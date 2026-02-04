@@ -9,6 +9,10 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^5.17.1"
+    "@astrojs/react": "^4.4.2",
+    "astro": "^5.17.1",
+    "gray-matter": "^4.0.3",
+    "octokit": "^5.0.5",
+    "react": "^19.2.4"
   }
 }
