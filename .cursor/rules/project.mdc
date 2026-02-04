@@ -1,0 +1,17 @@
+---
+alwaysApply: true
+---
+
+# Project rules
+
+- Use `bun` for installing packages and running scripts.
+- Keep content in `src/content/{blog,projects,tldrs}` with frontmatter fields defined in `src/content/config.ts`.
+- Use React islands only for interactive UI (filters, skill paths, contact form).
+- Prefer Astro components for layout and static cards; keep client JS minimal.
+- Read data from YAML files in `src/data` for skill paths and accomplishments.
+- Fetch GitHub milestone progress at build time and cache in `.cache/github.json`.
+- Store global UI styles in `src/styles/global.css` and keep components simple.
+
+# Memory
+- When you find a piece of information that is important to the project (A critical fix that should be kept in mind later), add it to `.cursor/rules/memory.mdc`.
+- Keep memories as a list, and keep them short and sweet.

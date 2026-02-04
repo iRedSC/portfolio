@@ -1,0 +1,53 @@
+---
+import '../styles/global.css';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import type { ImageMetadata } from 'astro';
+
+type Props = {
+	title: string;
+	description?: string;
+	image?: string | ImageMetadata;
+	canonicalUrl?: string;
+};
+
+const { title, description, image, canonicalUrl } = Astro.props;
+const pageTitle = title ? `${title} | Portfolio` : 'Portfolio';
+const canonical = canonicalUrl ?? new URL(Astro.url.pathname, Astro.site ?? Astro.url).toString();
+const socialImage = typeof image === 'string' ? image : image?.src ?? '/favicon.svg';
+---
+
+<!doctype html>
+<html lang="en" class="theme-auto">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" href="/favicon.ico" />
+		<title>{pageTitle}</title>
+		<meta name="description" content={description ?? 'Personal portfolio and writing.'} />
+		<link rel="canonical" href={canonical} />
+		<meta property="og:title" content={pageTitle} />
+		<meta property="og:description" content={description ?? 'Personal portfolio and writing.'} />
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content={canonical} />
+		<meta property="og:image" content={socialImage} />
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content={pageTitle} />
+		<meta name="twitter:description" content={description ?? 'Personal portfolio and writing.'} />
+		<meta name="twitter:image" content={socialImage} />
+		<script is:inline>
+			{`
+				const stored = localStorage.getItem('theme');
+				if (stored === 'dark') document.documentElement.classList.add('theme-dark');
+				if (stored === 'light') document.documentElement.classList.add('theme-light');
+			`}
+		</script>
+	</head>
+	<body>
+		<Nav />
+		<main class="container"><slot /></main>
+		<Footer />
+	</body>
+</html>

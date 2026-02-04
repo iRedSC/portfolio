@@ -1,0 +1,76 @@
+name: TypeScript
+nodes:
+  - name: Fundamentals
+    skills:
+      - name: Type annotations and basic type system
+        complete: true
+      - name: Primitive types and type inference
+        complete: true
+      - name: Union and intersection types
+        complete: true
+      - name: Functions with type signatures
+        complete: true
+      - name: Objects and type definitions
+        complete: true
+      - name: Arrays and tuple types
+        complete: true
+
+  - name: Core Skills
+    skills:
+      - name: Interfaces and type contracts
+        complete: true
+      - name: Classes and object-oriented programming
+        complete: true
+      - name: Generics and parametric typing
+        complete: true
+      - name: Enums and literal types
+        complete: true
+      - name: Modules and namespace management
+        complete: true
+      - name: Type guards and type narrowing
+        complete: true
+
+  - name: Advanced Patterns
+    skills:
+      - name: Advanced generics and constraints
+        complete: true
+      - name: Conditional and mapped types
+        complete: true
+      - name: Utility types and type manipulation
+        complete: true
+      - name: Decorators and metadata reflection
+        complete: true
+      - name: Higher-order functions and function composition
+        complete: true
+      - name: Advanced class patterns and inheritance
+        complete: true
+
+  - name: Production Practices
+    skills:
+      - name: Strict mode configuration and type safety
+        complete: true
+      - name: Error handling and exception typing
+        complete: true
+      - name: Testing with typed test frameworks
+        complete: false
+      - name: Build tooling and compilation optimization
+        complete: false
+      - name: Type declaration files and third-party libraries
+        complete: true
+      - name: Performance optimization and bundle analysis
+        complete: false
+
+  - name: Advanced & Enterprise
+    skills:
+      - name: Framework integration (React, Vue, Angular, Node.js)
+        complete: true
+      - name: Advanced async patterns and Promise typing
+        complete: true
+      - name: Monorepo management and workspace configuration
+        complete: false
+      - name: Type-safe API design and validation
+        complete: true
+      - name: Advanced metaprogramming and reflection
+        complete: true
+      - name: Complex architectural patterns and scalability
+        complete: true

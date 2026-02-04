@@ -1,0 +1,84 @@
+id: backend-development
+name: "Backend Development"
+description: "Server-side development skills covering Node.js, databases, APIs, and cloud deployment."
+
+nodes:
+  - id: nodejs
+    name: "Node.js"
+    level: 4
+    description: "Server-side JavaScript, npm ecosystem, and Node.js runtime fundamentals"
+
+  - id: express
+    name: "Express.js"
+    level: 4
+    description: "RESTful APIs, middleware, routing, and Express application architecture"
+    dependencies: ["nodejs"]
+
+  - id: databases
+    name: "Databases"
+    level: 3
+    description: "SQL and NoSQL databases, query optimization, and data modeling"
+
+  - id: postgresql
+    name: "PostgreSQL"
+    level: 3
+    description: "Relational database design, complex queries, and performance tuning"
+    dependencies: ["databases"]
+
+  - id: mongodb
+    name: "MongoDB"
+    level: 3
+    description: "Document-based database, aggregation pipelines, and schema design"
+    dependencies: ["databases"]
+
+  - id: api-design
+    name: "API Design"
+    level: 4
+    description: "REST, GraphQL, OpenAPI specification, and API versioning"
+    dependencies: ["express"]
+
+  - id: authentication
+    name: "Authentication & Security"
+    level: 3
+    description: "JWT, OAuth, password hashing, and security best practices"
+    dependencies: ["nodejs", "api-design"]
+
+  - id: testing-backend
+    name: "Backend Testing"
+    level: 3
+    description: "Unit testing, integration testing, and API testing with Jest/Supertest"
+    dependencies: ["nodejs"]
+
+  - id: docker
+    name: "Docker"
+    level: 3
+    description: "Containerization, Docker Compose, and deployment strategies"
+
+  - id: aws
+    name: "AWS Cloud Services"
+    level: 2
+    description: "EC2, S3, Lambda, API Gateway, and serverless architecture"
+
+  - id: serverless
+    name: "Serverless Functions"
+    level: 3
+    description: "Vercel, Netlify Functions, and cloud function development"
+    dependencies: ["nodejs"]
+
+  - id: graphql
+    name: "GraphQL"
+    level: 2
+    description: "Schema design, resolvers, and GraphQL API development"
+    dependencies: ["api-design"]
+
+  - id: redis
+    name: "Redis"
+    level: 2
+    description: "Caching, session storage, and data structures"
+    dependencies: ["databases"]
+
+  - id: monitoring
+    name: "Application Monitoring"
+    level: 2
+    description: "Logging, error tracking, and performance monitoring"
+    dependencies: ["nodejs"]

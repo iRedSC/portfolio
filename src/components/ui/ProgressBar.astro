@@ -1,0 +1,8 @@
+---
+const { value, label } = Astro.props;
+const percent = Math.min(100, Math.max(0, Number(value)));
+---
+
+<div class="progress" aria-label={label ?? `Progress ${percent}%`}>
+	<span style={`width: ${percent}%`}></span>
+</div>

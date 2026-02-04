@@ -1,17 +1,155 @@
 ---
+import { Image } from 'astro:assets';
+import Layout from '../layouts/Layout.astro';
+import profileImage from '../assets/profile.svg';
+import SkillPaths from '../components/SkillPaths';
+import ContactForm from '../components/ContactForm';
+import Card from '../components/ui/Card.astro';
+import ProjectCard from '../components/ui/ProjectCard.astro';
+import BlogPostCard from '../components/ui/BlogPostCard.astro';
+import { getCollection } from 'astro:content';
+import { getSkillPaths, getAccomplishments } from '../lib/data';
+import { getEnrichedProjects } from '../lib/build-projects';
+import { getReadingTimeMinutes } from '../lib/readingTime';
 
+const skillPaths = await getSkillPaths();
+const accomplishments = await getAccomplishments();
+const allProjects = await getEnrichedProjects();
+const featuredProjects = allProjects
+  .filter((p) => p.featured)
+  .sort((a, b) => b.pubDate.valueOf() - a.pubDate.valueOf())
+  .slice(0, 5);
+
+const blogPosts = await getCollection('blog', ({ data }) => !data.draft);
+const recentPosts = blogPosts
+  .map((entry) => ({
+    title: entry.data.title,
+    description: entry.data.description,
+    pubDate: entry.data.pubDate,
+    tags: entry.data.tags ?? [],
+    slug: entry.slug,
+    readingTime: getReadingTimeMinutes(entry.body),
+  }))
+  .sort((a, b) => b.pubDate.getTime() - a.pubDate.getTime())
+  .slice(0, 3);
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Layout
+  title="Home"
+  description="Portfolio of projects, writing, and highlights from my engineering journey."
+>
+  <section class="hero">
+    <div class="hero-content">
+      <p class="eyebrow">Hello, I'm Your Name</p>
+      <h1 class="title-gradient">Building cloud-native platforms and developer tooling.</h1>
+      <p class="lead">
+        I specialize in Docker, Kubernetes, and modern web stacks. This is where I share
+        projects, experiments, and the systems I've helped ship.
+      </p>
+    </div>
+    <Image src={profileImage} alt="Portrait" class="hero-photo" width={420} height={520} />
+  </section>
+
+  <div class="container">
+    <section class="section">
+      <div class="section-title section-title--divider section-title--centered">
+        <div class="section-title__group">
+          <span class="section-title__line" aria-hidden="true"></span>
+          <h2 class="section-title__heading">Skills</h2>
+          <span class="section-title__line" aria-hidden="true"></span>
+        </div>
+      </div>
+      <SkillPaths client:visible paths={skillPaths} />
+    </section>
+
+    <section class="section">
+      <div class="section-title section-title--divider">
+        <div class="section-title__group">
+          <span class="section-title__line" aria-hidden="true"></span>
+          <h2 class="section-title__heading">Featured projects</h2>
+          <span class="section-title__line" aria-hidden="true"></span>
+        </div>
+        <a href="/projects" class="section-title__link">View all</a>
+      </div>
+      <div class="card-grid">
+        {featuredProjects.map((project) => (
+          <ProjectCard
+            slug={project.slug}
+            title={project.title}
+            description={project.description}
+            image={project.heroImage}
+            tags={project.tags}
+            progress={project.progress}
+            language={project.language}
+          />
+        ))}
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title section-title--divider">
+        <div class="section-title__group">
+          <span class="section-title__line" aria-hidden="true"></span>
+          <h2 class="section-title__heading">Recent blog posts</h2>
+          <span class="section-title__line" aria-hidden="true"></span>
+        </div>
+        <a href="/blog" class="section-title__link">View all</a>
+      </div>
+      <div class="card-grid card-grid--blog">
+        {recentPosts.map((post) => (
+          <BlogPostCard
+            title={post.title}
+            description={post.description}
+            pubDate={post.pubDate}
+            updatedDate={undefined}
+            tags={post.tags}
+            slug={post.slug}
+            readingTime={post.readingTime}
+          />
+        ))}
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title section-title--divider">
+        <div class="section-title__group">
+          <span class="section-title__line" aria-hidden="true"></span>
+          <h2 class="section-title__heading">Technology & Tools</h2>
+          <span class="section-title__line" aria-hidden="true"></span>
+        </div>
+      </div>
+      <div class="card-grid">
+        {accomplishments.map((item) => (
+          <Card>
+            <div class="card-content">
+              <h3>{item.name}</h3>
+              <p>Delivered production systems with {item.name}.</p>
+            </div>
+          </Card>
+        ))}
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title section-title--divider section-title--centered">
+        <div class="section-title__group">
+          <span class="section-title__line" aria-hidden="true"></span>
+          <h2 class="section-title__heading">Contact</h2>
+          <span class="section-title__line" aria-hidden="true"></span>
+        </div>
+      </div>
+      <ContactForm client:load />
+    </section>
+  </div>
+</Layout>
+
+<style>
+  .card-grid--blog {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  @media (max-width: 768px) {
+    .card-grid--blog {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

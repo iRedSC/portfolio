@@ -1,0 +1,59 @@
+---
+import Layout from './Layout.astro';
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+type TocItem = {
+	depth: number;
+	slug: string;
+	text: string;
+};
+
+type Props = {
+	title: string;
+	description?: string;
+	image?: ImageMetadata;
+	publishedDate: Date;
+	readingTime?: string;
+	toc?: TocItem[];
+};
+
+const { title, description, image, publishedDate, readingTime, toc = [] } = Astro.props;
+---
+
+<Layout title={title} description={description} image={image}>
+	<article class="post">
+		<header class="post-hero">
+			<div>
+				<p class="eyebrow">{publishedDate.toLocaleDateString()}</p>
+				<h1>{title}</h1>
+				{description && <p class="lead">{description}</p>}
+				{readingTime && <p class="meta">{readingTime}</p>}
+			</div>
+			{image && (
+				<Image
+					src={image}
+					alt=""
+					class="post-hero-image"
+					width={720}
+					height={420}
+				/>
+			)}
+		</header>
+		<div class="post-body">
+			<div class="post-content"><slot /></div>
+			{toc.length > 0 && (
+				<aside class="post-toc">
+					<p class="toc-title">On this page</p>
+					<ul>
+						{toc.map((item) => (
+							<li class={`depth-${item.depth}`}>
+								<a href={`#${item.slug}`}>{item.text}</a>
+							</li>
+						))}
+					</ul>
+				</aside>
+			)}
+		</div>
+	</article>
+</Layout>

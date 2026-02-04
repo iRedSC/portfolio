@@ -1,0 +1,232 @@
+---
+interface Props {
+  name: string;
+  title: string;
+  bio: string;
+  avatar?: string;
+  socialLinks?: Array<{
+    platform: string;
+    url: string;
+    icon: string;
+  }>;
+}
+
+const { name, title, bio, avatar, socialLinks = [] } = Astro.props;
+---
+
+<section class="hero">
+  <div class="hero-container">
+    <div class="hero-content">
+      {avatar && (
+        <div class="hero-avatar">
+          <img src={avatar} alt={name} />
+        </div>
+      )}
+
+      <div class="hero-text">
+        <h1 class="hero-name">{name}</h1>
+        <p class="hero-title">{title}</p>
+        <p class="hero-bio">{bio}</p>
+      </div>
+
+      {socialLinks.length > 0 && (
+        <div class="hero-social">
+          {socialLinks.map(link => (
+            <a
+              href={link.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="social-link"
+              aria-label={link.platform}
+            >
+              <span class="social-icon">{link.icon}</span>
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+
+    <div class="hero-scroll">
+      <div class="scroll-indicator">
+        <span>Scroll to explore</span>
+        <div class="scroll-arrow">↓</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    background: linear-gradient(135deg, var(--color-background) 0%, var(--color-muted) 100%);
+  }
+
+  .hero-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    width: 100%;
+  }
+
+  .hero-content {
+    text-align: center;
+    animation: fadeInUp 1s ease-out;
+  }
+
+  .hero-avatar {
+    margin-bottom: 2rem;
+  }
+
+  .hero-avatar img {
+    width: 8rem;
+    height: 8rem;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid var(--color-primary);
+  }
+
+  .hero-name {
+    font-size: 3rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+    color: var(--color-text);
+    animation: slideInFromLeft 0.8s ease-out 0.2s both;
+  }
+
+  .hero-title {
+    font-size: 1.5rem;
+    color: var(--color-primary);
+    margin: 0 0 1rem 0;
+    font-weight: 500;
+    animation: slideInFromRight 0.8s ease-out 0.4s both;
+  }
+
+  .hero-bio {
+    font-size: 1.125rem;
+    color: var(--color-text-muted);
+    max-width: 600px;
+    margin: 0 auto 2rem auto;
+    line-height: 1.6;
+    animation: fadeInUp 1s ease-out 0.6s both;
+  }
+
+  .hero-social {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 3rem;
+    animation: fadeInUp 1s ease-out 0.8s both;
+  }
+
+  .social-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .social-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    color: var(--color-primary);
+  }
+
+  .hero-scroll {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    animation: bounce 2s infinite;
+  }
+
+  .scroll-indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-text-muted);
+    font-size: 0.875rem;
+  }
+
+  .scroll-arrow {
+    font-size: 1.5rem;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideInFromLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-50px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slideInFromRight {
+    from {
+      opacity: 0;
+      transform: translateX(50px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+      transform: translateX(-50%) translateY(0);
+    }
+    40% {
+      transform: translateX(-50%) translateY(-10px);
+    }
+    60% {
+      transform: translateX(-50%) translateY(-5px);
+    }
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 0.5;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .hero-name {
+      font-size: 2rem;
+    }
+
+    .hero-title {
+      font-size: 1.25rem;
+    }
+
+    .hero-bio {
+      font-size: 1rem;
+    }
+  }
+</style>

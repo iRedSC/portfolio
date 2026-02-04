@@ -1,0 +1,33 @@
+---
+import PostLayout from '../../layouts/PostLayout.astro';
+import { getCollection } from 'astro:content';
+import { getReadingTime } from '../../lib/readingTime';
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+	const entries = await getCollection('blog', ({ data }) => !data.draft);
+	return entries.map((entry) => ({ params: { slug: entry.slug }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { Content, headings } = await entry.render();
+const toc = headings
+	.filter((heading) => heading.depth === 2 || heading.depth === 3)
+	.map((heading) => ({
+		depth: heading.depth,
+		slug: heading.slug,
+		text: heading.text,
+	}));
+---
+
+<PostLayout
+	title={entry.data.title}
+	description={entry.data.description}
+	image={entry.data.image}
+	publishedDate={entry.data.pubDate}
+	readingTime={getReadingTime(entry.body)}
+	toc={toc}
+>
+	<Content />
+</PostLayout>

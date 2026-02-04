@@ -1,0 +1,92 @@
+id: frontend-development
+name: "Frontend Development"
+description: "Core skills for modern frontend web development, from HTML/CSS fundamentals to advanced JavaScript frameworks and performance optimization."
+
+nodes:
+  - id: html-css
+    name: "HTML & CSS"
+    level: 5
+    description: "Semantic HTML, modern CSS with Grid/Flexbox, responsive design, and CSS architecture patterns"
+
+  - id: javascript
+    name: "JavaScript (ES6+)"
+    level: 4
+    description: "Modern JavaScript features, asynchronous programming, DOM manipulation, and browser APIs"
+    dependencies: ["html-css"]
+
+  - id: typescript
+    name: "TypeScript"
+    level: 4
+    description: "Static typing, advanced types, generics, and TypeScript configuration"
+    dependencies: ["javascript"]
+
+  - id: react
+    name: "React"
+    level: 4
+    description: "Component architecture, hooks, state management, and React ecosystem"
+    dependencies: ["javascript", "typescript"]
+
+  - id: nextjs
+    name: "Next.js"
+    level: 3
+    description: "Server-side rendering, static generation, API routes, and deployment"
+    dependencies: ["react"]
+
+  - id: astro
+    name: "Astro"
+    level: 4
+    description: "Island architecture, content collections, and modern web framework concepts"
+    dependencies: ["javascript", "typescript"]
+
+  - id: tailwind
+    name: "Tailwind CSS"
+    level: 4
+    description: "Utility-first CSS framework, responsive design, and custom configurations"
+    dependencies: ["html-css", "css-architecture"]
+
+  - id: css-architecture
+    name: "CSS Architecture"
+    level: 3
+    description: "BEM, SMACSS, CSS-in-JS, and scalable CSS methodologies"
+    dependencies: ["html-css"]
+
+  - id: webpack-vite
+    name: "Build Tools (Vite/Webpack)"
+    level: 3
+    description: "Module bundling, development servers, and build optimization"
+    dependencies: ["javascript"]
+
+  - id: testing
+    name: "Testing"
+    level: 3
+    description: "Unit testing, integration testing, and testing best practices with Jest, React Testing Library"
+    dependencies: ["javascript"]
+
+  - id: performance
+    name: "Web Performance"
+    level: 3
+    description: "Core Web Vitals, lazy loading, code splitting, and performance optimization"
+    dependencies: ["javascript", "html-css"]
+
+  - id: accessibility
+    name: "Accessibility (a11y)"
+    level: 3
+    description: "WCAG guidelines, semantic HTML, ARIA attributes, and inclusive design"
+    dependencies: ["html-css"]
+
+  - id: git
+    name: "Git & Version Control"
+    level: 4
+    description: "Version control workflows, branching strategies, and collaborative development"
+
+  - id: package-management
+    name: "Package Management"
+    level: 4
+    description: "npm, yarn, bun, dependency management, and semantic versioning"
+    dependencies: ["javascript"]
+
+  - id: ci-cd
+    name: "CI/CD"
+    level: 2
+    description: "Automated testing, deployment pipelines, and continuous integration"
+    dependencies: ["git", "testing"]

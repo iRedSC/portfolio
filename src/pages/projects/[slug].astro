@@ -1,0 +1,79 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+import { getMilestoneProgress } from '../../lib/github';
+import { Image } from 'astro:assets';
+import Card from '../../components/ui/Card.astro';
+import ProgressBar from '../../components/ui/ProgressBar.astro';
+import Tag from '../../components/ui/Tag.astro';
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+	const entries = await getCollection('projects', ({ data }) => !data.draft);
+	return entries.map((entry) => ({ params: { slug: entry.slug }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { Content, headings } = await entry.render();
+const progress = await getMilestoneProgress(entry.data.githubRepo, entry.data.githubMilestoneId);
+const toc = headings
+	.filter((heading) => heading.depth === 2 || heading.depth === 3)
+	.map((heading) => ({
+		depth: heading.depth,
+		slug: heading.slug,
+		text: heading.text,
+	}));
+const buildDate = new Date().toLocaleDateString();
+---
+
+<Layout title={entry.data.title} description={entry.data.description} image={entry.data.image}>
+	<article class="post">
+		<header class="post-hero">
+			<div>
+				<p class="eyebrow">{entry.data.pubDate.toLocaleDateString()}</p>
+				<h1>{entry.data.title}</h1>
+				<p class="lead">{entry.data.description}</p>
+				<div>
+					{entry.data.tags.map((tag) => (
+						<Tag label={tag} />
+					))}
+				</div>
+				<div class="section-title">
+					<ProgressBar value={progress.percent} label={`Progress ${progress.percent}%`} />
+					<p class="meta">Progress last updated: {buildDate}</p>
+				</div>
+				<div class="card-grid">
+					<Card href={entry.data.repoUrl} target="_blank" rel="noreferrer">
+						GitHub repo
+					</Card>
+					{entry.data.demoUrl && (
+						<Card href={entry.data.demoUrl} target="_blank" rel="noreferrer">
+							Live demo
+						</Card>
+					)}
+				</div>
+			</div>
+			{entry.data.image && (
+				<Image src={entry.data.image} alt="" class="post-hero-image" width={720} height={420} />
+			)}
+		</header>
+		<div class="post-body">
+			<div class="post-content">
+				<Content />
+			</div>
+			{toc.length > 0 && (
+				<aside class="post-toc">
+					<p class="toc-title">On this page</p>
+					<ul>
+						{toc.map((item) => (
+							<li class={`depth-${item.depth}`}>
+								<a href={`#${item.slug}`}>{item.text}</a>
+							</li>
+						))}
+					</ul>
+				</aside>
+			)}
+		</div>
+	</article>
+</Layout>

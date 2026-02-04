@@ -1,0 +1,76 @@
+name: Docker
+nodes:
+  - name: Fundamentals
+    skills:
+      - name: Docker container execution and lifecycle management
+        complete: true
+      - name: Docker image pulling and repository management
+        complete: true
+      - name: Container port mapping and networking
+        complete: true
+      - name: Volume and data persistence configuration
+        complete: true
+      - name: Docker CLI and command-line tools
+        complete: true
+      - name: Container debugging and troubleshooting
+        complete: true
+
+  - name: Core Skills
+    skills:
+      - name: Dockerfile creation and optimization
+        complete: true
+      - name: Custom image building and management
+        complete: true
+      - name: Docker networking (bridge, host, custom networks)
+        complete: true
+      - name: Environment variable and configuration management
+        complete: true
+      - name: Private registry and image storage solutions
+        complete: false
+      - name: Multi-stage builds and layer optimization
+        complete: false
+
+  - name: Multi-Container Architecture
+    skills:
+      - name: Docker Compose configuration and orchestration
+        complete: true
+      - name: Service dependency management and startup order
+        complete: false
+      - name: Cross-container networking and communication
+        complete: true
+      - name: Secrets and sensitive data management
+        complete: false
+      - name: Health checks and container restart policies
+        complete: false
+      - name: Service scaling and resource allocation
+        complete: false
+
+  - name: Production Practices
+    skills:
+      - name: Container security and image scanning
+        complete: false
+      - name: Logging, monitoring, and observability implementation
+        complete: false
+      - name: CI/CD pipeline integration and automation
+        complete: false
+      - name: Resource constraints and performance optimization
+        complete: false
+      - name: Backup and disaster recovery strategies
+        complete: false
+      - name: Registry security and access control
+        complete: false
+
+  - name: Advanced & Enterprise
+    skills:
+      - name: Kubernetes deployment and orchestration
+        complete: false
+      - name: Service mesh implementation (Istio, Linkerd)
+        complete: false
+      - name: Distributed system monitoring and tracing
+        complete: false
+      - name: Multi-cloud and hybrid deployments
+        complete: false
+      - name: GitOps and infrastructure-as-code practices
+        complete: false
+      - name: Advanced troubleshooting and system architecture
+        complete: false

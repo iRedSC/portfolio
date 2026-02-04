@@ -1,0 +1,165 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ProjectCard from '../../components/ui/ProjectCard.astro';
+import ProjectsFilter from '../../components/ProjectsFilter.tsx';
+import { getEnrichedProjects } from '../../lib/build-projects';
+
+const projects = await getEnrichedProjects();
+
+const projectsForFilter = projects.map((p) => ({
+  slug: p.slug,
+  title: p.title,
+  description: p.description,
+  tags: p.tags ?? [],
+  heroImage: p.heroImage,
+  progress: p.progress,
+  language: p.language,
+}));
+---
+
+<Layout
+  title="Projects | Portfolio"
+  description="Explore my portfolio of web development projects, from full-stack applications to open-source contributions."
+>
+  <section class="section">
+    <div class="section-title section-title--divider section-title--centered">
+      <div class="section-title__group">
+        <span class="section-title__line" aria-hidden="true"></span>
+        <h1 class="section-title__heading">Projects</h1>
+        <span class="section-title__line" aria-hidden="true"></span>
+      </div>
+    </div>
+    <p class="lead" style="text-align: center; margin: -0.5rem 0 1.5rem;">
+      A showcase of my work in web development, featuring full-stack applications,
+      open-source contributions, and ongoing projects.
+    </p>
+
+    <ProjectsFilter projects={projectsForFilter} client:only="react">
+      <div class="blog-filter" slot="fallback" aria-hidden="true">
+        <div class="filter-controls">
+          <div class="search-container">
+            <input type="text" placeholder="Search projects..." class="search-input" disabled aria-hidden="true" />
+          </div>
+          <div class="tags-container">
+            <div class="tags-list">
+              {projectsForFilter.flatMap((p: any) => p.tags).filter((t: string, i: number, a: string[]) => a.indexOf(t) === i).sort().slice(0, 8).map((tag: string) => (
+                <span class="tag-chip">{tag}</span>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div class="filter-results">
+          <span class="results-count">{projects.length} of {projects.length} projects</span>
+        </div>
+      </div>
+    </ProjectsFilter>
+
+    <div id="filtered-projects" class="card-grid">
+      {projects.map((project) => (
+        <ProjectCard
+          slug={project.slug}
+          title={project.title}
+          description={project.description}
+          image={project.heroImage}
+          tags={project.tags}
+          progress={project.progress}
+          language={project.language}
+        />
+      ))}
+    </div>
+
+    {projects.length === 0 && (
+      <div class="empty-state">
+        <p>No projects available yet. Check back soon!</p>
+      </div>
+    )}
+  </section>
+</Layout>
+
+<script define:vars={{ projectsJson: JSON.stringify(projectsForFilter) }}>
+  function escapeHtml(s) {
+    if (s == null) return '';
+    const str = String(s);
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  function renderProjectCard(project) {
+    const slug = project.slug;
+    const title = project.title;
+    const description = project.description;
+    const tags = Array.isArray(project.tags) ? project.tags : [];
+    const heroImage = project.heroImage;
+    const progress = project.progress;
+    const language = project.language;
+
+    const tagsHtml = tags
+      .map(
+        (tag) =>
+          `<button type="button" class="tag tag-clickable" data-tag="${escapeHtml(tag)}" aria-label="Filter by ${escapeHtml(tag)}">${escapeHtml(tag)}</button>`
+      )
+      .join('');
+
+    const languageHtml = language
+      ? `<span class="project-language">${escapeHtml(language)}</span>`
+      : '';
+
+    const progressHtml =
+      progress !== undefined
+        ? `<div class="project-progress">
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: ${progress}%"></div>
+            </div>
+            <span class="progress-text">${progress}% complete</span>
+          </div>`
+        : '';
+
+    return `
+      <article class="project-card">
+        ${slug ? `<a href="/projects/${escapeHtml(slug)}" class="project-card-link" aria-label="View ${escapeHtml(title)}"></a>` : ''}
+        ${heroImage ? `<div class="project-image"><img src="${escapeHtml(heroImage)}" alt="${escapeHtml(title)}" loading="lazy" /></div>` : ''}
+        <div class="project-content">
+          <div class="project-card-top">
+            <h3 class="project-title">${escapeHtml(title)}</h3>
+            <p class="project-description">${escapeHtml(description)}</p>
+          </div>
+          <div class="project-card-bottom">
+            <div class="project-tags">${tagsHtml}</div>
+            ${languageHtml}
+            ${progressHtml}
+          </div>
+        </div>
+      </article>
+    `;
+  }
+
+  function updateFilteredProjects(filteredProjects) {
+    const grid = document.getElementById('filtered-projects');
+    if (!grid) return;
+    const projects = typeof projectsJson !== 'undefined' ? JSON.parse(projectsJson) : [];
+    const list = Array.isArray(filteredProjects) ? filteredProjects : projects;
+    grid.innerHTML = list.map((p) => renderProjectCard(p)).join('');
+  }
+
+  window.addEventListener('filteredProjectsUpdate', (e) => {
+    updateFilteredProjects(e.detail ?? []);
+  });
+
+  document.getElementById('filtered-projects')?.addEventListener('click', (e) => {
+    const target = e.target.closest('.tag-clickable');
+    if (!target) return;
+    e.preventDefault();
+    e.stopPropagation();
+    const tag = target.dataset.tag;
+    if (tag) window.dispatchEvent(new CustomEvent('filterByTag', { detail: { tag } }));
+  });
+</script>
+
+<style>
+  .empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: var(--muted);
+  }
+</style>

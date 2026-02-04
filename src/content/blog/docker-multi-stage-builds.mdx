@@ -1,0 +1,23 @@
+---
+title: Docker multi-stage builds
+description: Cut your Docker image size without losing developer ergonomics.
+tags: [docker, devops]
+image: ./images/placeholder.svg
+pubDate: 2025-12-10
+draft: false
+---
+
+## Why multi-stage builds matter
+
+Multi-stage builds let you separate build tooling from runtime artifacts.
+
+## A simple pattern
+
+```bash
+docker build -t app:latest .
+```
+
+## Common pitfalls
+
+- Forgetting to copy only the final build output.
+- Leaving debug tools in the runtime layer.

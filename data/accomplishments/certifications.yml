@@ -1,0 +1,22 @@
+- id: "aws-certified-developer"
+  title: "AWS Certified Developer - Associate"
+  description: "Validated expertise in developing and maintaining applications on AWS platform"
+  date: "2023-11-15"
+  type: "certification"
+  tags: ["aws", "cloud", "certification"]
+  url: "https://aws.amazon.com/certification/certified-developer-associate/"
+
+- id: "react-certification"
+  title: "Meta React Developer Certification"
+  description: "Comprehensive certification covering React fundamentals, hooks, and best practices"
+  date: "2023-09-20"
+  type: "certification"
+  tags: ["react", "frontend", "certification"]
+  url: "https://www.coursera.org/professional-certificates/meta-react-developer"
+
+- id: "typescript-certification"
+  title: "TypeScript Fundamentals Certification"
+  description: "In-depth understanding of TypeScript types, interfaces, and advanced features"
+  date: "2023-08-10"
+  type: "certification"
+  tags: ["typescript", "javascript", "certification"]

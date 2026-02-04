@@ -1,0 +1,6 @@
+- name: Docker
+- name: Kubernetes
+- name: AWS
+- name: React
+- name: Astro
+- name: Terraform

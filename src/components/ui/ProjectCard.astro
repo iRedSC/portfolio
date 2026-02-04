@@ -1,0 +1,173 @@
+---
+interface Props {
+  slug?: string;
+  title: string;
+  description: string;
+  image?: string;
+  tags: string[];
+  progress?: number;
+  language?: string;
+}
+
+const { slug, title, description, image, tags, progress, language } = Astro.props;
+---
+
+<article class="project-card">
+  {slug && (
+    <a href={`/projects/${slug}`} class="project-card-link" aria-label={`View ${title}`}></a>
+  )}
+  {image && (
+    <div class="project-image">
+      <img src={image} alt={title} loading="lazy" />
+    </div>
+  )}
+
+  <div class="project-content">
+    <div class="project-card-top">
+      <h3 class="project-title">{title}</h3>
+      <p class="project-description">{description}</p>
+    </div>
+
+    <div class="project-card-bottom">
+      <div class="project-tags">
+        {tags.map((tag: string) => (
+          <span class="tag">{tag}</span>
+        ))}
+      </div>
+      {language && (
+        <span class="project-language">{language}</span>
+      )}
+      {progress !== undefined && (
+        <div class="project-progress">
+          <div class="progress-bar">
+            <div class="progress-fill" style={`width: ${progress}%`}></div>
+          </div>
+          <span class="progress-text">{progress}% complete</span>
+        </div>
+      )}
+    </div>
+  </div>
+</article>
+
+<style>
+  .project-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .project-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .project-card-link {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  .project-image {
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+  }
+
+  .project-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .project-content {
+    position: relative;
+    z-index: 1;
+    flex: 1 1 auto;
+    padding: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .project-card-top {
+    flex: 1 1 auto;
+  }
+
+  .project-card-bottom {
+    margin-top: auto;
+    padding-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    min-height: 0;
+  }
+
+  .project-card-bottom .project-progress {
+    flex-shrink: 0;
+  }
+
+  .project-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem 0;
+    color: var(--text);
+  }
+
+  .project-description {
+    color: var(--muted);
+    margin: 0 0 1rem 0;
+    line-height: 1.5;
+  }
+
+  .project-progress {
+    margin: 0;
+  }
+
+  .progress-bar {
+    width: 100%;
+    height: 8px;
+    background: var(--border);
+    border-radius: 999px;
+    overflow: hidden;
+    margin-bottom: 0.25rem;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    transition: width 0.3s ease;
+  }
+
+  .progress-text {
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  .project-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    min-width: 0;
+  }
+
+  .project-language {
+    font-size: 0.875rem;
+    color: var(--muted);
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  .tag {
+    background: var(--accent-soft);
+    color: var(--accent);
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+  }
+
+</style>
