@@ -16,44 +16,88 @@ type Props = {
 	publishedDate: Date;
 	readingTime?: string;
 	toc?: TocItem[];
+	backgroundVideo?: string;
 };
 
-const { title, description, image, publishedDate, readingTime, toc = [] } = Astro.props;
+const { title, description, image, publishedDate, readingTime, toc = [], backgroundVideo } = Astro.props;
 ---
 
 <Layout title={title} description={description} image={image}>
-	<article class="post">
-		<header class="post-hero">
-			<div>
-				<p class="eyebrow">{publishedDate.toLocaleDateString()}</p>
-				<h1>{title}</h1>
-				{description && <p class="lead">{description}</p>}
-				{readingTime && <p class="meta">{readingTime}</p>}
+	{backgroundVideo ? (
+		<div class="post-with-video">
+			<div class="video-background" aria-hidden>
+				<video src={backgroundVideo} autoplay muted loop playsinline />
 			</div>
-			{image && (
-				<Image
-					src={image}
-					alt=""
-					class="post-hero-image"
-					width={720}
-					height={420}
-				/>
-			)}
-		</header>
-		<div class="post-body">
-			<div class="post-content"><slot /></div>
-			{toc.length > 0 && (
-				<aside class="post-toc">
-					<p class="toc-title">On this page</p>
-					<ul>
-						{toc.map((item) => (
-							<li class={`depth-${item.depth}`}>
-								<a href={`#${item.slug}`}>{item.text}</a>
-							</li>
-						))}
-					</ul>
-				</aside>
-			)}
+			<div class="video-overlay" aria-hidden />
+			<article class="post">
+				<header class="post-hero">
+					<div>
+						<p class="eyebrow">{publishedDate.toLocaleDateString()}</p>
+						<h1>{title}</h1>
+						{description && <p class="lead">{description}</p>}
+						{readingTime && <p class="meta">{readingTime}</p>}
+					</div>
+					{image && (
+						<Image
+							src={image}
+							alt=""
+							class="post-hero-image"
+							width={720}
+							height={420}
+						/>
+					)}
+				</header>
+				<div class="post-body">
+					<div class="post-content"><slot /></div>
+					{toc.length > 0 && (
+						<aside class="post-toc">
+							<p class="toc-title">On this page</p>
+							<ul>
+								{toc.map((item) => (
+									<li class={`depth-${item.depth}`}>
+										<a href={`#${item.slug}`}>{item.text}</a>
+									</li>
+								))}
+							</ul>
+						</aside>
+					)}
+				</div>
+			</article>
 		</div>
-	</article>
+	) : (
+		<article class="post">
+			<header class="post-hero">
+				<div>
+					<p class="eyebrow">{publishedDate.toLocaleDateString()}</p>
+					<h1>{title}</h1>
+					{description && <p class="lead">{description}</p>}
+					{readingTime && <p class="meta">{readingTime}</p>}
+				</div>
+				{image && (
+					<Image
+						src={image}
+						alt=""
+						class="post-hero-image"
+						width={720}
+						height={420}
+					/>
+				)}
+			</header>
+			<div class="post-body">
+				<div class="post-content"><slot /></div>
+				{toc.length > 0 && (
+					<aside class="post-toc">
+						<p class="toc-title">On this page</p>
+						<ul>
+							{toc.map((item) => (
+								<li class={`depth-${item.depth}`}>
+									<a href={`#${item.slug}`}>{item.text}</a>
+								</li>
+							))}
+						</ul>
+					</aside>
+				)}
+			</div>
+		</article>
+	)}
 </Layout>

@@ -1,6 +1,5 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import BlogPostCard from '../../components/ui/BlogPostCard.astro';
 import BlogFilter from '../../components/BlogFilter.tsx';
 import { getCollection } from 'astro:content';
 import { getReadingTimeMinutes } from '../../lib/readingTime';
@@ -37,103 +36,54 @@ const posts = blogPosts
 
     <BlogFilter
       posts={posts}
-      onFilteredPosts={(filteredPosts) => {
-        // This will be handled client-side
-        console.log('Filtered posts:', filteredPosts);
-      }}
       client:only="react"
     >
-      <!-- Fallback matches React layout (column) to avoid content shift when hydrating -->
-      <div class="blog-filter" slot="fallback" aria-hidden="true">
-        <div class="filter-controls">
-          <div class="search-container">
-            <input type="text" placeholder="Search posts..." class="search-input" disabled aria-hidden="true" />
-          </div>
-          <div class="tags-container">
-            <div class="tags-list">
-              {posts.flatMap((p: any) => p.tags).filter((t: string, i: number, a: string[]) => a.indexOf(t) === i).sort().slice(0, 8).map((tag: string) => (
-                <span class="tag-chip">{tag}</span>
-              ))}
+      <!-- Fallback: filter UI + placeholder cards to avoid layout shift -->
+      <div slot="fallback" aria-hidden="true">
+        <div class="blog-filter">
+          <div class="filter-controls">
+            <div class="search-container">
+              <input type="text" placeholder="Search posts..." class="search-input" disabled />
+            </div>
+            <div class="tags-container">
+              <div class="tags-list">
+                {posts.flatMap((p: any) => p.tags).filter((t: string, i: number, a: string[]) => a.indexOf(t) === i).sort().slice(0, 8).map((tag: string) => (
+                  <span class="tag-chip">{tag}</span>
+                ))}
+              </div>
             </div>
           </div>
+          <div class="filter-results">
+            <span class="results-count">{posts.length} of {posts.length} posts</span>
+          </div>
         </div>
-        <div class="filter-results">
-          <span class="results-count">{posts.length} of {posts.length} posts</span>
+        <div id="filtered-posts" class="card-grid blog-cards-with-video">
+          {posts.map((post: any) => (
+            <a href={`/blog/${post.slug}`} class="blog-card blog-card--video blog-card--fallback">
+              <div class="blog-card-content">
+                <div class="blog-card-top">
+                  <h3 class="blog-title">{post.title}</h3>
+                  <p class="blog-description">{post.description}</p>
+                </div>
+                <div class="blog-card-bottom">
+                  <div class="blog-tags">
+                    {(post.tags ?? []).map((tag: string) => (
+                      <span class="tag">{tag}</span>
+                    ))}
+                  </div>
+                  <div class="blog-meta">
+                    <time datetime={post.pubDate.toISOString()}>{post.pubDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</time>
+                    {post.readingTime ? <span class="reading-time">{post.readingTime} min read</span> : ''}
+                  </div>
+                </div>
+              </div>
+            </a>
+          ))}
         </div>
       </div>
     </BlogFilter>
-
-    <div id="filtered-posts" class="card-grid">
-        {posts.map((post: any) => (
-          <BlogPostCard
-            title={post.title}
-            description={post.description}
-            pubDate={post.pubDate}
-            updatedDate={undefined}
-            tags={post.tags}
-            slug={post.slug}
-            readingTime={post.readingTime}
-          />
-        ))}
-      </div>
   </section>
 </Layout>
-
-<script>
-  // Handle filtered posts from BlogFilter component
-  function updateFilteredPosts(filteredPosts: any[]) {
-    const postsGrid = document.getElementById('filtered-posts');
-    if (!postsGrid) return;
-
-    // Clear existing posts
-    postsGrid.innerHTML = '';
-
-    // Add filtered posts
-    filteredPosts.forEach((post: any) => {
-      const postCard = document.createElement('div');
-      const pubDate = post.pubDate != null ? new Date(post.pubDate) : new Date();
-      const dateStr = pubDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-      const isoDate = pubDate.toISOString();
-      const tags = Array.isArray(post.tags) ? post.tags : [];
-      postCard.innerHTML = `
-        <a href="/blog/${post.slug}" class="blog-card">
-          <div class="blog-card-top">
-            <h3 class="blog-title">${post.title}</h3>
-            <p class="blog-description">${post.description}</p>
-          </div>
-          <div class="blog-card-bottom">
-            <div class="blog-tags">
-              ${tags.map((tag: string) => `<button type="button" class="tag tag-clickable" data-tag="${tag.replace(/"/g, '&quot;')}" aria-label="Filter by ${tag.replace(/"/g, '')}">${tag}</button>`).join('')}
-            </div>
-            <div class="blog-meta">
-              <time datetime="${isoDate}">${dateStr}</time>
-              ${post.readingTime ? `<span class="reading-time">${post.readingTime} min read</span>` : ''}
-            </div>
-          </div>
-        </a>
-      `;
-      const cardElement = postCard.firstElementChild;
-      if (cardElement) {
-        postsGrid.appendChild(cardElement);
-      }
-    });
-  }
-
-  // Listen for custom event from BlogFilter (must listen on window since the event is dispatched there)
-  window.addEventListener('filteredPostsUpdate', (e: any) => {
-    updateFilteredPosts(e.detail ?? []);
-  });
-
-  // Clickable card tags: dispatch filterByTag so BlogFilter applies the same filter as chip click
-  document.getElementById('filtered-posts')?.addEventListener('click', (e: Event) => {
-    const target = (e.target as HTMLElement).closest('.tag-clickable');
-    if (!target) return;
-    e.preventDefault();
-    e.stopPropagation();
-    const tag = (target as HTMLElement).dataset.tag;
-    if (tag) window.dispatchEvent(new CustomEvent('filterByTag', { detail: { tag } }));
-  });
-</script>
 
 <style>
   #filtered-posts.card-grid {

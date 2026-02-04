@@ -36,4 +36,9 @@ export default defineConfig({
 		}),
 		sitemap(),
 	],
+	vite: {
+		optimizeDeps: {
+			include: ['three'],
+		},
+	},
 });

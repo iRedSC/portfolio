@@ -193,9 +193,11 @@ a {
 	grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
 }
 
-/* Blog index grid: style both Astro-rendered and script-injected cards (no scoping) */
-#filtered-posts .blog-card {
-	background: var(--card);
+/* Blog cards with video backgrounds */
+#filtered-posts .blog-card,
+.blog-cards-with-video .blog-card {
+	position: relative;
+	background: transparent;
 	border: 1px solid var(--border);
 	border-radius: 20px;
 	padding: 1.75rem;
@@ -209,9 +211,58 @@ a {
 	color: inherit;
 }
 
-#filtered-posts .blog-card:hover {
+.blog-card--video .video-bg {
+	position: absolute;
+	inset: 0;
+	z-index: 0;
+	border-radius: inherit;
+	overflow: hidden;
+}
+
+.blog-card--video .video-bg-item {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.blog-card--video .blog-card-overlay {
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+	background: linear-gradient(
+		to bottom,
+		rgba(26, 20, 16, 0.5) 0%,
+		rgba(26, 20, 16, 0.75) 100%
+	);
+	border-radius: inherit;
+	pointer-events: none;
+}
+
+.blog-card--video .blog-card-content {
+	position: relative;
+	z-index: 2;
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	min-height: 0;
+}
+
+.blog-card--fallback {
+	background: #1a1410;
+}
+
+.blog-card--fallback .video-bg {
+	display: none;
+}
+
+.blog-card--fallback .blog-card-overlay {
+	display: none;
+}
+
+#filtered-posts .blog-card:hover,
+.blog-cards-with-video .blog-card:hover {
 	transform: translateY(-4px);
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 #filtered-posts .blog-title {
@@ -688,6 +739,42 @@ a {
 	.hero-photo {
 		animation: float 6s ease-in-out infinite;
 	}
+}
+
+/* Video background for blog posts */
+.post-with-video {
+	position: relative;
+	min-height: 100vh;
+}
+
+.post-with-video .video-background {
+	position: fixed;
+	inset: 0;
+	z-index: -1;
+	overflow: hidden;
+}
+
+.post-with-video .video-background video {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.post-with-video .video-overlay {
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(
+		to bottom,
+		rgba(26, 20, 16, 0.7) 0%,
+		rgba(26, 20, 16, 0.85) 50%,
+		rgba(26, 20, 16, 0.95) 100%
+	);
+	pointer-events: none;
+}
+
+.post-with-video .post {
+	position: relative;
+	z-index: 1;
 }
 
 .post {
