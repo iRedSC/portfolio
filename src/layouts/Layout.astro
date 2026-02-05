@@ -49,5 +49,13 @@ const socialImage = typeof image === 'string' ? image : image?.src ?? '/favicon.
 		<Nav />
 		<main class="container"><slot /></main>
 		<Footer />
+		<script is:inline>
+			{`
+				document.querySelectorAll('.video-bg-item').forEach(function(img) {
+					if (img.complete) img.classList.add('video-bg-item--loaded');
+					else img.addEventListener('load', function() { img.classList.add('video-bg-item--loaded'); });
+				});
+			`}
+		</script>
 	</body>
 </html>

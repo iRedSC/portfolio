@@ -55,9 +55,7 @@ export default function ProjectsFilter({ projects = [] }: ProjectsFilterProps) {
     const handleFilterByTag = (e: CustomEvent<{ tag: string }>) => {
       const tag = e.detail?.tag;
       if (!tag) return;
-      setSelectedTags((prev) =>
-        prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
-      );
+      setSelectedTags((prev) => (prev.includes(tag) ? [] : [tag]));
     };
     window.addEventListener('filterByTag' as any, handleFilterByTag as any);
     return () =>
@@ -65,9 +63,7 @@ export default function ProjectsFilter({ projects = [] }: ProjectsFilterProps) {
   }, []);
 
   const toggleTag = (tag: string) => {
-    setSelectedTags((prev) =>
-      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
-    );
+    setSelectedTags((prev) => (prev.includes(tag) ? [] : [tag]));
   };
 
   const clearFilters = () => {
@@ -97,9 +93,6 @@ export default function ProjectsFilter({ projects = [] }: ProjectsFilterProps) {
                 className={`tag-chip ${selectedTags.includes(tag) ? 'active' : ''}`}
               >
                 {tag}
-                {selectedTags.includes(tag) && (
-                  <span className="remove-tag">×</span>
-                )}
               </button>
             ))}
           </div>

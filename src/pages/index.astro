@@ -6,7 +6,7 @@ import SkillPaths from '../components/SkillPaths';
 import ContactForm from '../components/ContactForm';
 import Card from '../components/ui/Card.astro';
 import ProjectCard from '../components/ui/ProjectCard.astro';
-import BlogPostCard from '../components/ui/BlogPostCard.astro';
+import BlogCard from '../components/BlogCard';
 import { getCollection } from 'astro:content';
 import { getSkillPaths, getAccomplishments } from '../lib/data';
 import { getEnrichedProjects } from '../lib/build-projects';
@@ -95,13 +95,13 @@ const recentPosts = blogPosts
         </div>
         <a href="/blog" class="section-title__link">View all</a>
       </div>
-      <div class="card-grid card-grid--blog">
+      <div class="card-grid card-grid--blog blog-cards-with-video">
         {recentPosts.map((post) => (
-          <BlogPostCard
+          <BlogCard
+            client:visible
             title={post.title}
             description={post.description}
             pubDate={post.pubDate}
-            updatedDate={undefined}
             tags={post.tags}
             slug={post.slug}
             readingTime={post.readingTime}

@@ -1,9 +1,7 @@
-import VideoBackground from './VideoBackground';
-
 interface BlogCardProps {
 	title: string;
 	description: string;
-	pubDate: Date;
+	pubDate: Date | string;
 	tags: string[];
 	slug: string;
 	readingTime?: number;
@@ -17,11 +15,13 @@ export default function BlogCard({
 	slug,
 	readingTime,
 }: BlogCardProps) {
-	const formattedDate = pubDate.toLocaleDateString('en-US', {
+	const date = typeof pubDate === 'string' ? new Date(pubDate) : pubDate;
+	const formattedDate = date.toLocaleDateString('en-US', {
 		year: 'numeric',
 		month: 'long',
 		day: 'numeric',
 	});
+	const isoDate = date.toISOString();
 
 	const handleTagClick = (e: React.MouseEvent, tag: string) => {
 		e.preventDefault();
@@ -30,9 +30,7 @@ export default function BlogCard({
 	};
 
 	return (
-		<a href={`/blog/${slug}`} className="blog-card blog-card--video">
-			<VideoBackground slug={slug} />
-			<div className="blog-card-overlay" aria-hidden />
+		<a href={`/blog/${slug}`} className="blog-card">
 			<div className="blog-card-content">
 				<div className="blog-card-top">
 					<h3 className="blog-title">{title}</h3>
@@ -54,7 +52,7 @@ export default function BlogCard({
 						))}
 					</div>
 					<div className="blog-meta">
-						<time dateTime={pubDate.toISOString()}>{formattedDate}</time>
+						<time dateTime={isoDate}>{formattedDate}</time>
 						{readingTime != null && (
 							<span className="reading-time">{readingTime} min read</span>
 						)}

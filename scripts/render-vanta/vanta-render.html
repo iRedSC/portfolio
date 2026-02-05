@@ -4,24 +4,88 @@
   <meta charset="utf-8" />
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body { width: 100%; height: 100%; overflow: hidden; background: #1a1410; }
-    #vanta { width: 100%; height: 100%; }
+    html, body { width: 100%; height: 100%; overflow: hidden; }
+    body { display: flex; align-items: center; justify-content: center; }
+    .vanta-wrap { width: 100vmin; height: 100vmin; flex-shrink: 0; }
+    #vanta { display: block; width: 100%; height: 100%; }
   </style>
+  <!-- THREE.js required by most effects; p5.js required by trunk & topology -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/build/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.min.js"></script>
 </head>
 <body>
-  <div id="vanta"></div>
+  <div class="vanta-wrap"><div id="vanta"></div></div>
   <script>
     (function() {
+      // Portfolio warm theme colors (match src/styles/global.css)
+      const THEMES = {
+        dark: {
+          bg: 0x1a1410,
+          color: 0xff7b54,
+          color2: 0xb89a7e,
+          birdColor: 0xff7b54,
+        },
+        light: {
+          bg: 0xfef9f3,
+          color: 0xea5a2e,
+          color2: 0x8b6e5a,
+          birdColor: 0xea5a2e,
+        },
+      };
+
       const params = new URLSearchParams(window.location.search);
-      const effect = (params.get('effect') || 'halo').toLowerCase();
+      const effect = (params.get('effect') || 'birds').toLowerCase();
+      const theme = (params.get('theme') || 'dark').toLowerCase();
+      const themeConfig = THEMES[theme] || THEMES.dark;
+
+      document.body.style.background = '#' + themeConfig.bg.toString(16).padStart(6, '0');
+
+      function loadEffect() {
+        const opts = {
+          el: '#vanta',
+          mouseControls: false,
+          touchControls: false,
+          gyroControls: false,
+          backgroundColor: themeConfig.bg,
+          color: themeConfig.color,
+          speed: 0.35,
+        };
+        if (typeof THREE !== 'undefined') opts.THREE = THREE;
+        if (typeof p5 !== 'undefined' && (effect === 'trunk' || effect === 'topology')) opts.p5 = p5;
+
+        if (effect === 'birds') {
+          opts.speedLimit = 1.5;
+          opts.birdSize = 1.2;
+          opts.color1 = themeConfig.birdColor;
+          opts.color2 = themeConfig.color2;
+          opts.wingSpan = 25;
+        }
+        if (effect === 'halo') {
+          opts.baseColor = themeConfig.color;
+          opts.color2 = themeConfig.color2;
+        }
+        if (effect === 'cells') {
+          opts.color1 = themeConfig.color;
+          opts.color2 = themeConfig.color2;
+        }
+        if (effect === 'trunk') {
+          opts.spacing = 5;
+          opts.chaos = 2.5;
+        }
+        const vantaName = effect.toUpperCase();
+        try {
+          window.vantaEffect = VANTA[vantaName](opts);
+          if (window.vantaEffect && typeof window.vantaEffect.resize === 'function') {
+            setTimeout(function() { window.vantaEffect.resize(); }, 100);
+          }
+        } catch (e) {
+          console.error('Vanta init failed:', e);
+        }
+      }
+
       const script = document.createElement('script');
       script.src = 'https://cdn.jsdelivr.net/npm/vanta@0.5.24/dist/vanta.' + effect + '.min.js';
-      script.onload = function() {
-        const opts = { el: '#vanta', mouseControls: false, touchControls: false, gyroControls: false };
-        if (typeof THREE !== 'undefined') opts.THREE = THREE;
-        const name = effect.toUpperCase();
-        window.vantaEffect = VANTA[name](opts);
-      };
+      script.onload = loadEffect;
       document.head.appendChild(script);
     })();
   </script>
