@@ -119,6 +119,7 @@ export default function SkillPaths({ paths }: Props) {
 								return (
 									<div 
 										key={nodeKey}
+										className="skill-path-node"
 										style={{ 
 											position: 'relative',
 											display: 'flex',
@@ -132,6 +133,7 @@ export default function SkillPaths({ paths }: Props) {
 										{/* Connecting line */}
 										{showLine && (
 											<div
+												className="skill-path-line"
 												style={{
 													position: 'absolute',
 													left: 'calc(-50% - 1rem)',
@@ -146,6 +148,7 @@ export default function SkillPaths({ paths }: Props) {
 										
 										{/* Node circle */}
 										<div
+											className="skill-path-node-circle"
 											onMouseEnter={(event) => {
 												setActiveNode(nodeKey);
 												setActiveTooltip({
@@ -182,6 +185,7 @@ export default function SkillPaths({ paths }: Props) {
 											{/* Inner circle */}
 											{!isComplete && (
 												<div
+													className="skill-path-node-inner"
 													style={{
 														width: '48px',
 														height: '48px',
