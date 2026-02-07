@@ -1,5 +1,7 @@
-import { useLayoutEffect, useState } from 'react';
+import { useLayoutEffect, useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
+
+const MOBILE_BREAKPOINT = 768;
 
 type Skill = { name: string; amount?: number };
 type Node = { name: string; amount: number; skills: Skill[] };
@@ -14,8 +16,10 @@ function getNodeAmount(node: Node): number {
 	return Math.max(1, Math.min(4, node.amount ?? 1));
 }
 
+const ICON_SIZE = 26;
+
 const BookIcon = () => (
-	<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+	<svg width={ICON_SIZE} height={ICON_SIZE} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
 		<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
 		<path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
 		<path d="M8 7h8" />
@@ -24,14 +28,14 @@ const BookIcon = () => (
 );
 
 const MagnifierIcon = () => (
-	<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+	<svg width={ICON_SIZE} height={ICON_SIZE} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
 		<circle cx="11" cy="11" r="8" />
 		<path d="m21 21-4.35-4.35" />
 	</svg>
 );
 
 const RocketIcon = () => (
-	<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+	<svg width={ICON_SIZE} height={ICON_SIZE} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
 		<path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z" />
 		<path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z" />
 		<path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0" />
@@ -40,7 +44,7 @@ const RocketIcon = () => (
 );
 
 const StarIcon = () => (
-	<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+	<svg width={ICON_SIZE} height={ICON_SIZE} viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
 		<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
 	</svg>
 );
@@ -74,6 +78,14 @@ export default function SkillPaths({ paths }: Props) {
 	} | null>(null);
 	const [iconTooltipRect, setIconTooltipRect] = useState<DOMRect | null>(null);
 	const [iconHovered, setIconHovered] = useState<string | null>(null);
+	const [isMobile, setIsMobile] = useState(false);
+
+	useEffect(() => {
+		const check = () => setIsMobile(window.innerWidth <= MOBILE_BREAKPOINT);
+		check();
+		window.addEventListener('resize', check);
+		return () => window.removeEventListener('resize', check);
+	}, []);
 
 	useLayoutEffect(() => {
 		if (!activeTooltip) return;
@@ -110,9 +122,10 @@ export default function SkillPaths({ paths }: Props) {
 	}, [iconTooltip]);
 
 	const maxNodes = Math.max(...paths.map((p) => p.nodes.length), 1);
+	const gridCols = `8rem repeat(${maxNodes}, 1fr)`;
 
 	return (
-		<div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', overflow: 'visible' }}>
+		<div className="skill-paths" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', overflow: 'visible' }}>
 			{paths.map((path) => {
 				const sortedNodes = [...path.nodes].sort((a, b) => getNodeAmount(b) - getNodeAmount(a));
 				return (
@@ -123,28 +136,38 @@ export default function SkillPaths({ paths }: Props) {
 							overflowX: 'auto',
 							overflowY: 'visible',
 							padding: '0.5rem 0',
+							WebkitOverflowScrolling: 'touch',
 						}}
 					>
 						<div
+							className="skill-path-grid"
 							style={{
 								display: 'grid',
-								gridTemplateColumns: `8rem repeat(${maxNodes}, minmax(0, 1fr))`,
+								gridTemplateColumns: gridCols,
+								gridTemplateRows: 'auto auto',
 								alignItems: 'center',
 								gap: '1rem',
 								paddingTop: '0.75rem',
 								paddingBottom: '0.75rem',
 								overflow: 'visible',
 								minWidth: 0,
+								['--skill-cols' as string]: maxNodes,
 							}}
 						>
-						<h3 style={{
-							fontSize: '1.125rem',
-							margin: 0,
-							color: 'var(--text)',
-							fontWeight: 600,
-						}}>
+						<h3
+							className="skill-path-heading"
+							style={{
+								fontSize: '1.125rem',
+								margin: 0,
+								color: 'var(--text)',
+								fontWeight: 600,
+								gridRow: 1,
+								gridColumn: '1 / -1',
+							}}
+						>
 							{path.name}
 						</h3>
+						<div className="skill-path-nodes-row">
 						{Array.from({ length: maxNodes }, (_, i) => {
 							const node = sortedNodes[i];
 							if (!node) {
@@ -187,8 +210,10 @@ export default function SkillPaths({ paths }: Props) {
 										}}
 										style={{
 											position: 'relative',
-											width: '44px',
-											height: '44px',
+											width: 'clamp(2rem, 2.75rem, 3.5rem)',
+											height: 'clamp(2rem, 2.75rem, 3.5rem)',
+											minWidth: '2rem',
+											minHeight: '2rem',
 											borderRadius: '50%',
 											cursor: 'pointer',
 											transition: 'transform 0.2s ease',
@@ -220,8 +245,10 @@ export default function SkillPaths({ paths }: Props) {
 												setIconHovered(null);
 											}}
 											style={{
-												width: '34px',
-												height: '34px',
+												width: 'clamp(1.5rem, 2.125rem, 2.5rem)',
+												height: 'clamp(1.5rem, 2.125rem, 2.5rem)',
+												minWidth: '1.5rem',
+												minHeight: '1.5rem',
 												borderRadius: '50%',
 												background: 'var(--card)',
 												display: 'flex',
@@ -230,19 +257,24 @@ export default function SkillPaths({ paths }: Props) {
 												color: amount >= 3 ? 'var(--accent)' : 'var(--muted)',
 											}}
 										>
-											<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', transform: 'scale(0.8)' }}>
+											<div className="skill-path-node-icon" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
 												{NODE_ICONS[amount as 1 | 2 | 3 | 4]()}
 											</div>
 										</div>
 									</div>
 
 									<div
+										className="skill-path-node-label"
 										style={{
 											fontSize: '0.75rem',
 											fontWeight: 500,
 											color: 'var(--text)',
 											textAlign: 'center',
-											maxWidth: '100%'
+											maxWidth: '100%',
+											minHeight: '2.5em',
+											display: 'flex',
+											alignItems: 'center',
+											justifyContent: 'center',
 										}}
 									>
 										{node.name}
@@ -251,27 +283,49 @@ export default function SkillPaths({ paths }: Props) {
 							);
 						})}
 						</div>
+						</div>
 					</div>
 				);
 			})}
 			{activeTooltip && tooltipRect && createPortal(
 				<div
-					className="skill-path-tooltip skill-path-tooltip-enter"
-					style={{
-						position: 'fixed',
-						top: `${tooltipRect.bottom + 12}px`,
-						left: `${tooltipRect.left + tooltipRect.width / 2}px`,
-						transform: 'translateX(-50%)',
-						background: 'var(--card)',
-						border: '1px solid var(--border)',
-						borderRadius: '12px',
-						padding: '1rem',
-						minWidth: '340px',
-						maxWidth: '480px',
-						boxShadow: '0 8px 24px rgba(0, 0, 0, 0.1)',
-						zIndex: 9999,
-						pointerEvents: 'none',
-					}}
+					className={`skill-path-tooltip skill-path-tooltip-enter ${isMobile ? 'skill-path-tooltip-mobile' : ''}`}
+					style={isMobile
+						? {
+							position: 'fixed',
+							bottom: 'calc(var(--mobile-nav-height, 4rem) + 1rem)',
+							left: '1rem',
+							right: '1rem',
+							top: 'auto',
+							background: 'var(--card)',
+							border: '1px solid var(--border)',
+							borderRadius: '12px',
+							padding: '1rem',
+							width: 'auto',
+							minWidth: 'auto',
+							maxWidth: 'none',
+							boxShadow: '0 8px 24px rgba(0, 0, 0, 0.15)',
+							zIndex: 9999,
+							pointerEvents: 'none',
+							maxHeight: 'min(70vh, calc(100dvh - var(--mobile-nav-height, 4rem) - 2rem))',
+							overflowY: 'auto',
+						  }
+						: {
+							position: 'fixed',
+							top: `${tooltipRect.bottom + 12}px`,
+							left: `${tooltipRect.left + tooltipRect.width / 2}px`,
+							transform: 'translateX(-50%)',
+							background: 'var(--card)',
+							border: '1px solid var(--border)',
+							borderRadius: '12px',
+							padding: '1rem',
+							minWidth: 'min(340px, calc(100vw - 2rem))',
+							maxWidth: 'min(480px, calc(100vw - 2rem))',
+							boxShadow: '0 8px 24px rgba(0, 0, 0, 0.1)',
+							zIndex: 9999,
+							pointerEvents: 'none',
+						  }
+					}
 				>
 					<div style={{ 
 						fontWeight: 600, 
@@ -324,22 +378,40 @@ export default function SkillPaths({ paths }: Props) {
 			{iconTooltip && iconTooltipRect && createPortal(
 				<div
 					className="skill-path-icon-tooltip skill-path-icon-tooltip-enter"
-					style={{
-						position: 'fixed',
-						top: `${iconTooltipRect.top - 18}px`,
-						left: `${iconTooltipRect.left + iconTooltipRect.width / 2}px`,
-						transform: 'translate(-50%, -100%)',
-						background: 'var(--card)',
-						border: '1px solid var(--border)',
-						borderRadius: '8px',
-						padding: '0.5rem 0.75rem',
-						fontSize: '0.8rem',
-						color: 'var(--text)',
-						whiteSpace: 'nowrap',
-						boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-						zIndex: 10000,
-						pointerEvents: 'none',
-					}}
+					style={isMobile
+						? {
+							position: 'fixed',
+							bottom: 'calc(var(--mobile-nav-height, 4rem) + 0.75rem)',
+							left: `${iconTooltipRect.left + iconTooltipRect.width / 2}px`,
+							transform: 'translateX(-50%)',
+							background: 'var(--card)',
+							border: '1px solid var(--border)',
+							borderRadius: '8px',
+							padding: '0.5rem 0.75rem',
+							fontSize: '0.8rem',
+							color: 'var(--text)',
+							whiteSpace: 'nowrap',
+							boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+							zIndex: 10000,
+							pointerEvents: 'none',
+						  }
+						: {
+							position: 'fixed',
+							top: `${iconTooltipRect.top - 18}px`,
+							left: `${iconTooltipRect.left + iconTooltipRect.width / 2}px`,
+							transform: 'translate(-50%, -100%)',
+							background: 'var(--card)',
+							border: '1px solid var(--border)',
+							borderRadius: '8px',
+							padding: '0.5rem 0.75rem',
+							fontSize: '0.8rem',
+							color: 'var(--text)',
+							whiteSpace: 'nowrap',
+							boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+							zIndex: 10000,
+							pointerEvents: 'none',
+						  }
+					}
 				>
 					{NODE_STAGE_LABELS[iconTooltip.amount]}
 				</div>,

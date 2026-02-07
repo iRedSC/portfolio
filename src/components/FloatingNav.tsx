@@ -1,5 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import ThemeToggle from './ThemeToggle';
+
+const MOBILE_BREAKPOINT = 768;
+const TOP_THRESHOLD = 24;
 
 interface NavLink {
   href: string;
@@ -11,168 +14,305 @@ interface FloatingNavProps {
   links: NavLink[];
 }
 
+const TRANSITION_DURATION_MS = 280;
+
 export default function FloatingNav({ links }: FloatingNavProps) {
   const [isHidden, setIsHidden] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
+  const [mobileBarCollapsed, setMobileBarCollapsed] = useState(false);
+  const [forceExpanded, setForceExpanded] = useState(false);
+  const [slideUp, setSlideUp] = useState(false);
+  const [circleSlideUp, setCircleSlideUp] = useState(false);
+  const [transitioningToCircle, setTransitioningToCircle] = useState(false);
+  const [transitioningToBar, setTransitioningToBar] = useState(false);
+  const transitionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const prevAtTopRef = useRef(true);
+  const isTransitioningRef = useRef(false);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [mouseNearTop, setMouseNearTop] = useState(false);
+  const [isMobile, setIsMobile] = useState(
+    () => (typeof window !== 'undefined' ? window.innerWidth <= MOBILE_BREAKPOINT : false)
+  );
+  const [isAtTop, setIsAtTop] = useState(true);
+  const [hasMounted, setHasMounted] = useState(false);
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth <= MOBILE_BREAKPOINT);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  const triggerCollapseTransition = useCallback(() => {
+    isTransitioningRef.current = true;
+    setTransitioningToCircle(true);
+    if (transitionTimeoutRef.current) clearTimeout(transitionTimeoutRef.current);
+    transitionTimeoutRef.current = setTimeout(() => {
+      setTransitioningToCircle(false);
+      setForceExpanded(false);
+      setMobileBarCollapsed(true);
+      setCircleSlideUp(true);
+      isTransitioningRef.current = false;
+      transitionTimeoutRef.current = setTimeout(() => {
+        setCircleSlideUp(false);
+        transitionTimeoutRef.current = null;
+      }, TRANSITION_DURATION_MS);
+    }, TRANSITION_DURATION_MS);
+  }, []);
+
+  const triggerExpandTransition = useCallback(() => {
+    isTransitioningRef.current = true;
+    setTransitioningToBar(true);
+    if (transitionTimeoutRef.current) clearTimeout(transitionTimeoutRef.current);
+    transitionTimeoutRef.current = setTimeout(() => {
+      setTransitioningToBar(false);
+      setForceExpanded(true);
+      setMobileBarCollapsed(false);
+      setSlideUp(true);
+      isTransitioningRef.current = false;
+      transitionTimeoutRef.current = setTimeout(() => {
+        setSlideUp(false);
+        transitionTimeoutRef.current = null;
+      }, TRANSITION_DURATION_MS);
+    }, TRANSITION_DURATION_MS);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-      
-      // Hide when scrolling down, show when scrolling up
+      const atTop = currentScrollY <= TOP_THRESHOLD;
+      const wasAtTop = prevAtTopRef.current;
+      prevAtTopRef.current = atTop;
+      setIsAtTop(atTop);
+
+      if (isMobile) {
+        if (isTransitioningRef.current) return;
+        if (wasAtTop && !atTop) {
+          triggerCollapseTransition();
+        } else if (!wasAtTop && atTop) {
+          triggerExpandTransition();
+        }
+        return;
+      }
+
       if (currentScrollY > lastScrollY && currentScrollY > 100) {
         setIsHidden(true);
       } else {
         setIsHidden(false);
       }
-      
+
       setLastScrollY(currentScrollY);
     };
 
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [lastScrollY, isMobile, triggerCollapseTransition, triggerExpandTransition]);
+
+  useEffect(() => {
+    return () => {
+      if (transitionTimeoutRef.current) clearTimeout(transitionTimeoutRef.current);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isMobile) return;
     const handleMouseMove = (e: MouseEvent) => {
-      // Show nav when mouse is near the top
       setMouseNearTop(e.clientY < 100);
     };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
     window.addEventListener('mousemove', handleMouseMove);
-    
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('mousemove', handleMouseMove);
-    };
-  }, [lastScrollY]);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, [isMobile]);
+
+  const mobileCollapsed = isMobile && !forceExpanded && (mobileBarCollapsed || !isAtTop);
+  const desktopVisible = !isHidden || mouseNearTop;
+
+  const showBar = !mobileCollapsed || transitioningToCircle;
+  const showCircle = mobileCollapsed || transitioningToBar;
+
+  const handleCircleClick = () => triggerExpandTransition();
+  const handleHamburgerClick = () => triggerCollapseTransition();
+
+  const linkStyle = {
+    color: 'var(--text)',
+    textDecoration: 'none' as const,
+    fontWeight: 400,
+    fontSize: '0.95rem',
+    transition: 'color 0.2s ease',
+    position: 'relative' as const,
+  };
+
+  const HamburgerIcon = () => (
+    <>
+      <span style={{ width: '18px', height: '2px', background: 'var(--text)', display: 'block', borderRadius: '2px' }} />
+      <span style={{ width: '18px', height: '2px', background: 'var(--text)', display: 'block', borderRadius: '2px' }} />
+      <span style={{ width: '18px', height: '2px', background: 'var(--text)', display: 'block', borderRadius: '2px' }} />
+    </>
+  );
 
   return (
-    <header
-      style={{
-        position: 'fixed',
-        top: isHidden && !mouseNearTop ? '-3rem' : '1rem',
-        left: '50%',
-        transform: 'translateX(-50%)',
-        transition: 'top 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-        zIndex: 50,
-        width: 'fit-content',
-      }}
-    >
-      <nav
-        style={{
-          background: 'var(--card)',
-          border: '2px solid var(--border)',
-          borderRadius: '999px',
-          padding: '0.6rem 1.5rem',
-          backdropFilter: 'blur(10px)',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '1.5rem',
-        }}
+    <>
+      <header
+        className="floating-nav"
+        data-mobile={isMobile}
+        data-collapsed={mobileCollapsed}
+        style={
+          !hasMounted
+            ? undefined
+            : isMobile
+              ? { justifyContent: showCircle ? 'flex-end' : 'center' }
+              : { top: !desktopVisible ? '-3rem' : '1rem' }
+        }
       >
-        <a
-          href="/"
-          style={{
-            fontWeight: 700,
-            fontSize: '1.1rem',
-            color: 'var(--text)',
-            textDecoration: 'none',
-            transition: 'color 0.2s ease',
-          }}
-        >
-          Mason Trout
-        </a>
-
-        <div
-          style={{
-            display: 'flex',
-            gap: '1.5rem',
-            alignItems: 'center',
-          }}
-          className="nav-links-desktop"
-        >
-          {links.map((link) => (
+        {/* Mobile: circle (collapsed) or bar (expanded); use transition states to animate */}
+        {showCircle ? (
+          <button
+            type="button"
+            onClick={transitioningToBar ? undefined : handleCircleClick}
+            aria-label="Open menu"
+            className={`floating-nav-collapsed-btn${transitioningToBar ? ' floating-nav-collapsed-btn--slide-down' : circleSlideUp ? ' floating-nav-collapsed-btn--slide-up' : ''}`}
+            style={{
+              width: '2.75rem',
+              height: '2.75rem',
+              borderRadius: '50%',
+              border: '2px solid var(--border)',
+              background: 'var(--card)',
+              backdropFilter: 'blur(10px)',
+              cursor: 'pointer',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '5px',
+              flexShrink: 0,
+              boxShadow: '0 2px 12px rgba(0,0,0,0.1)',
+            }}
+          >
+            <HamburgerIcon />
+          </button>
+        ) : (
+          <nav
+            className={`floating-nav-inner${transitioningToCircle ? ' floating-nav-inner--slide-down' : isMobile && slideUp ? ' floating-nav-inner--slide-up' : ''}`}
+            style={{
+              background: 'var(--card)',
+              border: '2px solid var(--border)',
+              borderRadius: '999px',
+              padding: isMobile ? '0.6rem 1rem' : '0.6rem 1.5rem',
+              backdropFilter: 'blur(10px)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: isMobile ? '1rem' : '1.5rem',
+              transition: 'padding 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              ...(isMobile
+                ? {
+                    width: '100%',
+                    maxWidth: 'min(100%, 560px)',
+                    justifyContent: 'space-between',
+                  }
+                : {}),
+            }}
+          >
             <a
-              key={link.href}
-              href={link.href}
-              className={`nav-link${link.isActive ? ' active' : ''}`}
+              href="/"
               style={{
-                color: link.isActive ? 'var(--accent)' : 'var(--text)',
+                fontWeight: 700,
+                fontSize: isMobile ? '1.05rem' : '1.1rem',
+                color: 'var(--text)',
                 textDecoration: 'none',
-                fontWeight: link.isActive ? 600 : 400,
-                fontSize: '0.95rem',
                 transition: 'color 0.2s ease',
-                position: 'relative',
+                flexShrink: 0,
               }}
             >
-              {link.label}
+              {isMobile ? 'MT' : 'Mason Trout'}
             </a>
-          ))}
-        </div>
 
-        {/* Mobile menu button */}
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className="nav-toggle-mobile"
-          style={{
-            display: 'none',
-            flexDirection: 'column',
-            gap: '4px',
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            padding: '0.25rem',
-          }}
-          aria-label="Toggle navigation"
-        >
-          <span style={{ width: '20px', height: '2px', background: 'var(--text)', display: 'block', borderRadius: '2px' }} />
-          <span style={{ width: '20px', height: '2px', background: 'var(--text)', display: 'block', borderRadius: '2px' }} />
-          <span style={{ width: '20px', height: '2px', background: 'var(--text)', display: 'block', borderRadius: '2px' }} />
-        </button>
-
-        <ThemeToggle />
-      </nav>
-
-      {/* Mobile dropdown menu */}
-      {isOpen && (
-        <div
-          className="mobile-menu"
-          style={{
-            position: 'absolute',
-            top: 'calc(100% + 0.5rem)',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            background: 'var(--card)',
-            border: '2px solid var(--border)',
-            borderRadius: '1rem',
-            padding: '1rem',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12)',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '0.75rem',
-            minWidth: '200px',
-          }}
-        >
-          {links.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
+            <div
               style={{
-                color: link.isActive ? 'var(--accent)' : 'var(--text)',
-                textDecoration: 'none',
-                fontWeight: link.isActive ? 600 : 400,
-                fontSize: '0.95rem',
-                padding: '0.5rem',
-                borderRadius: '0.5rem',
-                transition: 'background 0.2s ease',
+                display: 'flex',
+                gap: isMobile ? '1rem' : '1.5rem',
+                alignItems: 'center',
+                flex: isMobile ? 1 : 'none',
+                justifyContent: isMobile ? 'center' : undefined,
+                minWidth: 0,
               }}
+              className="nav-links"
             >
-              {link.label}
-            </a>
-          ))}
-        </div>
-      )}
+              {links.map((link) => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  className={`nav-link${link.isActive ? ' active' : ''}`}
+                  style={{
+                    ...linkStyle,
+                    color: link.isActive ? 'var(--accent)' : 'var(--text)',
+                    fontWeight: link.isActive ? 600 : 400,
+                    fontSize: isMobile ? '0.9rem' : '0.95rem',
+                  }}
+                >
+                  {link.label}
+                </a>
+              ))}
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0 }}>
+              <ThemeToggle />
+              {isMobile && (
+                <button
+                  type="button"
+                  onClick={transitioningToCircle ? undefined : handleHamburgerClick}
+                  aria-label="Collapse menu"
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    padding: '0.35rem',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '4px',
+                  }}
+                >
+                  <HamburgerIcon />
+                </button>
+              )}
+            </div>
+          </nav>
+        )}
+      </header>
 
       <style>{`
+        /* Base positioning via media queries — correct from first paint, no JS-dependent jump */
+        .floating-nav {
+          position: fixed;
+          z-index: 50;
+          transition: top 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        @media (max-width: 768px) {
+          .floating-nav {
+            left: 0;
+            right: 0;
+            bottom: var(--mobile-nav-bottom);
+            top: auto;
+            display: flex;
+            justify-content: center;
+            padding-left: max(1rem, env(safe-area-inset-left));
+            padding-right: max(1rem, env(safe-area-inset-right));
+          }
+        }
+        @media (min-width: 769px) {
+          .floating-nav {
+            left: 50%;
+            transform: translateX(-50%);
+            top: 1rem;
+            bottom: auto;
+            width: fit-content;
+            display: flex;
+          }
+        }
         .nav-link::after {
           content: '';
           position: absolute;
@@ -191,17 +331,43 @@ export default function FloatingNav({ links }: FloatingNavProps) {
           transform: scaleX(1);
         }
         @media (max-width: 768px) {
-          .nav-links-desktop {
-            display: none !important;
-          }
-          .nav-toggle-mobile {
+          .nav-links {
             display: flex !important;
           }
+          .floating-nav-inner--slide-up {
+            animation: floating-nav-slide-up 0.28s ease-out forwards;
+          }
+          .floating-nav-inner--slide-down {
+            animation: floating-nav-slide-down 0.28s ease-out forwards;
+          }
+          .floating-nav-collapsed-btn--slide-up {
+            animation: floating-nav-slide-up 0.28s ease-out forwards;
+          }
+          .floating-nav-collapsed-btn--slide-down {
+            animation: floating-nav-slide-down 0.28s ease-out forwards;
+          }
         }
-        .mobile-menu a:hover {
-          background: var(--border);
+        @keyframes floating-nav-slide-up {
+          from {
+            transform: translateY(100%);
+            opacity: 0;
+          }
+          to {
+            transform: translateY(0);
+            opacity: 1;
+          }
+        }
+        @keyframes floating-nav-slide-down {
+          from {
+            transform: translateY(0);
+            opacity: 1;
+          }
+          to {
+            transform: translateY(100%);
+            opacity: 0;
+          }
         }
       `}</style>
-    </header>
+    </>
   );
 }

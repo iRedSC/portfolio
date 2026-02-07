@@ -9,6 +9,9 @@
 	--accent-soft: #ffe8df;
 	--shadow: rgba(234, 90, 46, 0.08);
 	--max-width: 1100px;
+	/* Mobile bottom nav: safe-area aware for browser chrome / search bar */
+	--mobile-nav-height: calc(3.5rem + env(safe-area-inset-bottom, 0px));
+	--mobile-nav-bottom: max(0.75rem, env(safe-area-inset-bottom, 0px));
 	/* Aliases for consistency */
 	--color-bg: var(--bg);
 	--color-text: var(--text);
@@ -56,6 +59,13 @@ body {
 	background: var(--bg);
 	color: var(--text);
 	line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+	body {
+		padding-top: 1rem;
+		padding-bottom: calc(var(--mobile-nav-height, 4rem) + 0.75rem);
+	}
 }
 
 img {
@@ -1186,9 +1196,19 @@ a {
 	transform: scale(1.12);
 }
 
+.skill-path-node-circle {
+	flex-shrink: 0;
+}
+
+.skill-path-node-label {
+	word-break: break-word;
+	hyphens: auto;
+}
+
 .skill-paths {
-	display: grid;
-	gap: 3rem;
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
 }
 
 .skill-nodes-container {
@@ -1209,37 +1229,132 @@ a {
 	border-radius: 3px;
 }
 
+/* Desktop: single row — title | nodes, evenly spaced */
+@media (min-width: 769px) {
+	.skill-path-grid {
+		grid-template-rows: auto !important;
+	}
+
+	.skill-path-heading {
+		grid-column: 1 !important;
+		grid-row: 1 !important;
+	}
+
+	.skill-path-nodes-row {
+		display: grid !important;
+		grid-template-columns: repeat(var(--skill-cols), 1fr) !important;
+		grid-column: 2 / -1 !important;
+		grid-row: 1 !important;
+		align-items: start !important;
+		gap: 1rem !important;
+		min-width: 0 !important;
+	}
+
+	.skill-path-node {
+		justify-self: center !important;
+	}
+
+	/* Scale nodes with viewport when there's space */
+	.skill-path-node-circle {
+		width: clamp(2.5rem, 2.5rem + 1.2vw, 4.5rem) !important;
+		height: clamp(2.5rem, 2.5rem + 1.2vw, 4.5rem) !important;
+		min-width: 2.5rem !important;
+		min-height: 2.5rem !important;
+	}
+
+	.skill-path-node-inner {
+		width: clamp(1.875rem, 1.875rem + 0.9vw, 3.25rem) !important;
+		height: clamp(1.875rem, 1.875rem + 0.9vw, 3.25rem) !important;
+		min-width: 1.875rem !important;
+		min-height: 1.875rem !important;
+	}
+}
+
+/* Large desktop (2k+): even larger nodes when space allows */
+@media (min-width: 1920px) {
+	.skill-path-node-circle {
+		width: clamp(3rem, 3rem + 1vw, 5rem) !important;
+		height: clamp(3rem, 3rem + 1vw, 5rem) !important;
+		min-width: 3rem !important;
+		min-height: 3rem !important;
+	}
+
+	.skill-path-node-inner {
+		width: clamp(2.25rem, 2.25rem + 0.75vw, 3.75rem) !important;
+		height: clamp(2.25rem, 2.25rem + 0.75vw, 3.75rem) !important;
+		min-width: 2.25rem !important;
+		min-height: 2.25rem !important;
+	}
+}
+
+/* Mobile: stacked title + scrollable nodes row */
 @media (max-width: 768px) {
 	.skill-paths {
 		gap: 2rem;
 	}
 
+	.skill-path-grid {
+		grid-template-columns: repeat(var(--skill-cols, 8), minmax(3.25rem, 1fr)) !important;
+		grid-template-rows: auto auto !important;
+		gap: 0.75rem 1rem !important;
+		align-items: start !important;
+	}
+
+	.skill-path-heading {
+		grid-column: 1 / -1 !important;
+		margin-bottom: 0.25rem !important;
+	}
+
+	.skill-path-nodes-row {
+		display: contents !important;
+	}
+
 	.skill-nodes-container {
-		gap: 0.75rem !important;
-		padding: 1rem 0.5rem 4rem !important;
-		max-width: 100%;
+		padding: 0.75rem 0 0.5rem !important;
 		-webkit-overflow-scrolling: touch;
 	}
 
 	.skill-path-node {
-		flex: 0 0 52px !important;
-		width: 52px !important;
-		min-width: 52px !important;
+		min-width: 3.25rem !important;
 	}
 
 	.skill-path-node-circle {
-		width: 44px !important;
-		height: 44px !important;
+		min-width: 2.75rem !important;
+		min-height: 2.75rem !important;
+		width: 2.75rem !important;
+		height: 2.75rem !important;
 	}
 
 	.skill-path-node-inner {
-		width: 34px !important;
-		height: 34px !important;
-		font-size: 0.7rem !important;
+		min-width: 2.125rem !important;
+		min-height: 2.125rem !important;
+		width: 2.125rem !important;
+		height: 2.125rem !important;
+	}
+
+	.skill-path-node-label {
+		min-height: 2.5em !important;
 	}
 
 	.skill-path-node .skill-path-node-circle + div {
 		font-size: 0.75rem;
-		max-width: 70px;
+		max-width: 4.5rem;
+		line-height: 1.2;
+	}
+}
+
+/* Mobile tooltip: bottom sheet, no translate animation */
+.skill-path-tooltip.skill-path-tooltip-mobile.skill-path-tooltip-enter {
+	animation: skill-path-tooltip-mobile-enter 0.2s ease-out forwards;
+}
+
+@keyframes skill-path-tooltip-mobile-enter {
+	from {
+		opacity: 0;
+		transform: translateY(1rem);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
 	}
 }
