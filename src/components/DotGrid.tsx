@@ -180,7 +180,12 @@ const DotGrid: React.FC<DotGridProps> = ({
       if (!canvas) return;
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
+      // Clear entire backing store with identity transform so zoom/scale cannot
+      // cause partial clear (frame stacking). Restore transform after.
+      ctx.save();
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.restore();
 
       const { x: px, y: py } = pointerRef.current;
 
