@@ -16,35 +16,26 @@ function getCompletion(node: Node) {
 }
 
 const CheckIcon = ({ completed }: { completed: boolean }) => (
-	<svg 
-		width="16" 
-		height="16" 
-		viewBox="0 0 16 16" 
+	<svg
+		width="16"
+		height="16"
+		viewBox="0 0 16 16"
 		fill="none"
-		style={{ 
+		style={{
 			flexShrink: 0,
-			color: completed ? 'var(--accent)' : 'var(--muted)'
+			color: completed ? 'var(--accent)' : 'var(--muted)',
 		}}
 	>
 		{completed ? (
-			<>
-				<rect width="16" height="16" rx="4" fill="currentColor" />
-				<path 
-					d="M4 8L7 11L12 5" 
-					stroke="white" 
-					strokeWidth="2" 
-					strokeLinecap="round" 
-					strokeLinejoin="round"
-				/>
-			</>
-		) : (
-			<rect 
-				width="16" 
-				height="16" 
-				rx="4" 
-				stroke="currentColor" 
+			<path
+				d="M3 8l3.5 3.5L13 5"
+				stroke="currentColor"
 				strokeWidth="2"
+				strokeLinecap="round"
+				strokeLinejoin="round"
 			/>
+		) : (
+			<circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="1.5" fill="none" />
 		)}
 	</svg>
 );
@@ -249,8 +240,8 @@ export default function SkillPaths({ paths }: Props) {
 						border: '1px solid var(--border)',
 						borderRadius: '12px',
 						padding: '1rem',
-						minWidth: '220px',
-						maxWidth: '280px',
+						minWidth: '280px',
+						maxWidth: '380px',
 						boxShadow: '0 8px 24px rgba(0, 0, 0, 0.1)',
 						zIndex: 9999,
 						pointerEvents: 'none',
@@ -264,20 +255,22 @@ export default function SkillPaths({ paths }: Props) {
 					}}>
 						{activeTooltip.node.name}
 					</div>
-					<div style={{ 
-						display: 'flex', 
-						flexDirection: 'column',
-						gap: '0.5rem'
-					}}>
+					<div
+						style={{
+							display: 'grid',
+							gridTemplateColumns: '1fr 1fr',
+							gap: '0.5rem 1rem',
+							fontSize: '0.85rem',
+							color: 'var(--text)',
+						}}
+					>
 						{activeTooltip.node.skills.map((skill) => (
-							<div 
+							<div
 								key={skill.name}
 								style={{
 									display: 'flex',
 									alignItems: 'center',
 									gap: '0.5rem',
-									fontSize: '0.85rem',
-									color: 'var(--text)'
 								}}
 							>
 								<CheckIcon completed={skill.complete} />

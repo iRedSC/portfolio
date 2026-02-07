@@ -17,6 +17,7 @@
     "@types/three": "^0.182.0",
     "astro": "^5.17.1",
     "gray-matter": "^4.0.3",
+    "gsap": "^3.14.2",
     "lucide-react": "^0.563.0",
     "octokit": "^5.0.5",
     "p5": "^2.2.0",

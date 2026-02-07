@@ -2,75 +2,95 @@ name: TypeScript
 nodes:
   - name: Fundamentals
     skills:
-      - name: Type annotations and basic type system
+      - name: Primitive type annotations
         complete: true
-      - name: Primitive types and type inference
+      - name: Interface definitions
         complete: true
-      - name: Union and intersection types
+      - name: Type aliases
         complete: true
-      - name: Functions with type signatures
+      - name: Function signatures
         complete: true
-      - name: Objects and type definitions
+      - name: Array and tuple types
         complete: true
-      - name: Arrays and tuple types
+      - name: Union and intersection
+        complete: true
+      - name: Type inference
+        complete: true
+      - name: Literal types
         complete: true
 
-  - name: Core Skills
+  - name: Type System
     skills:
-      - name: Interfaces and type contracts
+      - name: Generic constraints
         complete: true
-      - name: Classes and object-oriented programming
+      - name: Conditional types
         complete: true
-      - name: Generics and parametric typing
+      - name: Mapped type modifiers
         complete: true
-      - name: Enums and literal types
+      - name: Template literal types
         complete: true
-      - name: Modules and namespace management
+      - name: Discriminated unions
         complete: true
-      - name: Type guards and type narrowing
+      - name: Type narrowing guards
+        complete: true
+      - name: Utility type usage
+        complete: true
+      - name: Index access types
+        complete: true
+
+  - name: Configuration
+    skills:
+      - name: Strict mode settings
+        complete: true
+      - name: Module resolution
+        complete: true
+      - name: Path mapping
+        complete: true
+      - name: Declaration files
+        complete: true
+      - name: Compiler targets
+        complete: true
+      - name: Lib options
+        complete: true
+      - name: Source maps
+        complete: false
+      - name: Watch mode
         complete: true
 
   - name: Advanced Patterns
     skills:
-      - name: Advanced generics and constraints
+      - name: Type predicate functions
         complete: true
-      - name: Conditional and mapped types
+      - name: Branded type patterns
+        complete: false
+      - name: Declaration merging
+        complete: false
+      - name: Module augmentation
         complete: true
-      - name: Utility types and type manipulation
+      - name: Builder pattern types
         complete: true
-      - name: Decorators and metadata reflection
+      - name: Factory method types
         complete: true
-      - name: Higher-order functions and function composition
+      - name: Dependency injection
         complete: true
-      - name: Advanced class patterns and inheritance
+      - name: Readonly modifiers
         complete: true
 
-  - name: Production Practices
+  - name: Integration
     skills:
-      - name: Strict mode configuration and type safety
+      - name: Third-party types
         complete: true
-      - name: Error handling and exception typing
+      - name: React component types
         complete: true
-      - name: Testing with typed test frameworks
+      - name: Node.js types
+        complete: true
+      - name: Jest type definitions
         complete: false
-      - name: Build tooling and compilation optimization
-        complete: false
-      - name: Type declaration files and third-party libraries
+      - name: DOM manipulation types
         complete: true
-      - name: Performance optimization and bundle analysis
-        complete: false
-
-  - name: Advanced & Enterprise
-    skills:
-      - name: Framework integration (React, Vue, Angular, Node.js)
+      - name: API client typing
         complete: true
-      - name: Advanced async patterns and Promise typing
+      - name: JSON schema types
         complete: true
-      - name: Monorepo management and workspace configuration
-        complete: false
-      - name: Type-safe API design and validation
-        complete: true
-      - name: Advanced metaprogramming and reflection
-        complete: true
-      - name: Complex architectural patterns and scalability
+      - name: Migration strategies
         complete: true

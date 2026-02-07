@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
+import DotGrid from '../components/DotGrid.tsx';
 import type { ImageMetadata } from 'astro';
 
 type Props = {
@@ -9,9 +10,10 @@ type Props = {
 	description?: string;
 	image?: string | ImageMetadata;
 	canonicalUrl?: string;
+	showDotGrid?: boolean;
 };
 
-const { title, description, image, canonicalUrl } = Astro.props;
+const { title, description, image, canonicalUrl, showDotGrid = false } = Astro.props;
 const pageTitle = title ? `${title} | Portfolio` : 'Portfolio';
 const canonical = canonicalUrl ?? new URL(Astro.url.pathname, Astro.site ?? Astro.url).toString();
 const socialImage = typeof image === 'string' ? image : image?.src ?? '/favicon.svg';
@@ -22,6 +24,15 @@ const socialImage = typeof image === 'string' ? image : image?.src ?? '/favicon.
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width" />
+		<script is:inline>
+			(function(){
+				try {
+					var stored = localStorage.getItem('theme');
+					if (stored === 'dark') document.documentElement.classList.add('theme-dark');
+					else if (stored === 'light') document.documentElement.classList.add('theme-light');
+				} catch (e) {}
+			})();
+		</script>
 		<meta name="generator" content={Astro.generator} />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="icon" href="/favicon.ico" />
@@ -37,15 +48,24 @@ const socialImage = typeof image === 'string' ? image : image?.src ?? '/favicon.
 		<meta name="twitter:title" content={pageTitle} />
 		<meta name="twitter:description" content={description ?? 'Personal portfolio and writing.'} />
 		<meta name="twitter:image" content={socialImage} />
-		<script is:inline>
-			{`
-				const stored = localStorage.getItem('theme');
-				if (stored === 'dark') document.documentElement.classList.add('theme-dark');
-				if (stored === 'light') document.documentElement.classList.add('theme-light');
-			`}
-		</script>
 	</head>
 	<body>
+		{showDotGrid && (
+			<div class="page-bg" aria-hidden="true">
+				<DotGrid
+					client:load
+					dotSize={4}
+					gap={80}
+					baseColor="#3a2e23"
+					activeColor="#ff7b54"
+					proximity={120}
+					shockRadius={2000}
+					shockStrength={1}
+					resistance={100}
+					returnDuration={5}
+				/>
+			</div>
+		)}
 		<Nav />
 		<main class="container"><slot /></main>
 		<Footer />
@@ -59,3 +79,35 @@ const socialImage = typeof image === 'string' ? image : image?.src ?? '/favicon.
 		</script>
 	</body>
 </html>
+
+<style is:global>
+	body {
+		position: relative;
+	}
+	.page-bg {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		min-height: 100%;
+		z-index: 0;
+		overflow: hidden;
+	}
+	.page-bg astro-island,
+	.page-bg :global(> *) {
+		display: block;
+		width: 100%;
+		height: 100%;
+		min-height: 100%;
+	}
+	.page-bg :global(section) {
+		padding: 0;
+		height: 100%;
+		min-height: 100vh;
+	}
+	nav,
+	main,
+	footer {
+		position: relative;
+		z-index: 1;
+	}
+</style>

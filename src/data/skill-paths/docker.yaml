@@ -2,75 +2,95 @@ name: Docker
 nodes:
   - name: Fundamentals
     skills:
-      - name: Docker container execution and lifecycle management
+      - name: Container lifecycle management
         complete: true
-      - name: Docker image pulling and repository management
+      - name: Docker CLI basics
         complete: true
-      - name: Container port mapping and networking
-        complete: true
-      - name: Volume and data persistence configuration
-        complete: true
-      - name: Docker CLI and command-line tools
-        complete: true
-      - name: Container debugging and troubleshooting
-        complete: true
-
-  - name: Core Skills
-    skills:
-      - name: Dockerfile creation and optimization
-        complete: true
-      - name: Custom image building and management
-        complete: true
-      - name: Docker networking (bridge, host, custom networks)
-        complete: true
-      - name: Environment variable and configuration management
-        complete: true
-      - name: Private registry and image storage solutions
+      - name: Dockerfile syntax
         complete: false
-      - name: Multi-stage builds and layer optimization
+      - name: Image layering concepts
+        complete: false
+      - name: Port mapping
+        complete: true
+      - name: Volume mounting
+        complete: true
+      - name: Environment variables
+        complete: true
+      - name: Container isolation
         complete: false
 
-  - name: Multi-Container Architecture
+  - name: Image Building
     skills:
-      - name: Docker Compose configuration and orchestration
+      - name: Multi-stage builds
+        complete: false
+      - name: Layer caching
+        complete: false
+      - name: Image optimization
+        complete: false
+      - name: BuildKit features
+        complete: false
+      - name: Base image selection
+        complete: false
+      - name: Registry authentication
+        complete: false
+      - name: Image tagging
+        complete: false
+      - name: .dockerignore usage
         complete: true
-      - name: Service dependency management and startup order
-        complete: false
-      - name: Cross-container networking and communication
+
+  - name: Orchestration
+    skills:
+      - name: Docker Compose
         complete: true
-      - name: Secrets and sensitive data management
+      - name: Service scaling
         complete: false
-      - name: Health checks and container restart policies
+      - name: Swarm mode
         complete: false
-      - name: Service scaling and resource allocation
+      - name: Stack deployment
+        complete: true
+      - name: Rolling updates
+        complete: false
+      - name: Health checks
+        complete: false
+      - name: Service discovery
+        complete: false
+      - name: Load balancing
         complete: false
 
-  - name: Production Practices
+  - name: Networking & Storage
     skills:
-      - name: Container security and image scanning
+      - name: Bridge networks
+        complete: true
+      - name: Overlay networks
         complete: false
-      - name: Logging, monitoring, and observability implementation
+      - name: Network segmentation
         complete: false
-      - name: CI/CD pipeline integration and automation
+      - name: DNS resolution
         complete: false
-      - name: Resource constraints and performance optimization
+      - name: Named volumes
+        complete: true
+      - name: Bind mounts
         complete: false
-      - name: Backup and disaster recovery strategies
+      - name: Volume drivers
         complete: false
-      - name: Registry security and access control
-        complete: false
+      - name: Persistent storage
+        complete: true
 
-  - name: Advanced & Enterprise
+  - name: Security & Operations
     skills:
-      - name: Kubernetes deployment and orchestration
+      - name: Secret management
         complete: false
-      - name: Service mesh implementation (Istio, Linkerd)
+      - name: Image scanning
         complete: false
-      - name: Distributed system monitoring and tracing
+      - name: Rootless containers
         complete: false
-      - name: Multi-cloud and hybrid deployments
+      - name: Resource limits
         complete: false
-      - name: GitOps and infrastructure-as-code practices
+      - name: Read-only filesystems
         complete: false
-      - name: Advanced troubleshooting and system architecture
+      - name: Log aggregation
+        complete: false
+      - name: CI/CD integration
+        complete: false
+      - name: Backup strategies
         complete: false

@@ -37,17 +37,19 @@ const recentPosts = blogPosts
 <Layout
   title="Home"
   description="Portfolio of projects, writing, and highlights from my engineering journey."
+  showDotGrid
 >
-  <section class="hero">
-    <div class="hero-content">
-      <p class="eyebrow">Hello, I'm Your Name</p>
-      <h1 class="title-gradient">Building cloud-native platforms and developer tooling.</h1>
-      <p class="lead">
-        I specialize in Docker, Kubernetes, and modern web stacks. This is where I share
-        projects, experiments, and the systems I've helped ship.
-      </p>
+  <section class="hero-wrapper">
+    <div class="hero">
+      <div class="hero-content">
+        <p class="eyebrow">Hello, I'm Mason</p>
+        <h1 class="title-gradient">Shipping full-stack tools from code to server.</h1>
+        <p class="lead">
+          I build applications that get stuff done, then handle the infrastructure to keep them running.
+        </p>
+      </div>
+      <Image src={profileImage} alt="Portrait" class="hero-photo" width={420} height={520} />
     </div>
-    <Image src={profileImage} alt="Portrait" class="hero-photo" width={420} height={520} />
   </section>
 
   <div class="container">
@@ -144,6 +146,14 @@ const recentPosts = blogPosts
 </Layout>
 
 <style>
+  .hero-wrapper {
+    position: relative;
+    min-height: 600px;
+  }
+  .hero-wrapper .hero {
+    position: relative;
+    z-index: 1;
+  }
   .card-grid--blog {
     grid-template-columns: repeat(3, 1fr);
   }

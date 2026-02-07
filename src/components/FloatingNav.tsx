@@ -79,7 +79,7 @@ export default function FloatingNav({ links }: FloatingNavProps) {
             transition: 'color 0.2s ease',
           }}
         >
-          Portfolio
+          Mason Trout
         </a>
 
         <div
