@@ -1,96 +1,61 @@
 name: TypeScript
 nodes:
   - name: Fundamentals
+    amount: 4
     skills:
       - name: Primitive type annotations
-        amount: 4
       - name: Interface definitions
-        amount: 4
       - name: Type aliases
-        amount: 4
       - name: Function signatures
-        amount: 4
       - name: Array and tuple types
-        amount: 4
       - name: Union and intersection
-        amount: 4
       - name: Type inference
-        amount: 4
       - name: Literal types
-        amount: 4
 
   - name: Type System
+    amount: 4
     skills:
       - name: Generic constraints
-        amount: 4
       - name: Conditional types
-        amount: 4
       - name: Mapped type modifiers
-        amount: 4
       - name: Template literal types
-        amount: 4
       - name: Discriminated unions
-        amount: 4
       - name: Type narrowing guards
-        amount: 4
       - name: Utility type usage
-        amount: 4
       - name: Index access types
-        amount: 4
 
   - name: Configuration
+    amount: 4
     skills:
       - name: Strict mode settings
-        amount: 4
       - name: Module resolution
-        amount: 4
       - name: Path mapping
-        amount: 4
       - name: Declaration files
-        amount: 4
       - name: Compiler targets
-        amount: 4
       - name: Lib options
-        amount: 4
       - name: Source maps
-        amount: 1
       - name: Watch mode
-        amount: 4
 
   - name: Advanced Patterns
+    amount: 3
     skills:
       - name: Type predicate functions
-        amount: 4
       - name: Branded type patterns
-        amount: 1
       - name: Declaration merging
-        amount: 1
       - name: Module augmentation
-        amount: 4
       - name: Builder pattern types
-        amount: 4
       - name: Factory method types
-        amount: 4
       - name: Dependency injection
-        amount: 4
       - name: Readonly modifiers
-        amount: 4
 
   - name: Integration
+    amount: 4
     skills:
       - name: Third-party types
-        amount: 4
       - name: React component types
-        amount: 4
       - name: Node.js types
-        amount: 4
       - name: Jest type definitions
-        amount: 1
       - name: DOM manipulation types
-        amount: 4
       - name: API client typing
-        amount: 4
       - name: JSON schema types
-        amount: 4
       - name: Migration strategies
-        amount: 4

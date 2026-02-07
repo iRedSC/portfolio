@@ -1222,6 +1222,8 @@ a {
 	}
 
 	.skill-path-node {
+		flex: 0 0 52px !important;
+		width: 52px !important;
 		min-width: 52px !important;
 	}
 

@@ -1,96 +1,61 @@
 name: Docker
 nodes:
   - name: Fundamentals
+    amount: 3
     skills:
       - name: Container lifecycle management
-        amount: 4
       - name: Docker CLI basics
-        amount: 4
       - name: Dockerfile syntax
-        amount: 1
       - name: Image layering concepts
-        amount: 1
       - name: Port mapping
-        amount: 4
       - name: Volume mounting
-        amount: 4
       - name: Environment variables
-        amount: 4
       - name: Container isolation
-        amount: 1
 
   - name: Image Building
+    amount: 1
     skills:
       - name: Multi-stage builds
-        amount: 1
       - name: Layer caching
-        amount: 1
       - name: Image optimization
-        amount: 1
       - name: BuildKit features
-        amount: 1
       - name: Base image selection
-        amount: 1
       - name: Registry authentication
-        amount: 1
       - name: Image tagging
-        amount: 1
       - name: .dockerignore usage
-        amount: 4
 
   - name: Orchestration
+    amount: 2
     skills:
       - name: Docker Compose
-        amount: 4
       - name: Service scaling
-        amount: 1
       - name: Swarm mode
-        amount: 1
       - name: Stack deployment
-        amount: 4
       - name: Rolling updates
-        amount: 1
       - name: Health checks
-        amount: 1
       - name: Service discovery
-        amount: 1
       - name: Load balancing
-        amount: 1
 
   - name: Networking & Storage
+    amount: 2
     skills:
       - name: Bridge networks
-        amount: 4
       - name: Overlay networks
-        amount: 1
       - name: Network segmentation
-        amount: 1
       - name: DNS resolution
-        amount: 1
       - name: Named volumes
-        amount: 4
       - name: Bind mounts
-        amount: 1
       - name: Volume drivers
-        amount: 1
       - name: Persistent storage
-        amount: 4
 
   - name: Security & Operations
+    amount: 1
     skills:
       - name: Secret management
-        amount: 1
       - name: Image scanning
-        amount: 1
       - name: Rootless containers
-        amount: 1
       - name: Resource limits
-        amount: 1
       - name: Read-only filesystems
-        amount: 1
       - name: Log aggregation
-        amount: 1
       - name: CI/CD integration
-        amount: 1
       - name: Backup strategies
-        amount: 1

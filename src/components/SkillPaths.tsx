@@ -1,20 +1,17 @@
 import { useLayoutEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-type Skill = { name: string; amount: number };
-type Node = { name: string; skills: Skill[] };
+type Skill = { name: string };
+type Node = { name: string; amount: number; skills: Skill[] };
 type Path = { name: string; nodes: Node[] };
 
 type Props = {
 	paths: Path[];
 };
 
-/** Returns 1–4 for the node progress state (average of skill amounts, rounded). */
+/** Returns 1–4 for the node progress state (from group amount). */
 function getNodeAmount(node: Node): number {
-	if (!node.skills.length) return 1;
-	const sum = node.skills.reduce((acc, s) => acc + (s.amount ?? 1), 0);
-	const avg = sum / node.skills.length;
-	return Math.max(1, Math.min(4, Math.round(avg)));
+	return Math.max(1, Math.min(4, node.amount ?? 1));
 }
 
 const CheckIcon = () => (
@@ -130,35 +127,47 @@ export default function SkillPaths({ paths }: Props) {
 		};
 	}, [iconTooltip]);
 
-	return (
-		<div style={{ display: 'grid', gap: '3rem' }}>
-			{paths.map((path) => (
-				<div key={path.name}>
-					<h3 style={{
-						fontSize: '1.5rem',
-						marginBottom: '2rem',
-						color: 'var(--text)',
-						fontWeight: 600,
-						textAlign: 'center'
-					}}>
-						{path.name}
-					</h3>
+	const maxNodes = Math.max(...paths.map((p) => p.nodes.length), 1);
 
+	return (
+		<div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', overflow: 'visible' }}>
+			{paths.map((path) => {
+				const sortedNodes = [...path.nodes].sort((a, b) => getNodeAmount(b) - getNodeAmount(a));
+				return (
 					<div
+						key={path.name}
 						className="skill-nodes-container"
 						style={{
-							position: 'relative',
-							display: 'flex',
-							alignItems: 'flex-start',
-							gap: '2rem',
-							padding: '2rem 1rem 6rem',
 							overflowX: 'auto',
-							overflowY: 'visible'
+							overflowY: 'visible',
+							padding: '0.5rem 0',
 						}}
 					>
-						{[...path.nodes]
-							.sort((a, b) => getNodeAmount(b) - getNodeAmount(a))
-							.map((node) => {
+						<div
+							style={{
+								display: 'grid',
+								gridTemplateColumns: `8rem repeat(${maxNodes}, minmax(0, 1fr))`,
+								alignItems: 'center',
+								gap: '1rem',
+								paddingTop: '0.75rem',
+								paddingBottom: '0.75rem',
+								overflow: 'visible',
+								minWidth: 0,
+							}}
+						>
+						<h3 style={{
+							fontSize: '1.125rem',
+							margin: 0,
+							color: 'var(--text)',
+							fontWeight: 600,
+						}}>
+							{path.name}
+						</h3>
+						{Array.from({ length: maxNodes }, (_, i) => {
+							const node = sortedNodes[i];
+							if (!node) {
+								return <div key={`empty-${i}`} />;
+							}
 							const amount = getNodeAmount(node);
 							const nodeKey = `${path.name}-${node.name}`;
 							const isActive = activeNode === nodeKey;
@@ -174,9 +183,9 @@ export default function SkillPaths({ paths }: Props) {
 										display: 'flex',
 										flexDirection: 'column',
 										alignItems: 'center',
-										gap: '0.75rem',
-										flex: '1 0 auto',
-										minWidth: '80px'
+										justifyContent: 'flex-start',
+										gap: '0.375rem',
+										minWidth: 0,
 									}}
 								>
 									<div
@@ -196,8 +205,8 @@ export default function SkillPaths({ paths }: Props) {
 										}}
 										style={{
 											position: 'relative',
-											width: '60px',
-											height: '60px',
+											width: '44px',
+											height: '44px',
 											borderRadius: '50%',
 											cursor: 'pointer',
 											transition: 'transform 0.2s ease',
@@ -229,8 +238,8 @@ export default function SkillPaths({ paths }: Props) {
 												setIconHovered(null);
 											}}
 											style={{
-												width: '48px',
-												height: '48px',
+												width: '34px',
+												height: '34px',
 												borderRadius: '50%',
 												background: 'var(--card)',
 												display: 'flex',
@@ -239,17 +248,19 @@ export default function SkillPaths({ paths }: Props) {
 												color: amount >= 3 ? 'var(--accent)' : 'var(--muted)',
 											}}
 										>
-											{NODE_ICONS[amount as 1 | 2 | 3 | 4]()}
+											<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', transform: 'scale(0.8)' }}>
+												{NODE_ICONS[amount as 1 | 2 | 3 | 4]()}
+											</div>
 										</div>
 									</div>
 
 									<div
 										style={{
-											fontSize: '0.9rem',
+											fontSize: '0.75rem',
 											fontWeight: 500,
 											color: 'var(--text)',
 											textAlign: 'center',
-											maxWidth: '120px'
+											maxWidth: '100%'
 										}}
 									>
 										{node.name}
@@ -257,9 +268,10 @@ export default function SkillPaths({ paths }: Props) {
 								</div>
 							);
 						})}
+						</div>
 					</div>
-				</div>
-			))}
+				);
+			})}
 			{activeTooltip && tooltipRect && createPortal(
 				<div
 					className="skill-path-tooltip skill-path-tooltip-enter"
