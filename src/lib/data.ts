@@ -6,7 +6,7 @@ export type SkillPath = {
 	name: string;
 	nodes: {
 		name: string;
-		skills: { name: string; complete: boolean }[];
+		skills: { name: string; amount: number }[];
 	}[];
 };
 

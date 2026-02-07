@@ -3,94 +3,94 @@ nodes:
   - name: Fundamentals
     skills:
       - name: Primitive type annotations
-        complete: true
+        amount: 4
       - name: Interface definitions
-        complete: true
+        amount: 4
       - name: Type aliases
-        complete: true
+        amount: 4
       - name: Function signatures
-        complete: true
+        amount: 4
       - name: Array and tuple types
-        complete: true
+        amount: 4
       - name: Union and intersection
-        complete: true
+        amount: 4
       - name: Type inference
-        complete: true
+        amount: 4
       - name: Literal types
-        complete: true
+        amount: 4
 
   - name: Type System
     skills:
       - name: Generic constraints
-        complete: true
+        amount: 4
       - name: Conditional types
-        complete: true
+        amount: 4
       - name: Mapped type modifiers
-        complete: true
+        amount: 4
       - name: Template literal types
-        complete: true
+        amount: 4
       - name: Discriminated unions
-        complete: true
+        amount: 4
       - name: Type narrowing guards
-        complete: true
+        amount: 4
       - name: Utility type usage
-        complete: true
+        amount: 4
       - name: Index access types
-        complete: true
+        amount: 4
 
   - name: Configuration
     skills:
       - name: Strict mode settings
-        complete: true
+        amount: 4
       - name: Module resolution
-        complete: true
+        amount: 4
       - name: Path mapping
-        complete: true
+        amount: 4
       - name: Declaration files
-        complete: true
+        amount: 4
       - name: Compiler targets
-        complete: true
+        amount: 4
       - name: Lib options
-        complete: true
+        amount: 4
       - name: Source maps
-        complete: false
+        amount: 1
       - name: Watch mode
-        complete: true
+        amount: 4
 
   - name: Advanced Patterns
     skills:
       - name: Type predicate functions
-        complete: true
+        amount: 4
       - name: Branded type patterns
-        complete: false
+        amount: 1
       - name: Declaration merging
-        complete: false
+        amount: 1
       - name: Module augmentation
-        complete: true
+        amount: 4
       - name: Builder pattern types
-        complete: true
+        amount: 4
       - name: Factory method types
-        complete: true
+        amount: 4
       - name: Dependency injection
-        complete: true
+        amount: 4
       - name: Readonly modifiers
-        complete: true
+        amount: 4
 
   - name: Integration
     skills:
       - name: Third-party types
-        complete: true
+        amount: 4
       - name: React component types
-        complete: true
+        amount: 4
       - name: Node.js types
-        complete: true
+        amount: 4
       - name: Jest type definitions
-        complete: false
+        amount: 1
       - name: DOM manipulation types
-        complete: true
+        amount: 4
       - name: API client typing
-        complete: true
+        amount: 4
       - name: JSON schema types
-        complete: true
+        amount: 4
       - name: Migration strategies
-        complete: true
+        amount: 4

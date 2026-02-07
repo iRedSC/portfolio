@@ -1,7 +1,7 @@
 import { useLayoutEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-type Skill = { name: string; complete: boolean };
+type Skill = { name: string; amount: number };
 type Node = { name: string; skills: Skill[] };
 type Path = { name: string; nodes: Node[] };
 
@@ -9,34 +9,29 @@ type Props = {
 	paths: Path[];
 };
 
-function getCompletion(node: Node) {
-	const total = node.skills.length;
-	const completed = node.skills.filter((skill) => skill.complete).length;
-	return total === 0 ? 0 : Math.round((completed / total) * 100);
+/** Returns 1–4 for the node progress state (average of skill amounts, rounded). */
+function getNodeAmount(node: Node): number {
+	if (!node.skills.length) return 1;
+	const sum = node.skills.reduce((acc, s) => acc + (s.amount ?? 1), 0);
+	const avg = sum / node.skills.length;
+	return Math.max(1, Math.min(4, Math.round(avg)));
 }
 
-const CheckIcon = ({ completed }: { completed: boolean }) => (
+const CheckIcon = () => (
 	<svg
 		width="16"
 		height="16"
 		viewBox="0 0 16 16"
 		fill="none"
-		style={{
-			flexShrink: 0,
-			color: completed ? 'var(--accent)' : 'var(--muted)',
-		}}
+		style={{ flexShrink: 0, color: 'var(--accent)' }}
 	>
-		{completed ? (
-			<path
-				d="M3 8l3.5 3.5L13 5"
-				stroke="currentColor"
-				strokeWidth="2"
-				strokeLinecap="round"
-				strokeLinejoin="round"
-			/>
-		) : (
-			<circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="1.5" fill="none" />
-		)}
+		<path
+			d="M3 8l3.5 3.5L13 5"
+			stroke="currentColor"
+			strokeWidth="2"
+			strokeLinecap="round"
+			strokeLinejoin="round"
+		/>
 	</svg>
 );
 
@@ -68,167 +63,112 @@ export default function SkillPaths({ paths }: Props) {
 
 	return (
 		<div style={{ display: 'grid', gap: '3rem' }}>
-			{paths.map((path) => {
-				const completions = path.nodes.map(node => getCompletion(node));
-				
-				return (
-					<div key={path.name}>
-						<h3 style={{ 
-							fontSize: '1.5rem', 
-							marginBottom: '2rem', 
-							color: 'var(--text)',
-							fontWeight: 600,
-							textAlign: 'center'
-						}}>
-							{path.name}
-						</h3>
-						
-						<div 
-							className="skill-nodes-container"
-							style={{ 
-								position: 'relative',
-								display: 'flex',
-								alignItems: 'flex-start',
-								gap: '2rem',
-								padding: '2rem 1rem 6rem',
-								overflowX: 'auto',
-								overflowY: 'visible'
-							}}
-						>
-							{path.nodes.map((node, index) => {
-								const percent = completions[index];
-								const nodeKey = `${path.name}-${node.name}`;
-								const isActive = activeNode === nodeKey;
-								const isComplete = percent === 100;
-								const hasProgress = percent > 0;
-								
-								// Determine line color - green if both this and previous node are complete
-								const showLine = index > 0;
-								const prevComplete = completions[index - 1] === 100;
-								const lineColor = isComplete && prevComplete ? 'var(--accent)' : 'var(--border)';
-								
-								return (
-									<div 
-										key={nodeKey}
-										className="skill-path-node"
-										style={{ 
+			{paths.map((path) => (
+				<div key={path.name}>
+					<h3 style={{
+						fontSize: '1.5rem',
+						marginBottom: '2rem',
+						color: 'var(--text)',
+						fontWeight: 600,
+						textAlign: 'center'
+					}}>
+						{path.name}
+					</h3>
+
+					<div
+						className="skill-nodes-container"
+						style={{
+							position: 'relative',
+							display: 'flex',
+							alignItems: 'flex-start',
+							gap: '2rem',
+							padding: '2rem 1rem 6rem',
+							overflowX: 'auto',
+							overflowY: 'visible'
+						}}
+					>
+						{path.nodes.map((node) => {
+							const amount = getNodeAmount(node);
+							const nodeKey = `${path.name}-${node.name}`;
+							const isActive = activeNode === nodeKey;
+							const fillPercent = (amount / 4) * 100;
+							const fillColor = `color-mix(in srgb, var(--accent) ${fillPercent}%, var(--card))`;
+
+							return (
+								<div
+									key={nodeKey}
+									className="skill-path-node"
+									style={{
+										position: 'relative',
+										display: 'flex',
+										flexDirection: 'column',
+										alignItems: 'center',
+										gap: '0.75rem',
+										flex: '1 0 auto',
+										minWidth: '80px'
+									}}
+								>
+									<div
+										className="skill-path-node-circle"
+										onMouseEnter={(event) => {
+											setActiveNode(nodeKey);
+											setActiveTooltip({
+												key: nodeKey,
+												node,
+												element: event.currentTarget,
+											});
+										}}
+										onMouseLeave={() => {
+											setActiveNode(null);
+											setActiveTooltip(null);
+											setTooltipRect(null);
+										}}
+										style={{
 											position: 'relative',
+											width: '60px',
+											height: '60px',
+											borderRadius: '50%',
+											cursor: 'pointer',
+											transition: 'transform 0.2s ease',
+											transform: isActive ? 'scale(1.1)' : 'scale(1)',
+											zIndex: 1,
+											background: fillPercent === 0
+												? 'var(--border)'
+												: `conic-gradient(${fillColor} ${fillPercent}%, var(--border) 0)`,
 											display: 'flex',
-											flexDirection: 'column',
 											alignItems: 'center',
-											gap: '0.75rem',
-											flex: '1 0 auto',
-											minWidth: '80px'
+											justifyContent: 'center',
+											boxShadow: isActive ? '0 4px 16px rgba(0, 0, 0, 0.15)' : 'none'
 										}}
 									>
-										{/* Connecting line */}
-										{showLine && (
-											<div
-												className="skill-path-line"
-												style={{
-													position: 'absolute',
-													left: 'calc(-50% - 1rem)',
-													top: '30px',
-													width: 'calc(100% + 2rem)',
-													height: '3px',
-													background: lineColor,
-													zIndex: 0
-												}}
-											/>
-										)}
-										
-										{/* Node circle */}
 										<div
-											className="skill-path-node-circle"
-											onMouseEnter={(event) => {
-												setActiveNode(nodeKey);
-												setActiveTooltip({
-													key: nodeKey,
-													node,
-													element: event.currentTarget,
-												});
-											}}
-											onMouseLeave={() => {
-												setActiveNode(null);
-												setActiveTooltip(null);
-												setTooltipRect(null);
-											}}
+											className="skill-path-node-inner"
 											style={{
-												position: 'relative',
-												width: '60px',
-												height: '60px',
+												width: '48px',
+												height: '48px',
 												borderRadius: '50%',
-												cursor: 'pointer',
-												transition: 'transform 0.2s ease',
-												transform: isActive ? 'scale(1.1)' : 'scale(1)',
-												zIndex: 1,
-												background: isComplete 
-													? 'var(--accent)' 
-													: !hasProgress
-													? 'var(--border)'
-													: `conic-gradient(var(--accent) ${percent}%, var(--border) 0)`,
-												display: 'flex',
-												alignItems: 'center',
-												justifyContent: 'center',
-												boxShadow: isActive ? '0 4px 16px rgba(0, 0, 0, 0.15)' : 'none'
+												background: 'var(--card)',
 											}}
-										>
-											{/* Inner circle */}
-											{!isComplete && (
-												<div
-													className="skill-path-node-inner"
-													style={{
-														width: '48px',
-														height: '48px',
-														borderRadius: '50%',
-														background: 'var(--card)',
-														display: 'flex',
-														alignItems: 'center',
-														justifyContent: 'center',
-														fontSize: '0.85rem',
-														fontWeight: 600,
-														color: hasProgress ? 'var(--accent)' : 'var(--muted)'
-													}}
-												>
-													{percent}%
-												</div>
-											)}
-											{isComplete && (
-												<svg
-													width="32"
-													height="32"
-													viewBox="0 0 24 24"
-													fill="none"
-													stroke="white"
-													strokeWidth="3"
-													strokeLinecap="round"
-													strokeLinejoin="round"
-												>
-													<polyline points="20 6 9 17 4 12" />
-												</svg>
-											)}
-										</div>
-										
-										{/* Node label */}
-										<div
-											style={{
-												fontSize: '0.9rem',
-												fontWeight: 500,
-												color: 'var(--text)',
-												textAlign: 'center',
-												maxWidth: '120px'
-											}}
-										>
-											{node.name}
-										</div>
-										
+										/>
 									</div>
-								);
-							})}
-						</div>
+
+									<div
+										style={{
+											fontSize: '0.9rem',
+											fontWeight: 500,
+											color: 'var(--text)',
+											textAlign: 'center',
+											maxWidth: '120px'
+										}}
+									>
+										{node.name}
+									</div>
+								</div>
+							);
+						})}
 					</div>
-				);
-			})}
+				</div>
+			))}
 			{activeTooltip && tooltipRect && createPortal(
 				<div
 					style={{
@@ -273,7 +213,7 @@ export default function SkillPaths({ paths }: Props) {
 									gap: '0.5rem',
 								}}
 							>
-								<CheckIcon completed={skill.complete} />
+								<CheckIcon />
 								<span>{skill.name}</span>
 							</div>
 						))}

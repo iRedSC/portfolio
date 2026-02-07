@@ -1202,9 +1202,4 @@ a {
 		font-size: 0.75rem;
 		max-width: 70px;
 	}
-
-	.skill-path-line {
-		top: 22px !important;
-		height: 2px !important;
-	}
 }

@@ -3,94 +3,94 @@ nodes:
   - name: Fundamentals
     skills:
       - name: Container lifecycle management
-        complete: true
+        amount: 4
       - name: Docker CLI basics
-        complete: true
+        amount: 4
       - name: Dockerfile syntax
-        complete: false
+        amount: 1
       - name: Image layering concepts
-        complete: false
+        amount: 1
       - name: Port mapping
-        complete: true
+        amount: 4
       - name: Volume mounting
-        complete: true
+        amount: 4
       - name: Environment variables
-        complete: true
+        amount: 4
       - name: Container isolation
-        complete: false
+        amount: 1
 
   - name: Image Building
     skills:
       - name: Multi-stage builds
-        complete: false
+        amount: 1
       - name: Layer caching
-        complete: false
+        amount: 1
       - name: Image optimization
-        complete: false
+        amount: 1
       - name: BuildKit features
-        complete: false
+        amount: 1
       - name: Base image selection
-        complete: false
+        amount: 1
       - name: Registry authentication
-        complete: false
+        amount: 1
       - name: Image tagging
-        complete: false
+        amount: 1
       - name: .dockerignore usage
-        complete: true
+        amount: 4
 
   - name: Orchestration
     skills:
       - name: Docker Compose
-        complete: true
+        amount: 4
       - name: Service scaling
-        complete: false
+        amount: 1
       - name: Swarm mode
-        complete: false
+        amount: 1
       - name: Stack deployment
-        complete: true
+        amount: 4
       - name: Rolling updates
-        complete: false
+        amount: 1
       - name: Health checks
-        complete: false
+        amount: 1
       - name: Service discovery
-        complete: false
+        amount: 1
       - name: Load balancing
-        complete: false
+        amount: 1
 
   - name: Networking & Storage
     skills:
       - name: Bridge networks
-        complete: true
+        amount: 4
       - name: Overlay networks
-        complete: false
+        amount: 1
       - name: Network segmentation
-        complete: false
+        amount: 1
       - name: DNS resolution
-        complete: false
+        amount: 1
       - name: Named volumes
-        complete: true
+        amount: 4
       - name: Bind mounts
-        complete: false
+        amount: 1
       - name: Volume drivers
-        complete: false
+        amount: 1
       - name: Persistent storage
-        complete: true
+        amount: 4
 
   - name: Security & Operations
     skills:
       - name: Secret management
-        complete: false
+        amount: 1
       - name: Image scanning
-        complete: false
+        amount: 1
       - name: Rootless containers
-        complete: false
+        amount: 1
       - name: Resource limits
-        complete: false
+        amount: 1
       - name: Read-only filesystems
-        complete: false
+        amount: 1
       - name: Log aggregation
-        complete: false
+        amount: 1
       - name: CI/CD integration
-        complete: false
+        amount: 1
       - name: Backup strategies
-        complete: false
+        amount: 1
