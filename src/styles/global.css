@@ -1148,6 +1148,44 @@ a {
 	border: 0;
 }
 
+@keyframes skill-path-tooltip-enter {
+	from {
+		opacity: 0;
+		transform: translate(-50%, -8px);
+	}
+	to {
+		opacity: 1;
+		transform: translate(-50%, 0);
+	}
+}
+
+@keyframes skill-path-icon-tooltip-enter {
+	from {
+		opacity: 0;
+		transform: translate(-50%, calc(-100% + 6px));
+	}
+	to {
+		opacity: 1;
+		transform: translate(-50%, -100%);
+	}
+}
+
+.skill-path-tooltip.skill-path-tooltip-enter {
+	animation: skill-path-tooltip-enter 0.2s ease-out forwards;
+}
+
+.skill-path-icon-tooltip.skill-path-icon-tooltip-enter {
+	animation: skill-path-icon-tooltip-enter 0.2s ease-out forwards;
+}
+
+.skill-path-node-inner {
+	transition: transform 0.2s ease;
+}
+
+.skill-path-node-inner.skill-path-icon-hover {
+	transform: scale(1.12);
+}
+
 .skill-paths {
 	display: grid;
 	gap: 3rem;
