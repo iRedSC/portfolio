@@ -1,0 +1,97 @@
+name: Languages
+nodes:
+  - name: Typescript
+    amount: 4
+    skills:
+      - name: Real-time data synchronization
+        amount: 4
+      - name: Interactive UI architecture
+        amount: 4
+      - name: WebSocket integration
+        amount: 4
+      - name: Full-stack web development
+        amount: 4
+      - name: Client-server architecture
+        amount: 4
+      - name: State management patterns
+        amount: 4
+      - name: API integration design
+        amount: 4
+      - name: Component-based systems
+        amount: 4
+  - name: Python
+    amount: 4
+    skills:
+      - name: Decorator-based DSL design
+        amount: 4
+      - name: Automation scripting
+        amount: 4
+      - name: ETL pipeline architecture
+        amount: 4
+      - name: Data transformation
+        amount: 4
+      - name: Web scraping
+        amount: 4
+      - name: External API integration
+        amount: 4
+      - name: AI model integration
+        amount: 4
+      - name: Asynchronous operations
+        amount: 4
+  - name: Visual Basic
+    amount: 2
+    skills:
+      - name: Database schema design
+        amount: 3
+      - name: Data cleaning/validation
+        amount: 4
+      - name: ETL implementation
+        amount: 4
+      - name: File format processing
+        amount: 3
+      - name: Relational data modeling
+        amount: 3
+      - name: Data import/export
+        amount: 4
+      - name: Custom utility development
+        amount: 4
+      - name: Legacy system optimization
+        amount: 2
+  - name: Java
+    amount: 1
+    skills:
+      - name: Event-driven architecture
+        amount: 2
+      - name: Reflection and introspection
+        amount: 1
+      - name: Gradle build system
+        amount: 2
+      - name: Game engine integration
+        amount: 2
+      - name: Plugin architecture patterns
+        amount: 2
+      - name: Configuration management
+        amount: 1
+      - name: Data serialization formats
+        amount: 1
+      - name: Version compatibility handling
+        amount: 1
+  - name: SQL
+    amount: 3
+    skills:
+      - name: Query optimization
+        amount: 3
+      - name: Complex joins/CTEs
+        amount: 3
+      - name: Database design
+        amount: 4
+      - name: Performance tuning
+        amount: 3
+      - name: Index optimization
+        amount: 3
+      - name: Replication/backup
+        amount: 3
+      - name: Data warehousing
+        amount: 3
+      - name: Analytics reporting
+        amount: 4

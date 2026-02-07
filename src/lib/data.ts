@@ -7,7 +7,7 @@ export type SkillPath = {
 	nodes: {
 		name: string;
 		amount: number;
-		skills: { name: string }[];
+		skills: { name: string; amount?: number }[];
 	}[];
 };
 

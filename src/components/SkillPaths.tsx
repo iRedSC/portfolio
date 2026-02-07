@@ -1,7 +1,7 @@
 import { useLayoutEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-type Skill = { name: string };
+type Skill = { name: string; amount?: number };
 type Node = { name: string; amount: number; skills: Skill[] };
 type Path = { name: string; nodes: Node[] };
 
@@ -13,24 +13,6 @@ type Props = {
 function getNodeAmount(node: Node): number {
 	return Math.max(1, Math.min(4, node.amount ?? 1));
 }
-
-const CheckIcon = () => (
-	<svg
-		width="16"
-		height="16"
-		viewBox="0 0 16 16"
-		fill="none"
-		style={{ flexShrink: 0, color: 'var(--accent)' }}
-	>
-		<path
-			d="M3 8l3.5 3.5L13 5"
-			stroke="currentColor"
-			strokeWidth="2"
-			strokeLinecap="round"
-			strokeLinejoin="round"
-		/>
-	</svg>
-);
 
 const BookIcon = () => (
 	<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
@@ -284,8 +266,8 @@ export default function SkillPaths({ paths }: Props) {
 						border: '1px solid var(--border)',
 						borderRadius: '12px',
 						padding: '1rem',
-						minWidth: '280px',
-						maxWidth: '380px',
+						minWidth: '340px',
+						maxWidth: '480px',
 						boxShadow: '0 8px 24px rgba(0, 0, 0, 0.1)',
 						zIndex: 9999,
 						pointerEvents: 'none',
@@ -303,24 +285,38 @@ export default function SkillPaths({ paths }: Props) {
 						style={{
 							display: 'grid',
 							gridTemplateColumns: '1fr 1fr',
+							gridAutoFlow: 'column',
+							gridTemplateRows: `repeat(${Math.ceil(activeTooltip.node.skills.length / 2)}, auto)`,
 							gap: '0.5rem 1rem',
 							fontSize: '0.85rem',
 							color: 'var(--text)',
 						}}
 					>
-						{activeTooltip.node.skills.map((skill) => (
-							<div
-								key={skill.name}
-								style={{
-									display: 'flex',
-									alignItems: 'center',
-									gap: '0.5rem',
-								}}
-							>
-								<CheckIcon />
-								<span>{skill.name}</span>
-							</div>
-						))}
+						{[...activeTooltip.node.skills]
+							.map((skill) => {
+								const amount = skill.amount != null ? Math.max(1, Math.min(4, skill.amount)) as 1 | 2 | 3 | 4 : 4;
+								return { ...skill, amount };
+							})
+							.sort((a, b) => b.amount - a.amount)
+							.map((skill) => {
+								const amount = skill.amount;
+								const Icon = NODE_ICONS[amount];
+								return (
+									<div
+										key={skill.name}
+										style={{
+											display: 'flex',
+											alignItems: 'center',
+											gap: '0.5rem',
+										}}
+									>
+										<div style={{ width: 16, height: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, color: amount >= 3 ? 'var(--accent)' : 'var(--muted)' }}>
+											<div style={{ transform: 'scale(0.73)' }}>{Icon()}</div>
+										</div>
+										<span>{skill.name}</span>
+									</div>
+								);
+							})}
 					</div>
 				</div>,
 				document.body

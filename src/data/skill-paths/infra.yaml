@@ -1,0 +1,97 @@
+name: Infrastructure/DevOps
+nodes:
+  - name: Docker
+    amount: 4
+    skills:
+      - name: Container image optimization
+        amount: 4
+      - name: Multi-stage builds
+        amount: 3
+      - name: Volume management
+        amount: 4
+      - name: Network configuration
+        amount: 4
+      - name: Environment variables
+        amount: 4
+      - name: Docker compose
+        amount: 4
+      - name: Registry management
+        amount: 3
+      - name: Layer caching strategies
+        amount: 2
+  - name: Dokploy
+    amount: 4
+    skills:
+      - name: Application deployment
+        amount: 4
+      - name: Database provisioning
+        amount: 4
+      - name: Environment management
+        amount: 4
+      - name: Service configuration
+        amount: 4
+      - name: Monitoring setup
+        amount: 4
+      - name: Backup management
+        amount: 2
+      - name: SSL/TLS integration
+        amount: 2
+      - name: Resource allocation
+        amount: 3
+  - name: Ansible
+    amount: 1
+    skills:
+      - name: Playbook design
+        amount: 2
+      - name: Inventory management
+        amount: 1
+      - name: Variable and templating
+        amount: 1
+      - name: Task orchestration
+        amount: 1
+      - name: Handler management
+        amount: 1
+      - name: Role structure
+        amount: 1
+      - name: Error handling
+        amount: 1
+      - name: Idempotency principles
+        amount: 2
+  - name: Terraform
+    amount: 1
+    skills:
+      - name: Infrastructure as code
+        amount: 2
+      - name: State management
+        amount: 1
+      - name: Module organization
+        amount: 1
+      - name: Variable configuration
+        amount: 1
+      - name: Output management
+        amount: 1
+      - name: Plan and apply workflows
+        amount: 1
+      - name: Cloud provider integration
+        amount: 1
+      - name: Resource dependencies
+        amount: 1
+  - name: Kubernetes
+    amount: 1
+    skills:
+      - name: Pod orchestration
+        amount: 1
+      - name: Deployment management
+        amount: 1
+      - name: Service networking
+        amount: 1
+      - name: ConfigMap and secrets
+        amount: 1
+      - name: Persistent volumes
+        amount: 1
+      - name: Ingress configuration
+        amount: 1
+      - name: Resource limits
+        amount: 1
+      - name: Kubectl operations
+        amount: 1

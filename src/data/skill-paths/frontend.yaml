@@ -1,0 +1,97 @@
+name: Frontend/UI
+nodes:
+  - name: React
+    amount: 3
+    skills:
+      - name: Component architecture patterns
+        amount: 3
+      - name: Hooks and state management
+        amount: 3
+      - name: Performance optimization
+        amount: 3
+      - name: Context and providers
+        amount: 3
+      - name: Form handling
+        amount: 3
+      - name: Component testing
+        amount: 3
+      - name: Async data fetching
+        amount: 4
+      - name: Server components/SSR
+        amount: 2
+  - name: Shadcn
+    amount: 3
+    skills:
+      - name: Component customization
+        amount: 3
+      - name: Tailwind integration
+        amount: 3
+      - name: Accessible components
+        amount: 4
+      - name: Theme management
+        amount: 3
+      - name: Dark mode implementation
+        amount: 3
+      - name: Component composition
+        amount: 3
+      - name: Responsive design patterns
+        amount: 4
+      - name: Advanced styling techniques
+        amount: 3
+  - name: Vite
+    amount: 3
+    skills:
+      - name: Build optimization
+        amount: 4
+      - name: HMR configuration
+        amount: 3
+      - name: Plugin ecosystem
+        amount: 3
+      - name: Code splitting
+        amount: 4
+      - name: Environment configuration
+        amount: 4
+      - name: Production bundling
+        amount: 4
+      - name: Dev server setup
+        amount: 4
+      - name: Framework integration
+        amount: 4
+  - name: Astro
+    amount: 2
+    skills:
+      - name: Static site generation
+        amount: 3
+      - name: Islands architecture
+        amount: 3
+      - name: Content collections
+        amount: 3
+      - name: Component frameworks
+        amount: 2
+      - name: Markdown integration
+        amount: 3
+      - name: API routes
+        amount: 2
+      - name: Dynamic routing
+        amount: 2
+      - name: Deployment optimization
+        amount: 3
+  - name: Tanstack Table
+    amount: 4
+    skills:
+      - name: Data grid implementation
+        amount: 4
+      - name: Sorting and filtering
+        amount: 4
+      - name: Pagination strategies
+        amount: 4
+      - name: Column management
+        amount: 4
+      - name: Row selection
+        amount: 3
+      - name: Virtual scrolling
+        amount: 4
+      - name: Custom rendering
+        amount: 4
+      - name: State synchronization
+        amount: 4

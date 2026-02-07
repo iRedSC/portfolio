@@ -1,0 +1,97 @@
+name: Databases
+nodes:
+  - name: Postgres
+    amount: 3
+    skills:
+      - name: Vector embeddings (pgvector)
+        amount: 2
+      - name: Query optimization
+        amount: 4
+      - name: Schema design
+        amount: 4
+      - name: Complex joins/CTEs
+        amount: 3
+      - name: JSON data types
+        amount: 3
+      - name: Full-text search
+        amount: 3
+      - name: Transactions/ACID
+        amount: 4
+      - name: Indexing strategies
+        amount: 3
+  - name: Convex
+    amount: 3
+    skills:
+      - name: Real-time queries
+        amount: 4
+      - name: Mutation design
+        amount: 3
+      - name: Authentication integration
+        amount: 3
+      - name: Live data binding
+        amount: 3
+      - name: Optimistic updates
+        amount: 3
+      - name: Action scheduling
+        amount: 4
+      - name: Server functions
+        amount: 3
+      - name: Data relationships
+        amount: 4
+  - name: Redis
+    amount: 1
+    skills:
+      - name: Caching strategies
+        amount: 1
+      - name: Session management
+        amount: 1
+      - name: Pub/Sub messaging
+        amount: 2
+      - name: Data expiration/TTL
+        amount: 2
+      - name: Pipeline operations
+        amount: 1
+      - name: Sorted sets/lists
+        amount: 1
+      - name: Rate limiting
+        amount: 1
+      - name: Real-time features
+        amount: 1
+  - name: Data Modeling
+    amount: 4
+    skills:
+      - name: Relational schema design
+        amount: 4
+      - name: Entity relationships
+        amount: 4
+      - name: Normalization
+        amount: 4
+      - name: Denormalization strategies
+        amount: 3
+      - name: Data integrity constraints
+        amount: 4
+      - name: Dimension modeling
+        amount: 4
+      - name: Document structure design
+        amount: 4
+      - name: Access pattern optimization
+        amount: 4
+  - name: ETL & Data Pipelines
+    amount: 4
+    skills:
+      - name: Pipeline orchestration
+        amount: 4
+      - name: Data transformation logic
+        amount: 4
+      - name: Data validation
+        amount: 4
+      - name: Incremental loading
+        amount: 4
+      - name: Error handling/recovery
+        amount: 4
+      - name: Data lineage tracking
+        amount: 3
+      - name: Source integration
+        amount: 4
+      - name: Performance optimization
+        amount: 4

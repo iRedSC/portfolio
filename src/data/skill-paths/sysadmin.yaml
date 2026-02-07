@@ -1,0 +1,97 @@
+name: System Administration
+nodes:
+  - name: Linux/Ubuntu
+    amount: 3
+    skills:
+      - name: System administration
+        amount: 4
+      - name: Package management
+        amount: 4
+      - name: User and permissions
+        amount: 3
+      - name: Process management
+        amount: 3
+      - name: Filesystem navigation
+        amount: 4
+      - name: Log analysis
+        amount: 3
+      - name: System monitoring
+        amount: 3
+      - name: SSH configuration
+        amount: 4
+  - name: Systemd
+    amount: 3
+    skills:
+      - name: Service management
+        amount: 3
+      - name: Unit file creation
+        amount: 3
+      - name: Timer scheduling
+        amount: 2
+      - name: Dependency management
+        amount: 2
+      - name: Service isolation
+        amount: 2
+      - name: Journal logging
+        amount: 2
+      - name: Socket activation
+        amount: 2
+      - name: System startup optimization
+        amount: 2
+  - name: Prometheus
+    amount: 1
+    skills:
+      - name: Metrics collection
+        amount: 1
+      - name: Alert configuration
+        amount: 1
+      - name: Time-series data
+        amount: 1
+      - name: Scrape configuration
+        amount: 1
+      - name: Recording rules
+        amount: 1
+      - name: Query language (PromQL)
+        amount: 1
+      - name: Data retention
+        amount: 1
+      - name: Visualization integration
+        amount: 1
+  - name: WireGuard
+    amount: 3
+    skills:
+      - name: VPN configuration
+        amount: 3
+      - name: Peer management
+        amount: 3
+      - name: Key generation
+        amount: 4
+      - name: Network routing
+        amount: 4
+      - name: Encryption setup
+        amount: 3
+      - name: Firewall integration
+        amount: 3
+      - name: Connection troubleshooting
+        amount: 3
+      - name: High availability setup
+        amount: 3
+  - name: Traefik
+    amount: 2
+    skills:
+      - name: Reverse proxy routing
+        amount: 3
+      - name: Service discovery
+        amount: 3
+      - name: SSL/TLS termination
+        amount: 2
+      - name: Middleware configuration
+        amount: 2
+      - name: Load balancing
+        amount: 2
+      - name: TCP/UDP routing
+        amount: 2
+      - name: Authentication integration
+        amount: 2
+      - name: Health checks
+        amount: 2
