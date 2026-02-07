@@ -378,40 +378,22 @@ export default function SkillPaths({ paths }: Props) {
 			{iconTooltip && iconTooltipRect && createPortal(
 				<div
 					className="skill-path-icon-tooltip skill-path-icon-tooltip-enter"
-					style={isMobile
-						? {
-							position: 'fixed',
-							bottom: 'calc(var(--mobile-nav-height, 4rem) + 0.75rem)',
-							left: `${iconTooltipRect.left + iconTooltipRect.width / 2}px`,
-							transform: 'translateX(-50%)',
-							background: 'var(--card)',
-							border: '1px solid var(--border)',
-							borderRadius: '8px',
-							padding: '0.5rem 0.75rem',
-							fontSize: '0.8rem',
-							color: 'var(--text)',
-							whiteSpace: 'nowrap',
-							boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-							zIndex: 10000,
-							pointerEvents: 'none',
-						  }
-						: {
-							position: 'fixed',
-							top: `${iconTooltipRect.top - 18}px`,
-							left: `${iconTooltipRect.left + iconTooltipRect.width / 2}px`,
-							transform: 'translate(-50%, -100%)',
-							background: 'var(--card)',
-							border: '1px solid var(--border)',
-							borderRadius: '8px',
-							padding: '0.5rem 0.75rem',
-							fontSize: '0.8rem',
-							color: 'var(--text)',
-							whiteSpace: 'nowrap',
-							boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-							zIndex: 10000,
-							pointerEvents: 'none',
-						  }
-					}
+					style={{
+						position: 'fixed',
+						top: `${iconTooltipRect.top - 18}px`,
+						left: `${iconTooltipRect.left + iconTooltipRect.width / 2}px`,
+						transform: 'translate(-50%, -100%)',
+						background: 'var(--card)',
+						border: '1px solid var(--border)',
+						borderRadius: '8px',
+						padding: '0.5rem 0.75rem',
+						fontSize: '0.8rem',
+						color: 'var(--text)',
+						whiteSpace: 'nowrap',
+						boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+						zIndex: 10000,
+						pointerEvents: 'none',
+					}}
 				>
 					{NODE_STAGE_LABELS[iconTooltip.amount]}
 				</div>,
