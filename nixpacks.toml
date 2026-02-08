@@ -1,8 +1,12 @@
 # Nixpacks config for Dokploy deployment
-# Build with NIXPACKS=1 so Astro uses the Node adapter (standalone server)
+# Use npm (not bun) in the container to avoid arch issues (exit 132) on some hosts.
+# NIXPACKS=1 makes Astro use the Node adapter (standalone server).
+
+[phases.install]
+cmds = ["npm install"]
 
 [phases.build]
-cmds = ["NIXPACKS=1 bun run build"]
+cmds = ["NIXPACKS=1 npm run build"]
 
 [start]
 cmd = "node ./dist/server/entry.mjs"
