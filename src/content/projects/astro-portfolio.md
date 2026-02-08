@@ -3,7 +3,7 @@ title: "Astro Portfolio Website"
 description: "A modern, high-performance portfolio website built with Astro, featuring content collections, React islands, and GitHub integration for project tracking."
 pubDate: 2024-01-15
 updatedDate: 2024-02-03
-heroImage: "/images/portfolio-hero.jpg"
+heroImage: "/images/portfolio.jpg"
 tags: ["astro", "react", "typescript", "tailwind", "portfolio"]
 draft: false
 githubRepo: "yourname/astro-portfolio"

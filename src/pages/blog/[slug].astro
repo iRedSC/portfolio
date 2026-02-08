@@ -3,13 +3,8 @@ import PostLayout from '../../layouts/PostLayout.astro';
 import { getCollection } from 'astro:content';
 import { getReadingTimeMinutes } from '../../lib/readingTime';
 
-import birds from '../../assets/background_videos/birds.mp4';
-import dots from '../../assets/background_videos/dots.mp4';
-import net from '../../assets/background_videos/net.mp4';
-
 export const prerender = true;
 
-const VIDEOS = [birds, dots, net];
 
 function hashString(str: string): number {
 	let h = 0;
@@ -20,9 +15,7 @@ function hashString(str: string): number {
 	return Math.abs(h);
 }
 
-function pickVideo(slug: string): string {
-	return VIDEOS[hashString(slug) % VIDEOS.length];
-}
+
 
 export async function getStaticPaths() {
 	const entries = await getCollection('blog', ({ data }) => !data.draft);
@@ -35,7 +28,7 @@ const readingTime = getReadingTimeMinutes(entry.body);
 const toc = headings
 	.filter((h) => h.depth === 2 || h.depth === 3)
 	.map((h) => ({ depth: h.depth, slug: h.slug, text: h.text }));
-const backgroundVideo = pickVideo(entry.slug);
+
 ---
 
 <PostLayout
@@ -45,7 +38,6 @@ const backgroundVideo = pickVideo(entry.slug);
 	publishedDate={entry.data.pubDate}
 	readingTime={`${readingTime} min read`}
 	toc={toc}
-	backgroundVideo={backgroundVideo}
 >
 	<Content />
 </PostLayout>
