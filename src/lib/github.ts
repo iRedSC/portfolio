@@ -78,7 +78,6 @@ export async function getMilestoneProgress(
 		return { percent: 0, open: 0, closed: 0, total: 0, updatedAt: new Date().toISOString() };
 	}
 }
-import { Octokit } from 'octokit';
 
 interface Milestone {
   title: string;

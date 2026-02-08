@@ -65,148 +65,16 @@ export const POST: APIRoute = async ({ request }) => {
 		return new Response('Failed to send', { status: 500 });
 	}
 };
-import type { APIRoute } from 'astro';
 
-interface ContactFormData {
-  name: string;
-  email: string;
-  subject: string;
-  message: string;
-}
-
-export const POST: APIRoute = async ({ request }) => {
-  try {
-    // Parse the request body
-    const body: ContactFormData = await request.json();
-
-    // Validate required fields
-    const { name, email, subject, message } = body;
-
-    if (!name || !email || !subject || !message) {
-      return new Response(
-        JSON.stringify({
-          error: 'Missing required fields',
-          details: 'name, email, subject, and message are all required'
-        }),
-        {
-          status: 400,
-          headers: { 'Content-Type': 'application/json' }
-        }
-      );
-    }
-
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return new Response(
-        JSON.stringify({
-          error: 'Invalid email format'
-        }),
-        {
-          status: 400,
-          headers: { 'Content-Type': 'application/json' }
-        }
-      );
-    }
-
-    // Here you would integrate with your email service (Resend, SendGrid, etc.)
-    // For now, we'll just log the contact attempt
-    console.log('Contact form submission:', {
-      name,
-      email,
-      subject,
-      message,
-      timestamp: new Date().toISOString(),
-    });
-
-    // Example integration with Resend (uncomment and configure when ready):
-    /*
-    const resendApiKey = import.meta.env.RESEND_API_KEY;
-    if (!resendApiKey) {
-      throw new Error('RESEND_API_KEY environment variable is required');
-    }
-
-    const resend = new Resend(resendApiKey);
-
-    const { data, error } = await resend.emails.send({
-      from: 'Portfolio Contact <contact@yourdomain.com>',
-      to: 'your-email@yourdomain.com',
-      subject: `Portfolio Contact: ${subject}`,
-      html: `
-        <h2>New Contact Form Submission</h2>
-        <p><strong>Name:</strong> ${name}</p>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Subject:</strong> ${subject}</p>
-        <p><strong>Message:</strong></p>
-        <p>${message.replace(/\n/g, '<br>')}</p>
-      `,
-    });
-
-    if (error) {
-      throw error;
-    }
-    */
-
-    // Example integration with SendGrid (uncomment and configure when ready):
-    /*
-    const sgMail = require('@sendgrid/mail');
-    sgMail.setApiKey(import.meta.env.SENDGRID_API_KEY);
-
-    const msg = {
-      to: 'your-email@yourdomain.com',
-      from: 'contact@yourdomain.com',
-      subject: `Portfolio Contact: ${subject}`,
-      html: `
-        <h2>New Contact Form Submission</h2>
-        <p><strong>Name:</strong> ${name}</p>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Subject:</strong> ${subject}</p>
-        <p><strong>Message:</strong></p>
-        <p>${message.replace(/\n/g, '<br>')}</p>
-      `,
-    };
-
-    await sgMail.send(msg);
-    */
-
-    // Return success response
-    return new Response(
-      JSON.stringify({
-        success: true,
-        message: 'Thank you for your message! I\'ll get back to you soon.'
-      }),
-      {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' }
-      }
-    );
-
-  } catch (error) {
-    console.error('Error processing contact form:', error);
-
-    return new Response(
-      JSON.stringify({
-        error: 'Internal server error',
-        message: 'Sorry, there was an error sending your message. Please try again later.'
-      }),
-      {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' }
-      }
-    );
-  }
-};
-
-// Handle other HTTP methods
 export const GET: APIRoute = () => {
-  return new Response(
-    JSON.stringify({
-      error: 'Method not allowed',
-      message: 'This endpoint only accepts POST requests'
-    }),
-    {
-      status: 405,
-      headers: { 'Content-Type': 'application/json' }
-    }
-  );
+	return new Response(
+		JSON.stringify({
+			error: 'Method not allowed',
+			message: 'This endpoint only accepts POST requests',
+		}),
+		{
+			status: 405,
+			headers: { 'Content-Type': 'application/json' },
+		}
+	);
 };

@@ -1,0 +1,8 @@
+# Nixpacks config for Dokploy deployment
+# Build with NIXPACKS=1 so Astro uses the Node adapter (standalone server)
+
+[phases.build]
+cmds = ["NIXPACKS=1 bun run build"]
+
+[start]
+cmd = "node ./dist/server/entry.mjs"
