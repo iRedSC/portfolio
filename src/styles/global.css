@@ -858,6 +858,12 @@ a {
 	gap: 2rem;
 }
 
+/* Let post content shrink on narrow viewports so code blocks don't force page width */
+.post-content {
+	min-width: 0;
+	max-width: 100%;
+}
+
 .post-content :is(h2, h3) {
 	scroll-margin-top: 6rem;
 }
@@ -876,12 +882,16 @@ a {
 	color: #e2e8f0;
 	padding: 1rem;
 	border-radius: 12px;
-	overflow: auto;
+	max-width: 100%;
+	overflow-x: auto;
+	overflow-y: auto;
 }
 
 .post-content pre.astro-code {
 	border-radius: 12px;
-	overflow: hidden;
+	max-width: 100%;
+	overflow-x: auto;
+	overflow-y: hidden;
 	padding: 1rem;
 	margin: 1.5rem 0;
 }
