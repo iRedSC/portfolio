@@ -397,7 +397,7 @@ a {
 #filtered-projects .project-card-link {
 	position: absolute;
 	inset: 0;
-	z-index: 0;
+	z-index: 1;
 }
 
 #filtered-projects .project-image {
@@ -413,12 +413,17 @@ a {
 
 #filtered-projects .project-content {
 	position: relative;
-	z-index: 1;
+	z-index: 0;
 	flex: 1 1 auto;
 	padding: 1.75rem;
 	display: flex;
 	flex-direction: column;
 	min-height: 0;
+}
+
+#filtered-projects .project-card .tag-clickable {
+	position: relative;
+	z-index: 2;
 }
 
 #filtered-projects .project-card-top {
