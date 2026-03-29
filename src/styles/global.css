@@ -852,6 +852,52 @@ a {
 	border: 1px solid var(--border);
 }
 
+.post-project-title-row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 1rem 1.5rem;
+	margin-bottom: 1rem;
+}
+
+.post-project-title-row h1 {
+	flex: 1;
+	min-width: min(100%, 10rem);
+	margin: 0;
+}
+
+.post-project-external {
+	display: flex;
+	flex-shrink: 0;
+	gap: 0.5rem;
+	align-items: center;
+	padding-top: 0.2em;
+}
+
+.post-project-icon-link {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 2.75rem;
+	height: 2.75rem;
+	color: var(--foreground);
+	background: var(--card);
+	border: 1px solid var(--border);
+	border-radius: 12px;
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.post-project-icon-link:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.post-project-icon-link svg {
+	width: 1.25rem;
+	height: 1.25rem;
+}
+
 .post-body {
 	display: grid;
 	grid-template-columns: minmax(0, 1fr) 220px;
