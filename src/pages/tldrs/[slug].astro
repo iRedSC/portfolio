@@ -10,7 +10,10 @@ export async function getStaticPaths() {
 }
 
 const { entry } = Astro.props;
-const { Content } = await entry.render();
+const { Content, headings } = await entry.render();
+const toc = headings
+	.filter((h) => h.depth === 2 || h.depth === 3)
+	.map((h) => ({ depth: h.depth, slug: h.slug, text: h.text }));
 ---
 
 <PostLayout
@@ -18,6 +21,7 @@ const { Content } = await entry.render();
 	description={entry.data.description}
 	image={entry.data.image}
 	publishedDate={entry.data.pubDate}
+	toc={toc}
 >
 	<Content />
 </PostLayout>

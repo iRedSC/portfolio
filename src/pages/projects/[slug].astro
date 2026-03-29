@@ -1,5 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import TocScrollSpy from '../../components/TocScrollSpy';
 import { getCollection } from 'astro:content';
 import { getMilestoneProgress } from '../../lib/github';
 import { Image } from 'astro:assets';
@@ -106,4 +107,5 @@ const buildDate = new Date().toLocaleDateString();
 			)}
 		</div>
 	</article>
+	{toc.length > 0 && <TocScrollSpy client:load />}
 </Layout>

@@ -973,6 +973,13 @@ a {
 .post-toc a {
 	color: inherit;
 	font-size: 0.9rem;
+	transition: color 0.15s ease;
+}
+
+.post-toc li.toc-active > a,
+.post-toc a[aria-current='location'] {
+	color: var(--accent);
+	font-weight: 600;
 }
 
 .depth-3 {
