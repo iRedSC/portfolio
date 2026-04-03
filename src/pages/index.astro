@@ -2,18 +2,13 @@
 import { Image } from 'astro:assets';
 import Layout from '../layouts/Layout.astro';
 import profileImage from '../assets/profile.jpg';
-import SkillPaths from '../components/SkillPaths';
 import ContactForm from '../components/ContactForm';
-import Card from '../components/ui/Card.astro';
 import ProjectCard from '../components/ui/ProjectCard.astro';
 import BlogCard from '../components/BlogCard';
 import { getCollection } from 'astro:content';
-import { getSkillPaths, getAccomplishments } from '../lib/data';
 import { getEnrichedProjects } from '../lib/build-projects';
 import { getReadingTimeMinutes } from '../lib/readingTime';
 
-const skillPaths = await getSkillPaths();
-const accomplishments = await getAccomplishments();
 const allProjects = await getEnrichedProjects();
 const featuredProjects = allProjects
   .filter((p) => p.featured)
@@ -41,10 +36,10 @@ const recentPosts = blogPosts
   <section class="hero-wrapper">
     <div class="hero">
       <div class="hero-content">
-        <p class="eyebrow">Hello, I'm Mason</p>
-        <h1 class="title-gradient">Shipping full-stack tools from code to server.</h1>
+        <p class="eyebrow">Hello, I'm Mason and</p>
+        <h1 class="title-gradient">I'm in love with complex problems.</h1>
         <p class="lead">
-          I build applications that get stuff done, then handle the infrastructure to keep them running.
+          Thinking is my hobby, solving is my passion.
         </p>
       </div>
       <Image src={profileImage} alt="Portrait" class="hero-photo" width={420} height={520} />
@@ -52,17 +47,6 @@ const recentPosts = blogPosts
   </section>
 
   <div class="container">
-    <section class="section">
-      <div class="section-title section-title--divider section-title--centered">
-        <div class="section-title__group">
-          <span class="section-title__line" aria-hidden="true"></span>
-          <h2 class="section-title__heading">Skills</h2>
-          <span class="section-title__line" aria-hidden="true"></span>
-        </div>
-      </div>
-      <SkillPaths client:visible paths={skillPaths} />
-    </section>
-
     <section class="section">
       <div class="section-title section-title--divider">
         <div class="section-title__group">
@@ -107,26 +91,6 @@ const recentPosts = blogPosts
             slug={post.slug}
             readingTime={post.readingTime}
           />
-        ))}
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="section-title section-title--divider">
-        <div class="section-title__group">
-          <span class="section-title__line" aria-hidden="true"></span>
-          <h2 class="section-title__heading">Technology & Tools</h2>
-          <span class="section-title__line" aria-hidden="true"></span>
-        </div>
-      </div>
-      <div class="card-grid">
-        {accomplishments.map((item) => (
-          <Card>
-            <div class="card-content">
-              <h3>{item.name}</h3>
-              <p>Delivered production systems with {item.name}.</p>
-            </div>
-          </Card>
         ))}
       </div>
     </section>
