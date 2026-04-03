@@ -5,7 +5,7 @@ pubDate: 2024-01-15
 updatedDate: 2024-02-03
 heroImage: "/images/portfolio.jpg"
 tags: ["astro", "react", "typescript", "tailwind", "portfolio"]
-draft: false
+draft: true
 githubRepo: "yourname/astro-portfolio"
 githubMilestoneId: 1
 featured: true

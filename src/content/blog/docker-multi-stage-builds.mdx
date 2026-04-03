@@ -1,22 +1,46 @@
 ---
-title: Docker multi-stage builds
-description: Cut your Docker image size without losing developer ergonomics.
-tags: [docker, devops]
-pubDate: 2025-12-10
+title: How do you reward an AI?
+description: Any time I learn about how AI models are trained, I usually hear the term reward thrown around...
+tags: [AI, ML]
+pubDate: 2026-04-02
 draft: false
 ---
 
-## Why multi-stage builds matter
+Any time I learn about how AI models are trained, I usually hear the term reward thrown around. This often confuses me, because what makes a network even WANT a reward?
 
-Multi-stage builds let you separate build tooling from runtime artifacts.
+When I dug deeper, I realized that the term "reward" is actually a few different terms that are conflated in an unhelpful way. The AI doesn't actually WANT anything. It is getting a signal, and being adjusted based on that signal.
 
-## A simple pattern
+Therein lies the problem: there are 3 levels of getting that signal, which are all called "rewards".
 
-```bash
-docker build -t app:latest .
-```
+## 1. The Ruleset
 
-## Common pitfalls
+This is nature. If you don't follow the rules, you die. You get no hints about how well you're doing, you either survive, or die. This is how evolutionary training is done. Give the model a set of sensors for its surroundings, let a bunch of them flail around, and kill everything but the best.
 
-- Forgetting to copy only the final build output.
-- Leaving debug tools in the runtime layer.
+## 2. External Feedback
+
+This is what allows a single network to adapt instead of requiring multiple generations. Pain receptors and hunger are a biological example of this. They are external feedback of how well we are following the ruleset, and our brains can rewire to make sure proper actions are taken in response.
+
+This is where most LLMs and image-gen models live. They are trained with methods like:
+- Supervised learning: a labeled dataset is the external signal, loss is computed against known-correct answers
+- RL with programmatic reward: Atari game scores, robotic control objectives
+- RLHF: human preferences as the signal
+
+They don't let the model figure the ruleset out on its own, they provide a pseudo-hunger in the form of a score. When we RL an LLM, we score it based on how well it follows its ruleset (high quality text), and rewire the network to more closely follow what we want.
+
+## 3. Internal Feedback
+
+This is when a model can simulate feedback loops internally. This can be simulated with stuff like AlphaGo Zero's self-play, where a model generates its own training games without external opponents, improves by playing against itself. The only feedback is what the model generates.
+
+This is very similar to dreaming. When we dream, we are simulating events without any external feedback, and determining how well they follow the ruleset.
+
+## How They Connect
+
+Level 2 and 3 don't really work without each other:
+
+If we only give internal feedback, an LLM quickly loses its grasp on what is real, because it can only see its own outputs, which causes hallucinations. This is very similar to what happens in humans who experience extended sensory deprivation. Our brain attempts to simulate senses which starts blurring what is real.
+
+If we only give external feedback, a model becomes brittle. It can't generalize data or prepare for new scenarios. It can only improve if someone else improves it.
+
+Combining both levels is likely the best recipe for a self-improving AI. This ground should be tread carefully though, as level 2 only improving when external input is provided is a critical safety measure as we chart these dangerous waters. Once the AI starts mulling internally, all bets are off.
+
+The more I study AI systems, the more I realize nature is the greatest teacher, because it already figured out the rules.

@@ -3,7 +3,7 @@ title: "Astro Content Collections: Type-Safe Content Management"
 description: "Quick overview of Astro's content collections feature for managing blog posts, projects, and other structured content with TypeScript support."
 pubDate: 2024-02-01
 tags: ["astro", "typescript", "content-management", "cms"]
-draft: false
+draft: true
 ---
 
 # Astro Content Collections TLDR

@@ -5,7 +5,7 @@ pubDate: 2024-02-03
 updatedDate: 2024-02-04
 heroImage: "/images/astro-hero.jpg"
 tags: ["astro", "web-development", "javascript", "frameworks"]
-draft: false
+draft: true
 ---
 
 # Getting Started with Astro

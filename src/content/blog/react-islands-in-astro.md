@@ -4,7 +4,7 @@ description: "Learn how to seamlessly integrate React components into your Astro
 pubDate: 2024-01-28
 heroImage: "/images/react-astro.jpg"
 tags: ["react", "astro", "javascript", "frontend", "performance"]
-draft: false
+draft: true
 ---
 
 # Building React Islands in Astro
