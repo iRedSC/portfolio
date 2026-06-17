@@ -1,15 +1,20 @@
 ---
+import { getSiteConfig } from '../../lib/site-config';
+
 interface NavItem {
   label: string;
   href: string;
   external?: boolean;
 }
 
+const { sections } = await getSiteConfig();
+
 const navItems: NavItem[] = [
   { label: 'Home', href: '/' },
   { label: 'Blog', href: '/blog' },
-  { label: 'Projects', href: '/projects' },
-  { label: 'TLDRs', href: '/tldrs' },
+  ...(sections.projects ? [{ label: 'Projects', href: '/projects' }] : []),
+  ...(sections.caseStudies ? [{ label: 'Case Studies', href: '/case-studies' }] : []),
+  ...(sections.tldrs ? [{ label: 'TLDRs', href: '/tldrs' }] : []),
   { label: 'About', href: '/about' },
 ];
 ---

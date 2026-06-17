@@ -5,11 +5,14 @@ import profileImage from '../assets/profile.jpg';
 import ContactForm from '../components/ContactForm';
 import ProjectCard from '../components/ui/ProjectCard.astro';
 import BlogCard from '../components/BlogCard';
+import CaseStudyCard from '../components/CaseStudyCard';
 import { getCollection } from 'astro:content';
 import { getEnrichedProjects } from '../lib/build-projects';
 import { getReadingTimeMinutes } from '../lib/readingTime';
+import { getSiteConfig } from '../lib/site-config';
 
-const allProjects = await getEnrichedProjects();
+const { sections } = await getSiteConfig();
+const allProjects = sections.projects ? await getEnrichedProjects() : [];
 const featuredProjects = allProjects
   .filter((p) => p.featured)
   .sort((a, b) => b.pubDate.valueOf() - a.pubDate.valueOf())
@@ -17,6 +20,22 @@ const featuredProjects = allProjects
 
 const blogPosts = await getCollection('blog', ({ data }) => !data.draft);
 const recentPosts = blogPosts
+  .map((entry) => ({
+    title: entry.data.title,
+    description: entry.data.description,
+    pubDate: entry.data.pubDate,
+    tags: entry.data.tags ?? [],
+    slug: entry.slug,
+    readingTime: getReadingTimeMinutes(entry.body),
+  }))
+  .sort((a, b) => b.pubDate.getTime() - a.pubDate.getTime())
+  .slice(0, 3);
+
+const caseStudyEntries = sections.caseStudies
+  ? await getCollection('case-studies', ({ data }) => !data.draft)
+  : [];
+const featuredCaseStudies = caseStudyEntries
+  .filter((entry) => entry.data.featured)
   .map((entry) => ({
     title: entry.data.title,
     description: entry.data.description,
@@ -37,9 +56,9 @@ const recentPosts = blogPosts
     <div class="hero">
       <div class="hero-content">
         <p class="eyebrow">Hello, I'm Mason and</p>
-        <h1 class="title-gradient">I'm in love with complex problems.</h1>
+        <h1 class="title-gradient">I design for least friction.</h1>
         <p class="lead">
-          Thinking is my hobby, solving is my passion.
+          People hate doing new stuff. I help them hate it, faster.
         </p>
       </div>
       <Image src={profileImage} alt="Portrait" class="hero-photo" width={420} height={520} />
@@ -47,29 +66,57 @@ const recentPosts = blogPosts
   </section>
 
   <div class="container">
-    <section class="section">
-      <div class="section-title section-title--divider">
-        <div class="section-title__group">
-          <span class="section-title__line" aria-hidden="true"></span>
-          <h2 class="section-title__heading">Featured projects</h2>
-          <span class="section-title__line" aria-hidden="true"></span>
+    {sections.projects && (
+      <section class="section">
+        <div class="section-title section-title--divider">
+          <div class="section-title__group">
+            <span class="section-title__line" aria-hidden="true"></span>
+            <h2 class="section-title__heading">Featured projects</h2>
+            <span class="section-title__line" aria-hidden="true"></span>
+          </div>
+          <a href="/projects" class="section-title__link">View all</a>
         </div>
-        <a href="/projects" class="section-title__link">View all</a>
-      </div>
-      <div class="card-grid">
-        {featuredProjects.map((project) => (
-          <ProjectCard
-            slug={project.slug}
-            title={project.title}
-            description={project.description}
-            image={project.heroImage}
-            tags={project.tags}
-            progress={project.progress}
-            language={project.language}
-          />
-        ))}
-      </div>
-    </section>
+        <div class="card-grid">
+          {featuredProjects.map((project) => (
+            <ProjectCard
+              slug={project.slug}
+              title={project.title}
+              description={project.description}
+              image={project.heroImage}
+              tags={project.tags}
+              progress={project.progress}
+              language={project.language}
+            />
+          ))}
+        </div>
+      </section>
+    )}
+
+    {sections.caseStudies && featuredCaseStudies.length > 0 && (
+      <section class="section">
+        <div class="section-title section-title--divider">
+          <div class="section-title__group">
+            <span class="section-title__line" aria-hidden="true"></span>
+            <h2 class="section-title__heading">Case studies</h2>
+            <span class="section-title__line" aria-hidden="true"></span>
+          </div>
+          <a href="/case-studies" class="section-title__link">View all</a>
+        </div>
+        <div class="card-grid card-grid--blog blog-cards-with-video">
+          {featuredCaseStudies.map((study) => (
+            <CaseStudyCard
+              client:visible
+              title={study.title}
+              description={study.description}
+              pubDate={study.pubDate}
+              tags={study.tags}
+              slug={study.slug}
+              readingTime={study.readingTime}
+            />
+          ))}
+        </div>
+      </section>
+    )}
 
     <section class="section">
       <div class="section-title section-title--divider">

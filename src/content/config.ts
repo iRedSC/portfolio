@@ -48,4 +48,19 @@ const projects = defineCollection({
 	}),
 });
 
-export const collections = { blog, tldrs, projects };
+const caseStudies = defineCollection({
+	type: 'content',
+	schema: ({ image }) => z.object({
+		title: z.string(),
+		description: z.string(),
+		tags: z.array(z.string()).default([]),
+		image: image().optional(),
+		heroImage: z.string().optional(),
+		pubDate: z.coerce.date(),
+		updatedDate: z.coerce.date().optional(),
+		draft: z.boolean().default(false),
+		featured: z.boolean().default(false),
+	}),
+});
+
+export const collections = { blog, tldrs, projects, 'case-studies': caseStudies };

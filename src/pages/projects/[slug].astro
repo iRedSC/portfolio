@@ -2,6 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 import TocScrollSpy from '../../components/TocScrollSpy';
 import { getCollection } from 'astro:content';
+import { getSiteConfig } from '../../lib/site-config';
 import { getMilestoneProgress } from '../../lib/github';
 import { Image } from 'astro:assets';
 import ProgressBar from '../../components/ui/ProgressBar.astro';
@@ -10,11 +11,19 @@ import Tag from '../../components/ui/Tag.astro';
 export const prerender = true;
 
 export async function getStaticPaths() {
+	const { sections } = await getSiteConfig();
+	if (!sections.projects) return [];
+
 	const entries = await getCollection('projects', ({ data }) => !data.draft);
 	return entries.map((entry) => ({ params: { slug: entry.slug }, props: { entry } }));
 }
 
 const { entry } = Astro.props;
+
+const { sections } = await getSiteConfig();
+if (!sections.projects || !entry) {
+	return new Response(null, { status: 404, statusText: 'Not Found' });
+}
 const { Content, headings } = await entry.render();
 const progress = await getMilestoneProgress(entry.data.githubRepo, entry.data.githubMilestoneId);
 const toc = headings

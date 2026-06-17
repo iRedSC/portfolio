@@ -4,4 +4,4 @@ alwaysApply: true
 
 # Memories
 
-- Write new critial information here.
+- Toggle whole site sections in `src/data/site.yaml` (`sections.projects`, `sections.tldrs`, `sections.caseStudies`). When false, nav links and pages for that section are hidden.

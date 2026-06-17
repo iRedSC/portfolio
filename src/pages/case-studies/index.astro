@@ -1,0 +1,92 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import CaseStudyFilter from '../../components/CaseStudyFilter.tsx';
+import { getCollection } from 'astro:content';
+import { getReadingTimeMinutes } from '../../lib/readingTime';
+import { getSiteConfig } from '../../lib/site-config';
+
+const { sections } = await getSiteConfig();
+if (!sections.caseStudies) {
+	return new Response(null, { status: 404, statusText: 'Not Found' });
+}
+
+const caseStudyEntries = await getCollection('case-studies', ({ data }) => !data.draft);
+
+const caseStudies = caseStudyEntries
+  .map((entry) => ({
+    title: entry.data.title,
+    description: entry.data.description,
+    pubDate: entry.data.pubDate,
+    tags: entry.data.tags ?? [],
+    slug: entry.slug,
+    readingTime: getReadingTimeMinutes(entry.body),
+  }))
+  .sort((a, b) => b.pubDate.getTime() - a.pubDate.getTime());
+---
+
+<Layout
+  title="Case Studies | Portfolio"
+  description="Private software solutions that save companies significant time and operational overhead."
+>
+  <section class="section">
+    <div class="section-title section-title--divider section-title--centered">
+      <div class="section-title__group">
+        <span class="section-title__line" aria-hidden="true"></span>
+        <h1 class="section-title__heading">Case Studies</h1>
+        <span class="section-title__line" aria-hidden="true"></span>
+      </div>
+    </div>
+    <p class="lead" style="text-align: center; margin: -0.5rem 0 1.5rem;">
+      Private software built for real businesses—focused on eliminating repetitive work
+      and reclaiming hours every week.
+    </p>
+
+    <CaseStudyFilter
+      caseStudies={caseStudies}
+      client:only="react"
+    >
+      <div slot="fallback" aria-hidden="true">
+        <div class="blog-filter">
+          <div class="filter-controls">
+            <div class="search-container">
+              <input type="text" placeholder="Search case studies..." class="search-input" disabled />
+            </div>
+            <div class="tags-container">
+              <div class="tags-list">
+                {caseStudies.flatMap((s: any) => s.tags).filter((t: string, i: number, a: string[]) => a.indexOf(t) === i).sort().slice(0, 8).map((tag: string) => (
+                  <span class="tag-chip">{tag}</span>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div class="filter-results">
+            <span class="results-count">{caseStudies.length} of {caseStudies.length} case studies</span>
+          </div>
+        </div>
+        <div id="filtered-case-studies" class="card-grid blog-cards-with-video">
+          {caseStudies.map((study: any) => (
+            <a href={`/case-studies/${study.slug}`} class="blog-card blog-card--fallback">
+              <div class="blog-card-content">
+                <div class="blog-card-top">
+                  <h3 class="blog-title">{study.title}</h3>
+                  <p class="blog-description">{study.description}</p>
+                </div>
+                <div class="blog-card-bottom">
+                  <div class="blog-tags">
+                    {(study.tags ?? []).map((tag: string) => (
+                      <span class="tag">{tag}</span>
+                    ))}
+                  </div>
+                  <div class="blog-meta">
+                    <time datetime={study.pubDate.toISOString()}>{study.pubDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</time>
+                    {study.readingTime ? <span class="reading-time">{study.readingTime} min read</span> : ''}
+                  </div>
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </CaseStudyFilter>
+  </section>
+</Layout>

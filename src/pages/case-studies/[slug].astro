@@ -1,0 +1,40 @@
+---
+import PostLayout from '../../layouts/PostLayout.astro';
+import { getCollection } from 'astro:content';
+import { getReadingTimeMinutes } from '../../lib/readingTime';
+import { getSiteConfig } from '../../lib/site-config';
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+	const { sections } = await getSiteConfig();
+	if (!sections.caseStudies) return [];
+
+	const entries = await getCollection('case-studies', ({ data }) => !data.draft);
+	return entries.map((entry) => ({ params: { slug: entry.slug }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+
+const { sections } = await getSiteConfig();
+if (!sections.caseStudies || !entry) {
+	return new Response(null, { status: 404, statusText: 'Not Found' });
+}
+
+const { Content, headings } = await entry.render();
+const readingTime = getReadingTimeMinutes(entry.body);
+const toc = headings
+	.filter((h) => h.depth === 2 || h.depth === 3)
+	.map((h) => ({ depth: h.depth, slug: h.slug, text: h.text }));
+---
+
+<PostLayout
+	title={entry.data.title}
+	description={entry.data.description}
+	image={entry.data.image}
+	publishedDate={entry.data.pubDate}
+	readingTime={`${readingTime} min read`}
+	toc={toc}
+>
+	<Content />
+</PostLayout>

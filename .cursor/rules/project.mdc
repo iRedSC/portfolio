@@ -5,7 +5,7 @@ alwaysApply: true
 # Project rules
 
 - Use `bun` for installing packages and running scripts.
-- Keep content in `src/content/{blog,projects,tldrs}` with frontmatter fields defined in `src/content/config.ts`.
+- Keep content in `src/content/{blog,projects,tldrs,case-studies}` with frontmatter fields defined in `src/content/config.ts`.
 - Use React islands only for interactive UI (filters, skill paths, contact form).
 - Prefer Astro components for layout and static cards; keep client JS minimal.
 - Read data from YAML files in `src/data` for skill paths and accomplishments.

@@ -2,6 +2,12 @@
 import Layout from '../../layouts/Layout.astro';
 import TldrFilter from '../../components/TldrFilter.tsx';
 import { getCollection } from 'astro:content';
+import { getSiteConfig } from '../../lib/site-config';
+
+const { sections } = await getSiteConfig();
+if (!sections.tldrs) {
+	return new Response(null, { status: 404, statusText: 'Not Found' });
+}
 
 const tldrs = await getCollection('tldrs', ({ data }) => !data.draft);
 

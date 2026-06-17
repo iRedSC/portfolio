@@ -1,11 +1,15 @@
 ---
 import FloatingNav from './FloatingNav';
+import { getSiteConfig } from '../lib/site-config';
+
+const { sections } = await getSiteConfig();
 
 const navLinks = [
 	{ href: '/', label: 'Home' },
 	{ href: '/blog', label: 'Blog' },
-	{ href: '/projects', label: 'Projects' },
-	{ href: '/tldrs', label: 'TLDRs' },
+	...(sections.projects ? [{ href: '/projects', label: 'Projects' }] : []),
+	...(sections.caseStudies ? [{ href: '/case-studies', label: 'Case Studies' }] : []),
+	...(sections.tldrs ? [{ href: '/tldrs', label: 'TLDRs' }] : []),
 ];
 const currentPath = Astro.url.pathname;
 

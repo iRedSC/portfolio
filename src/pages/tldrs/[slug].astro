@@ -1,15 +1,24 @@
 ---
 import PostLayout from '../../layouts/PostLayout.astro';
 import { getCollection } from 'astro:content';
+import { getSiteConfig } from '../../lib/site-config';
 
 export const prerender = true;
 
 export async function getStaticPaths() {
+	const { sections } = await getSiteConfig();
+	if (!sections.tldrs) return [];
+
 	const entries = await getCollection('tldrs', ({ data }) => !data.draft);
 	return entries.map((entry) => ({ params: { slug: entry.slug }, props: { entry } }));
 }
 
 const { entry } = Astro.props;
+
+const { sections } = await getSiteConfig();
+if (!sections.tldrs || !entry) {
+	return new Response(null, { status: 404, statusText: 'Not Found' });
+}
 const { Content, headings } = await entry.render();
 const toc = headings
 	.filter((h) => h.depth === 2 || h.depth === 3)
