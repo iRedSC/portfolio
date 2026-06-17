@@ -947,6 +947,21 @@ a {
 		'Liberation Mono', 'Courier New', monospace;
 }
 
+.post-content video {
+	display: block;
+	width: 100%;
+	max-width: 720px;
+	height: auto;
+	margin: 1.5rem auto;
+	border-radius: 12px;
+	border: 1px solid var(--border);
+	background: #000;
+}
+
+.post-content video.content-video--mobile {
+	max-width: 320px;
+}
+
 .post-toc {
 	position: sticky;
 	top: 6rem;
