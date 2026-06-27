@@ -5,6 +5,7 @@ interface CaseStudyCardProps {
 	tags: string[];
 	slug: string;
 	readingTime?: number;
+	heroImage?: string;
 }
 
 export default function CaseStudyCard({
@@ -14,6 +15,7 @@ export default function CaseStudyCard({
 	tags,
 	slug,
 	readingTime,
+	heroImage,
 }: CaseStudyCardProps) {
 	const date = typeof pubDate === 'string' ? new Date(pubDate) : pubDate;
 	const formattedDate = date.toLocaleDateString('en-US', {
@@ -30,7 +32,15 @@ export default function CaseStudyCard({
 	};
 
 	return (
-		<a href={`/case-studies/${slug}`} className="blog-card">
+		<a
+			href={`/case-studies/${slug}`}
+			className={`blog-card${heroImage ? ' blog-card--has-image' : ''}`}
+		>
+			{heroImage && (
+				<div className="blog-card-image">
+					<img src={heroImage} alt="" loading="lazy" />
+				</div>
+			)}
 			<div className="blog-card-content">
 				<div className="blog-card-top">
 					<h3 className="blog-title">{title}</h3>

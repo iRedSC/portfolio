@@ -43,6 +43,7 @@ const featuredCaseStudies = caseStudyEntries
     tags: entry.data.tags ?? [],
     slug: entry.slug,
     readingTime: getReadingTimeMinutes(entry.body),
+    heroImage: entry.data.heroImage,
   }))
   .sort((a, b) => b.pubDate.getTime() - a.pubDate.getTime())
   .slice(0, 3);
@@ -112,6 +113,7 @@ const featuredCaseStudies = caseStudyEntries
               tags={study.tags}
               slug={study.slug}
               readingTime={study.readingTime}
+              heroImage={study.heroImage}
             />
           ))}
         </div>

@@ -8,6 +8,7 @@ interface CaseStudy {
 	tags: string[];
 	slug: string;
 	readingTime?: number;
+	heroImage?: string;
 }
 
 interface CaseStudyFilterProps {
@@ -115,6 +116,7 @@ export default function CaseStudyFilter({ caseStudies = [] }: CaseStudyFilterPro
 						tags={study.tags}
 						slug={study.slug}
 						readingTime={study.readingTime}
+						heroImage={study.heroImage}
 					/>
 				))}
 			</div>

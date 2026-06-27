@@ -20,6 +20,7 @@ const caseStudies = caseStudyEntries
     tags: entry.data.tags ?? [],
     slug: entry.slug,
     readingTime: getReadingTimeMinutes(entry.body),
+    heroImage: entry.data.heroImage,
   }))
   .sort((a, b) => b.pubDate.getTime() - a.pubDate.getTime());
 ---
@@ -65,7 +66,12 @@ const caseStudies = caseStudyEntries
         </div>
         <div id="filtered-case-studies" class="card-grid blog-cards-with-video">
           {caseStudies.map((study: any) => (
-            <a href={`/case-studies/${study.slug}`} class="blog-card blog-card--fallback">
+            <a href={`/case-studies/${study.slug}`} class={`blog-card blog-card--fallback${study.heroImage ? ' blog-card--has-image' : ''}`}>
+              {study.heroImage && (
+                <div class="blog-card-image">
+                  <img src={study.heroImage} alt="" loading="lazy" />
+                </div>
+              )}
               <div class="blog-card-content">
                 <div class="blog-card-top">
                   <h3 class="blog-title">{study.title}</h3>
