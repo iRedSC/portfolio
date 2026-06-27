@@ -331,12 +331,14 @@ a {
 .blog-card-image {
 	aspect-ratio: 16 / 9;
 	overflow: hidden;
+	border-radius: 20px 20px 0 0;
 }
 
 .blog-card-image img {
 	width: 100%;
 	height: 100%;
 	object-fit: cover;
+	border-radius: inherit;
 }
 
 .blog-card--has-image .blog-card-content {
@@ -436,12 +438,14 @@ a {
 #filtered-projects .project-image {
 	aspect-ratio: 16 / 9;
 	overflow: hidden;
+	border-radius: 20px 20px 0 0;
 }
 
 #filtered-projects .project-image img {
 	width: 100%;
 	height: 100%;
 	object-fit: cover;
+	border-radius: inherit;
 }
 
 #filtered-projects .project-content {
@@ -670,12 +674,14 @@ a {
 	aspect-ratio: 1;
 	overflow: hidden;
 	background: var(--border);
+	border-radius: 20px 20px 0 0;
 }
 
 .card-image img {
 	width: 100%;
 	height: 100%;
 	object-fit: cover;
+	border-radius: inherit;
 }
 
 .card-content {

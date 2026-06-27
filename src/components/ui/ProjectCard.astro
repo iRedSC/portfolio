@@ -76,12 +76,14 @@ const { slug, title, description, image, tags, progress, language } = Astro.prop
   .project-image {
     aspect-ratio: 16 / 9;
     overflow: hidden;
+    border-radius: 20px 20px 0 0;
   }
 
   .project-image img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    border-radius: inherit;
   }
 
   .project-content {
