@@ -1,0 +1,12 @@
+node_modules
+dist
+.astro
+.vercel
+.cache
+.git
+.cursor
+.env
+.env.*
+!.env.example
+*.log
+bun.lock

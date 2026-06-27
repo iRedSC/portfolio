@@ -5,3 +5,4 @@ alwaysApply: true
 # Memories
 
 - Toggle whole site sections in `src/data/site.yaml` (`sections.projects`, `sections.tldrs`, `sections.caseStudies`). When false, nav links and pages for that section are hidden.
+- Dokploy/Nixpacks deploy uses `npm ci --omit=dev` (not bun). Set `NIXPACKS=1` at build time; enable Dokploy build cache for faster redeploys.

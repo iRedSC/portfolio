@@ -1,11 +1,14 @@
 # Nixpacks config for Dokploy deployment
 # Use npm (not bun) in the container to avoid arch issues (exit 132) on some hosts.
 # NIXPACKS=1 makes Astro use the Node adapter (standalone server).
-# Node 20+ required (octokit, resend, etc.). Use .nvmrc + package.json engines;
-# if build still uses Node 18, set build env NIXPACKS_NODE_VERSION=20 in Dokploy.
+# Enable persistent build cache in Dokploy so the install layer is reused between deploys.
+
+[variables]
+NIXPACKS_NODE_VERSION = "20"
+PUPPETEER_SKIP_DOWNLOAD = "true"
 
 [phases.install]
-cmds = ["npm install"]
+cmds = ["npm ci --omit=dev"]
 
 [phases.build]
 cmds = ["NIXPACKS=1 npm run build"]
