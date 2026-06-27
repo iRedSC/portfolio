@@ -1,4 +1,4 @@
 sections:
-  projects: true
+  projects: false
   tldrs: false
   caseStudies: true

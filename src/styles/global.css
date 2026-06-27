@@ -203,16 +203,21 @@ a {
 .card-grid {
 	display: grid;
 	gap: 1.5rem;
-	grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+	/* auto-fill (not auto-fit) keeps empty tracks so a single card stays a
+	   normal column width instead of stretching to fill the whole row. */
+	grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
 }
 
-/* Blog page: strict 3-column layout */
-#filtered-posts.card-grid {
-	grid-template-columns: repeat(3, 1fr);
+/* Blog & case study index grids: responsive columns that scale with the
+   viewport and never blow a lone card up to full width. */
+#filtered-posts.card-grid,
+#filtered-case-studies.card-grid {
+	grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
 }
 
 @media (max-width: 768px) {
 	#filtered-posts.card-grid,
+	#filtered-case-studies.card-grid,
 	.card-grid--blog.blog-cards-with-video {
 		display: flex;
 		flex-direction: column;
