@@ -5,7 +5,7 @@ import profileImage from '../assets/profile.jpg';
 import ContactForm from '../components/ContactForm';
 import ProjectCard from '../components/ui/ProjectCard.astro';
 import BlogCard from '../components/BlogCard';
-import CaseStudyCard from '../components/CaseStudyCard';
+import CaseStudyCard from '../components/ui/CaseStudyCard.astro';
 import { getCollection } from 'astro:content';
 import { getEnrichedProjects } from '../lib/build-projects';
 import { getReadingTimeMinutes } from '../lib/readingTime';
@@ -103,10 +103,9 @@ const featuredCaseStudies = caseStudyEntries
           </div>
           <a href="/case-studies" class="section-title__link">View all</a>
         </div>
-        <div class="card-grid card-grid--blog blog-cards-with-video">
+        <div class="card-grid blog-cards-with-video">
           {featuredCaseStudies.map((study) => (
             <CaseStudyCard
-              client:visible
               title={study.title}
               description={study.description}
               pubDate={study.pubDate}

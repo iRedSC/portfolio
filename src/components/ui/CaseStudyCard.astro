@@ -1,0 +1,48 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  pubDate: Date;
+  tags: string[];
+  slug: string;
+  readingTime?: number;
+  heroImage?: string;
+}
+
+const { title, description, pubDate, tags, slug, readingTime, heroImage } = Astro.props;
+const formattedDate = pubDate.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<a
+  href={`/case-studies/${slug}`}
+  class={`blog-card${heroImage ? ' blog-card--has-image' : ''}`}
+>
+  {heroImage && (
+    <div class="blog-card-image">
+      <img src={heroImage} alt="" loading="lazy" />
+    </div>
+  )}
+  <div class="blog-card-content">
+    <div class="blog-card-top">
+      <h3 class="blog-title">{title}</h3>
+      <p class="blog-description">{description}</p>
+    </div>
+    <div class="blog-card-bottom">
+      <div class="blog-tags">
+        {tags.map((tag: string) => (
+          <span class="tag">{tag}</span>
+        ))}
+      </div>
+      <div class="blog-meta">
+        <time datetime={pubDate.toISOString()}>{formattedDate}</time>
+        {readingTime != null && (
+          <span class="reading-time">{readingTime} min read</span>
+        )}
+      </div>
+    </div>
+  </div>
+</a>

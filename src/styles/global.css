@@ -233,8 +233,10 @@ a {
 		padding: 1.5rem;
 	}
 
-	.blog-card--has-image {
+	#filtered-posts .blog-card.blog-card--has-image,
+	.blog-cards-with-video .blog-card.blog-card--has-image {
 		padding: 0;
+		height: auto;
 	}
 
 	.blog-card--has-image .blog-card-content {
@@ -323,9 +325,11 @@ a {
 	height: 100%;
 }
 
-.blog-card--has-image {
+#filtered-posts .blog-card.blog-card--has-image,
+.blog-cards-with-video .blog-card.blog-card--has-image {
 	padding: 0;
 	aspect-ratio: auto;
+	height: auto;
 }
 
 .blog-card-image {
