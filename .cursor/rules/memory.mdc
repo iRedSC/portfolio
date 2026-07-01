@@ -8,3 +8,4 @@ alwaysApply: true
 - Dokploy/Nixpacks deploy uses `npm ci --omit=dev` (not bun). Set `NIXPACKS=1` at build time; enable Dokploy build cache for faster redeploys.
 - Card grids (`.card-grid` in `global.css`) use `auto-fill` (not `auto-fit`) so a single card stays one column wide instead of stretching full width. Blog/case-study index grids (`#filtered-posts`, `#filtered-case-studies`) share a `repeat(auto-fill, minmax(320px, 1fr))` rule.
 - Image blog/case-study cards need `.blog-cards-with-video .blog-card.blog-card--has-image` (not bare `.blog-card--has-image`) to override the square `aspect-ratio: 1` and padding from `.blog-cards-with-video .blog-card`.
+- Use `bun run compress-video` for MP4 compression; DaVinci `apv1` exports are not decodable by system `ffmpeg`, so export H.264/HEVC/ProRes first.

@@ -7,6 +7,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
+		"compress-video": "node scripts/compress-video.mjs",
     "render-vanta": "node scripts/render-vanta/render.mjs"
   },
   "dependencies": {
