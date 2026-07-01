@@ -1275,6 +1275,11 @@ a {
 	text-align: center;
 }
 
+.form-message--error {
+	background: rgba(220, 38, 38, 0.12);
+	color: #dc2626;
+}
+
 .sr-only {
 	position: absolute;
 	width: 1px;
