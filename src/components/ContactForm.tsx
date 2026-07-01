@@ -10,20 +10,30 @@ export default function ContactForm() {
 		event.preventDefault();
 		setStatus('loading');
 		setMessage('');
+
 		const form = event.currentTarget;
 		const formData = new FormData(form);
+
 		try {
 			const response = await fetch('/api/contact', {
 				method: 'POST',
 				body: formData,
 			});
-			if (!response.ok) throw new Error('Failed');
+
+			const data = (await response.json().catch(() => null)) as
+				| { ok?: boolean; error?: string }
+				| null;
+
+			if (!response.ok) {
+				throw new Error(data?.error ?? 'Failed to send message.');
+			}
+
 			setStatus('success');
 			setMessage('Message sent! Thanks for reaching out.');
 			form.reset();
 		} catch (error) {
 			setStatus('error');
-			setMessage('Something went wrong. Please try again later.');
+			setMessage(error instanceof Error ? error.message : 'Something went wrong. Please try again later.');
 		}
 	}
 
@@ -31,13 +41,13 @@ export default function ContactForm() {
 		<form className="contact-form" onSubmit={handleSubmit}>
 			<div className="form-field">
 				<label htmlFor="name">Name</label>
-				<input id="name" name="name" type="text" required />
+				<input id="name" name="name" type="text" required autoComplete="name" />
 			</div>
 			<div className="form-field">
 				<label htmlFor="email">Email</label>
-				<input id="email" name="email" type="email" required />
+				<input id="email" name="email" type="email" required autoComplete="email" />
 			</div>
-			<div className="sr-only">
+			<div className="sr-only" aria-hidden="true">
 				<label htmlFor="company">Leave this empty</label>
 				<input id="company" name="company" type="text" tabIndex={-1} autoComplete="off" />
 			</div>
@@ -48,7 +58,15 @@ export default function ContactForm() {
 			<button type="submit" disabled={status === 'loading'}>
 				{status === 'loading' ? 'Sending...' : 'Send message'}
 			</button>
-			{message && <p className="form-message">{message}</p>}
+			{message && (
+				<p
+					className={`form-message${status === 'error' ? ' form-message--error' : ''}`}
+					role="status"
+					aria-live="polite"
+				>
+					{message}
+				</p>
+			)}
 		</form>
 	);
 }
