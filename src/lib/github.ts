@@ -20,6 +20,8 @@ type GithubCache = Record<string, MilestoneProgress | CommitActivity>;
 
 const cacheDir = path.join(process.cwd(), '.cache');
 const cacheFile = path.join(cacheDir, 'github.json');
+const COMMIT_ACTIVITY_TTL_MS = 60 * 60 * 1000;
+const COMMIT_FETCH_TIMEOUT_MS = 4000;
 
 async function readCache(): Promise<GithubCache> {
 	try {
@@ -45,6 +47,14 @@ function isMilestoneProgress(entry: MilestoneProgress | CommitActivity | undefin
 
 function isCommitActivity(entry: MilestoneProgress | CommitActivity | undefined): entry is CommitActivity {
 	return Boolean(entry && 'days' in entry);
+}
+
+function commitActivityAgeMs(entry: CommitActivity): number {
+	return Date.now() - new Date(entry.updatedAt).getTime();
+}
+
+function isFreshCommitActivity(entry: CommitActivity): boolean {
+	return commitActivityAgeMs(entry) < COMMIT_ACTIVITY_TTL_MS;
 }
 
 function emptyCommitActivity(): CommitActivity {
@@ -101,14 +111,14 @@ async function fetchDailyCommitActivity(
 	owner: string,
 	repo: string,
 ): Promise<CommitDay[]> {
-	for (let attempt = 0; attempt < 5; attempt += 1) {
+	for (let attempt = 0; attempt < 3; attempt += 1) {
 		const response = await octokit.request('GET /repos/{owner}/{repo}/stats/commit_activity', {
 			owner,
 			repo,
 		});
 
 		if (response.status === 202) {
-			await new Promise((resolve) => setTimeout(resolve, 2000));
+			await new Promise((resolve) => setTimeout(resolve, 1000));
 			continue;
 		}
 
@@ -125,23 +135,26 @@ async function fetchDailyCommitActivity(
 export async function getCommitActivity(repoSlug: string): Promise<CommitActivity> {
 	const cacheKey = `commits30d:${repoSlug}`;
 	const cache = await readCache();
-	const cached = cache[cacheKey];
-	const isDev = process.env.NODE_ENV === 'development';
+	const cached = isCommitActivity(cache[cacheKey]) ? cache[cacheKey] : undefined;
 	const token = process.env.GITHUB_TOKEN;
 
-	if (isDev && isCommitActivity(cached)) {
+	if (cached && (!token || isFreshCommitActivity(cached))) {
 		return cached;
 	}
 
 	if (!token) {
-		if (isCommitActivity(cached)) return cached;
-		return emptyCommitActivity();
+		return cached ?? emptyCommitActivity();
 	}
 
 	try {
 		const [owner, repo] = repoSlug.split('/');
 		const octokit = new Octokit({ auth: token });
-		const days = await fetchDailyCommitActivity(octokit, owner, repo);
+		const days = await Promise.race([
+			fetchDailyCommitActivity(octokit, owner, repo),
+			new Promise<CommitDay[]>((_, reject) => {
+				setTimeout(() => reject(new Error('Commit activity fetch timed out')), COMMIT_FETCH_TIMEOUT_MS);
+			}),
+		]);
 		const activity: CommitActivity = {
 			days: days.length ? days : emptyCommitActivity().days,
 			updatedAt: new Date().toISOString(),
@@ -151,8 +164,7 @@ export async function getCommitActivity(repoSlug: string): Promise<CommitActivit
 		return activity;
 	} catch {
 		console.warn(`Commit activity fetch failed for ${repoSlug}`);
-		if (isCommitActivity(cached)) return cached;
-		return emptyCommitActivity();
+		return cached ?? emptyCommitActivity();
 	}
 }
 
