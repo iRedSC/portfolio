@@ -1813,3 +1813,44 @@ a {
 		transform: translateY(0);
 	}
 }
+
+/* Easter egg: type "awesome" (when not in a text field) to cycle accent colors */
+@property --accent-h {
+	syntax: '<number>';
+	inherits: true;
+	initial-value: 20;
+}
+
+html.accent-rgb-cycle {
+	--accent: hsl(var(--accent-h) 75% 55%);
+	--accent-soft: hsl(var(--accent-h) 80% 92%);
+	--shadow: hsl(var(--accent-h) 75% 55% / 0.15);
+	animation: accent-rgb-cycle 12s linear infinite;
+}
+
+html.accent-rgb-cycle.theme-dark {
+	--accent-soft: hsl(var(--accent-h) 50% 18%);
+	--shadow: hsl(var(--accent-h) 75% 55% / 0.3);
+}
+
+@media (prefers-color-scheme: dark) {
+	html.accent-rgb-cycle:not(.theme-light) {
+		--accent-soft: hsl(var(--accent-h) 50% 18%);
+		--shadow: hsl(var(--accent-h) 75% 55% / 0.3);
+	}
+}
+
+@keyframes accent-rgb-cycle {
+	from {
+		--accent-h: 0;
+	}
+	to {
+		--accent-h: 360;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	html.accent-rgb-cycle {
+		animation: none;
+	}
+}
