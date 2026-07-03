@@ -18,7 +18,7 @@ const projectsForFilter = projects.map((p) => ({
   description: p.description,
   tags: p.tags ?? [],
   heroImage: p.heroImage,
-  progress: p.progress,
+  commitActivity: p.commitActivity,
   language: p.language,
 }));
 ---
@@ -68,7 +68,7 @@ const projectsForFilter = projects.map((p) => ({
           description={project.description}
           image={project.heroImage}
           tags={project.tags}
-          progress={project.progress}
+          commitActivity={project.commitActivity}
           language={project.language}
         />
       ))}
@@ -83,6 +83,8 @@ const projectsForFilter = projects.map((p) => ({
 </Layout>
 
 <script define:vars={{ projectsJson: JSON.stringify(projectsForFilter) }}>
+  import { renderCommitHeatmapHtml } from '../../lib/commit-heatmap.ts';
+
   function escapeHtml(s) {
     if (s == null) return '';
     const str = String(s);
@@ -97,7 +99,7 @@ const projectsForFilter = projects.map((p) => ({
     const description = project.description;
     const tags = Array.isArray(project.tags) ? project.tags : [];
     const heroImage = project.heroImage;
-    const progress = project.progress;
+    const commitActivity = project.commitActivity;
     const language = project.language;
 
     const tagsHtml = tags
@@ -111,14 +113,9 @@ const projectsForFilter = projects.map((p) => ({
       ? `<span class="project-language">${escapeHtml(language)}</span>`
       : '';
 
-    const progressHtml =
-      progress !== undefined
-        ? `<div class="project-progress">
-            <div class="progress-bar">
-              <div class="progress-fill" style="width: ${progress}%"></div>
-            </div>
-            <span class="progress-text">${progress}% complete</span>
-          </div>`
+    const commitActivityHtml =
+      Array.isArray(commitActivity) && commitActivity.length > 0
+        ? `<div class="project-commit-activity">${renderCommitHeatmapHtml(commitActivity)}</div>`
         : '';
 
     return `
@@ -133,7 +130,7 @@ const projectsForFilter = projects.map((p) => ({
           <div class="project-card-bottom">
             <div class="project-tags">${tagsHtml}</div>
             ${languageHtml}
-            ${progressHtml}
+            ${commitActivityHtml}
           </div>
         </div>
       </article>

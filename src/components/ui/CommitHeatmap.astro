@@ -1,0 +1,33 @@
+---
+import type { CommitDay } from '../../lib/commit-heatmap';
+import { COMMIT_HEATMAP_DAYS, formatDayLabel, getCommitLevels } from '../../lib/commit-heatmap';
+
+interface Props {
+	days: CommitDay[];
+}
+
+const { days } = Astro.props;
+const levels = getCommitLevels(days);
+const totalCommits = days.reduce((sum, day) => sum + day.count, 0);
+---
+
+<div class="commit-heatmap" role="img" aria-label={`${totalCommits} commits in the last ${COMMIT_HEATMAP_DAYS} days`}>
+	{
+		days.map((day, index) => {
+			const countLabel = day.count === 1 ? '1 commit' : `${day.count} commits`;
+			return (
+				<span
+					class={`commit-heatmap-box level-${levels[index]}`}
+					tabindex="0"
+					role="gridcell"
+					aria-label={`${countLabel}, ${day.date}`}
+				>
+					<span class="commit-heatmap-tooltip" aria-hidden="true">
+						<strong>{countLabel}</strong>
+						<span>{formatDayLabel(day.date)}</span>
+					</span>
+				</span>
+			);
+		})
+	}
+</div>

@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
+import type { CommitDay } from '../lib/commit-heatmap';
 
 export interface ProjectForFilter {
   slug: string;
@@ -9,7 +10,7 @@ export interface ProjectForFilter {
   demoURL?: string;
   repoURL?: string;
   language?: string;
-  progress?: number;
+  commitActivity?: CommitDay[];
 }
 
 interface ProjectsFilterProps {

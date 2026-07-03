@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { Octokit } from 'octokit';
+import { COMMIT_HEATMAP_DAYS, type CommitDay } from './commit-heatmap';
 
 type MilestoneProgress = {
 	percent: number;
@@ -10,24 +11,148 @@ type MilestoneProgress = {
 	updatedAt: string;
 };
 
+export type CommitActivity = {
+	days: CommitDay[];
+	updatedAt: string;
+};
+
+type GithubCache = Record<string, MilestoneProgress | CommitActivity>;
+
 const cacheDir = path.join(process.cwd(), '.cache');
 const cacheFile = path.join(cacheDir, 'github.json');
 
-async function readCache(): Promise<Record<string, MilestoneProgress>> {
+async function readCache(): Promise<GithubCache> {
 	try {
 		const raw = await fs.readFile(cacheFile, 'utf-8');
-		return JSON.parse(raw) as Record<string, MilestoneProgress>;
+		return JSON.parse(raw) as GithubCache;
 	} catch {
 		return {};
 	}
 }
 
-async function writeCache(cache: Record<string, MilestoneProgress>) {
+async function writeCache(cache: GithubCache) {
 	try {
 		await fs.mkdir(cacheDir, { recursive: true });
 		await fs.writeFile(cacheFile, JSON.stringify(cache, null, 2));
 	} catch {
 		// ignore cache write failures
+	}
+}
+
+function isMilestoneProgress(entry: MilestoneProgress | CommitActivity | undefined): entry is MilestoneProgress {
+	return Boolean(entry && 'percent' in entry);
+}
+
+function isCommitActivity(entry: MilestoneProgress | CommitActivity | undefined): entry is CommitActivity {
+	return Boolean(entry && 'days' in entry);
+}
+
+function emptyCommitActivity(): CommitActivity {
+	const days: CommitDay[] = [];
+	const today = new Date();
+	today.setHours(0, 0, 0, 0);
+
+	for (let i = COMMIT_HEATMAP_DAYS - 1; i >= 0; i -= 1) {
+		const date = new Date(today);
+		date.setDate(date.getDate() - i);
+		days.push({
+			date: date.toISOString().slice(0, 10),
+			count: 0,
+		});
+	}
+
+	return { days, updatedAt: new Date().toISOString() };
+}
+
+function dailyCountsFromCommitActivity(
+	weeklyData: Array<{ week: number; days: number[] }>,
+): CommitDay[] {
+	const countsByDate = new Map<string, number>();
+
+	for (const week of weeklyData) {
+		const weekStart = new Date(week.week * 1000);
+		for (let dayIndex = 0; dayIndex < 7; dayIndex += 1) {
+			const date = new Date(weekStart);
+			date.setUTCDate(date.getUTCDate() + dayIndex);
+			const dateKey = date.toISOString().slice(0, 10);
+			countsByDate.set(dateKey, (countsByDate.get(dateKey) ?? 0) + (week.days[dayIndex] ?? 0));
+		}
+	}
+
+	const today = new Date();
+	today.setHours(0, 0, 0, 0);
+	const days: CommitDay[] = [];
+
+	for (let i = COMMIT_HEATMAP_DAYS - 1; i >= 0; i -= 1) {
+		const date = new Date(today);
+		date.setDate(date.getDate() - i);
+		const dateKey = date.toISOString().slice(0, 10);
+		days.push({
+			date: dateKey,
+			count: countsByDate.get(dateKey) ?? 0,
+		});
+	}
+
+	return days;
+}
+
+async function fetchDailyCommitActivity(
+	octokit: Octokit,
+	owner: string,
+	repo: string,
+): Promise<CommitDay[]> {
+	for (let attempt = 0; attempt < 5; attempt += 1) {
+		const response = await octokit.request('GET /repos/{owner}/{repo}/stats/commit_activity', {
+			owner,
+			repo,
+		});
+
+		if (response.status === 202) {
+			await new Promise((resolve) => setTimeout(resolve, 2000));
+			continue;
+		}
+
+		if (response.status !== 200 || !Array.isArray(response.data)) {
+			break;
+		}
+
+		return dailyCountsFromCommitActivity(response.data);
+	}
+
+	return [];
+}
+
+export async function getCommitActivity(repoSlug: string): Promise<CommitActivity> {
+	const cacheKey = `commits30d:${repoSlug}`;
+	const cache = await readCache();
+	const cached = cache[cacheKey];
+	const isDev = process.env.NODE_ENV === 'development';
+	const token = process.env.GITHUB_TOKEN;
+
+	if (isDev && isCommitActivity(cached)) {
+		return cached;
+	}
+
+	if (!token) {
+		if (isCommitActivity(cached)) return cached;
+		return emptyCommitActivity();
+	}
+
+	try {
+		const [owner, repo] = repoSlug.split('/');
+		const octokit = new Octokit({ auth: token });
+		const days = await fetchDailyCommitActivity(octokit, owner, repo);
+		const activity: CommitActivity = {
+			days: days.length ? days : emptyCommitActivity().days,
+			updatedAt: new Date().toISOString(),
+		};
+		cache[cacheKey] = activity;
+		await writeCache(cache);
+		return activity;
+	} catch {
+		console.warn(`Commit activity fetch failed for ${repoSlug}`);
+		if (isCommitActivity(cached)) return cached;
+		return emptyCommitActivity();
 	}
 }
 
@@ -41,12 +166,12 @@ export async function getMilestoneProgress(
 	const isDev = process.env.NODE_ENV === 'development';
 	const token = process.env.GITHUB_TOKEN;
 
-	if (isDev && cached) {
+	if (isDev && isMilestoneProgress(cached)) {
 		return cached;
 	}
 
 	if (!token) {
-		if (cached) return cached;
+		if (isMilestoneProgress(cached)) return cached;
 		return { percent: 0, open: 0, closed: 0, total: 0, updatedAt: new Date().toISOString() };
 	}
 
@@ -72,9 +197,9 @@ export async function getMilestoneProgress(
 		cache[cacheKey] = progress;
 		await writeCache(cache);
 		return progress;
-	} catch (error) {
+	} catch {
 		console.warn(`Milestone fetch failed for ${repoSlug}#${milestoneId}`);
-		if (cached) return cached;
+		if (isMilestoneProgress(cached)) return cached;
 		return { percent: 0, open: 0, closed: 0, total: 0, updatedAt: new Date().toISOString() };
 	}
 }

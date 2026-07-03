@@ -10,3 +10,4 @@ alwaysApply: true
 - Image blog/case-study cards need `.blog-cards-with-video .blog-card.blog-card--has-image` (not bare `.blog-card--has-image`) to override the square `aspect-ratio: 1` and padding from `.blog-cards-with-video .blog-card`.
 - Use `bun run compress-video` for MP4 compression; DaVinci `apv1` exports are not decodable by system `ffmpeg`, so export H.264/HEVC/ProRes first.
 - Astro `security.allowedDomains`: set `SITE_URL` at Nixpacks build time; use separate `{ protocol }` and `{ hostname }` entries (not combined) so `X-Forwarded-Proto` validation works behind Cloudflare/Dokploy.
+- Project cards show a 30-day commit heatmap (not milestone %). Fetch via `getCommitActivity` in `src/lib/github.ts`; cache key `commits30d:{owner/repo}` in `.cache/github.json`.

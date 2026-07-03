@@ -1,5 +1,6 @@
 import { getCollection } from 'astro:content';
-import { getMilestoneProgress, fetchRepositoryInfo } from './github';
+import type { CommitDay } from './commit-heatmap';
+import { getCommitActivity, fetchRepositoryInfo } from './github';
 
 export interface EnrichedProject {
   slug: string;
@@ -11,7 +12,7 @@ export interface EnrichedProject {
   tags: string[];
   draft: boolean;
   featured: boolean;
-  progress?: number;
+  commitActivity?: CommitDay[];
   language?: string;
 }
 
@@ -46,11 +47,8 @@ export async function getEnrichedProjects(): Promise<EnrichedProject[]> {
   const enriched = await Promise.all(
     projects.map(async (project) => {
       const tags = project.data.tags ?? [];
-      const [progress, repoInfo] = await Promise.all([
-        getMilestoneProgress(
-          project.data.githubRepo,
-          project.data.githubMilestoneId,
-        ),
+      const [commitActivity, repoInfo] = await Promise.all([
+        getCommitActivity(project.data.githubRepo),
         (() => {
           const repoUrl = project.data.repoUrl;
           const match = repoUrl?.match(/github\.com\/([^/]+)\/([^/]+)/);
@@ -73,7 +71,7 @@ export async function getEnrichedProjects(): Promise<EnrichedProject[]> {
         tags,
         draft: project.data.draft,
         featured: project.data.featured ?? false,
-        progress: progress.percent,
+        commitActivity: commitActivity.days,
         language,
       };
     }),

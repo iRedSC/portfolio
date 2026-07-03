@@ -4,9 +4,9 @@ import PostToc from '../../components/PostToc.astro';
 import TocScrollSpy from '../../components/TocScrollSpy';
 import { getCollection } from 'astro:content';
 import { getSiteConfig } from '../../lib/site-config';
-import { getMilestoneProgress } from '../../lib/github';
+import { getCommitActivity } from '../../lib/github';
+import CommitHeatmap from '../../components/CommitHeatmap.tsx';
 import { Image } from 'astro:assets';
-import ProgressBar from '../../components/ui/ProgressBar.astro';
 import Tag from '../../components/ui/Tag.astro';
 
 export const prerender = true;
@@ -26,7 +26,7 @@ if (!sections.projects || !entry) {
 	return new Response(null, { status: 404, statusText: 'Not Found' });
 }
 const { Content, headings } = await entry.render();
-const progress = await getMilestoneProgress(entry.data.githubRepo, entry.data.githubMilestoneId);
+const commitActivity = await getCommitActivity(entry.data.githubRepo);
 const toc = headings
 	.filter((heading) => heading.depth === 2 || heading.depth === 3)
 	.map((heading) => ({
@@ -91,8 +91,8 @@ const buildDate = new Date().toLocaleDateString();
 					))}
 				</div>
 				<div class="section-title">
-					<ProgressBar value={progress.percent} label={`Progress ${progress.percent}%`} />
-					<p class="meta">Progress last updated: {buildDate}</p>
+					<CommitHeatmap client:load days={commitActivity.days} />
+					<p class="meta">Commit activity last updated: {buildDate}</p>
 				</div>
 			</div>
 			{entry.data.image && (
