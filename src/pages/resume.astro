@@ -11,10 +11,10 @@ import ContactForm from '../components/ContactForm';
 >
   <article class="resume">
     <div class="resume-toolbar">
-      <a href="/resume.pdf" class="button button-primary" download="Mason-Trout-Resume.pdf">
+      <button type="button" class="button button-primary" id="print-resume">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3"/><path d="m7 10 5 5 5-5"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg>
-        Download PDF
-      </a>
+        Save as PDF
+      </button>
     </div>
 
     <div class="resume-page">
@@ -105,6 +105,32 @@ import ContactForm from '../components/ContactForm';
   </section>
 </Layout>
 
+<script>
+  document.getElementById('print-resume')?.addEventListener('click', () => {
+    const iframe = document.createElement('iframe');
+    iframe.className = 'resume-print-frame';
+    iframe.src = '/resume.pdf';
+    iframe.setAttribute('aria-hidden', 'true');
+    iframe.tabIndex = -1;
+    document.body.appendChild(iframe);
+
+    const cleanup = () => iframe.remove();
+
+    iframe.addEventListener('load', () => {
+      const frameWindow = iframe.contentWindow;
+      if (!frameWindow) {
+        cleanup();
+        return;
+      }
+
+      frameWindow.focus();
+      frameWindow.print();
+      frameWindow.addEventListener('afterprint', cleanup, { once: true });
+      window.setTimeout(cleanup, 60_000);
+    }, { once: true });
+  });
+</script>
+
 <style>
   .resume {
     padding: 2rem 0 0;
@@ -123,6 +149,15 @@ import ContactForm from '../components/ContactForm';
 
   .resume-toolbar .button {
     font-size: 0.9rem;
+  }
+
+  .resume-print-frame {
+    position: fixed;
+    width: 0;
+    height: 0;
+    border: 0;
+    clip: rect(0, 0, 0, 0);
+    overflow: hidden;
   }
 
   .resume-page {
