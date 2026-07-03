@@ -308,12 +308,38 @@ a {
 	flex-direction: column;
 	flex: 1;
 	min-height: 0;
+	position: relative;
+	z-index: 1;
 }
 
 #filtered-posts .blog-card:hover,
 .blog-cards-with-video .blog-card:hover {
 	transform: translateY(-4px);
 	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.blog-card-thumbnail {
+	position: absolute;
+	inset: 0;
+	z-index: 0;
+	overflow: hidden;
+	border-radius: inherit;
+	pointer-events: none;
+}
+
+.blog-card-thumbnail img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	object-position: center;
+}
+
+.blog-card--has-thumbnail .blog-card-thumbnail::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: var(--card);
+	opacity: 0.9;
 }
 
 /* Allow island wrapper to pass grid cell size to the card */

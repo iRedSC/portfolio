@@ -8,6 +8,7 @@ interface BlogPost {
 	tags: string[];
 	slug: string;
 	readingTime?: number;
+	thumbnail?: string;
 }
 
 interface BlogFilterProps {
@@ -123,6 +124,7 @@ export default function BlogFilter({ posts = [], onFilteredPosts }: BlogFilterPr
 							tags={post.tags}
 							slug={post.slug}
 							readingTime={post.readingTime}
+							thumbnail={post.thumbnail}
 						/>
 					))}
 				</div>

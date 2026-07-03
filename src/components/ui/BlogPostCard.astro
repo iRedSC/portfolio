@@ -7,9 +7,10 @@ interface Props {
   tags: string[];
   slug: string;
   readingTime?: number;
+  thumbnail?: string;
 }
 
-const { title, description, pubDate, updatedDate, tags, slug, readingTime } = Astro.props;
+const { title, description, pubDate, updatedDate, tags, slug, readingTime, thumbnail } = Astro.props;
 const formattedDate = pubDate.toLocaleDateString('en-US', {
   year: 'numeric',
   month: 'long',
@@ -17,7 +18,12 @@ const formattedDate = pubDate.toLocaleDateString('en-US', {
 });
 ---
 
-<a href={`/blog/${slug}`} class="blog-card">
+<a href={`/blog/${slug}`} class:list={['blog-card', thumbnail && 'blog-card--has-thumbnail']}>
+  {thumbnail && (
+    <div class="blog-card-thumbnail" aria-hidden="true">
+      <img src={thumbnail} alt="" loading="lazy" />
+    </div>
+  )}
   <div class="blog-card-content">
     <div class="blog-card-top">
       <h3 class="blog-title">{title}</h3>

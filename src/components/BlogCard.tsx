@@ -5,6 +5,7 @@ interface BlogCardProps {
 	tags: string[];
 	slug: string;
 	readingTime?: number;
+	thumbnail?: string;
 }
 
 export default function BlogCard({
@@ -14,6 +15,7 @@ export default function BlogCard({
 	tags,
 	slug,
 	readingTime,
+	thumbnail,
 }: BlogCardProps) {
 	const date = typeof pubDate === 'string' ? new Date(pubDate) : pubDate;
 	const formattedDate = date.toLocaleDateString('en-US', {
@@ -30,7 +32,15 @@ export default function BlogCard({
 	};
 
 	return (
-		<a href={`/blog/${slug}`} className="blog-card">
+		<a
+			href={`/blog/${slug}`}
+			className={`blog-card${thumbnail ? ' blog-card--has-thumbnail' : ''}`}
+		>
+			{thumbnail && (
+				<div className="blog-card-thumbnail" aria-hidden="true">
+					<img src={thumbnail} alt="" loading="lazy" />
+				</div>
+			)}
 			<div className="blog-card-content">
 				<div className="blog-card-top">
 					<h3 className="blog-title">{title}</h3>
