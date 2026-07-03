@@ -12,11 +12,12 @@ interface NavLink {
 
 interface FloatingNavProps {
   links: NavLink[];
+  isHomeActive?: boolean;
 }
 
 const TRANSITION_DURATION_MS = 280;
 
-export default function FloatingNav({ links }: FloatingNavProps) {
+export default function FloatingNav({ links, isHomeActive = false }: FloatingNavProps) {
   const [isHidden, setIsHidden] = useState(false);
   const [mobileBarCollapsed, setMobileBarCollapsed] = useState(false);
   const [forceExpanded, setForceExpanded] = useState(false);
@@ -219,13 +220,15 @@ export default function FloatingNav({ links }: FloatingNavProps) {
           >
             <a
               href="/"
+              className={`nav-link nav-logo${isHomeActive ? ' active' : ''}`}
               style={{
-                fontWeight: 700,
+                fontWeight: isHomeActive ? 600 : 700,
                 fontSize: isMobile ? '1.05rem' : '1.1rem',
-                color: 'var(--text)',
+                color: isHomeActive ? 'var(--accent)' : 'var(--text)',
                 textDecoration: 'none',
                 transition: 'color 0.2s ease',
                 flexShrink: 0,
+                position: 'relative',
               }}
             >
               {isMobile ? 'MT' : 'Mason Trout'}
