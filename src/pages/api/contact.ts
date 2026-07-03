@@ -41,12 +41,35 @@ function checkRateLimit(ip: string) {
 	return true;
 }
 
-export const POST: APIRoute = async ({ request }) => {
+async function parseContactPayload(request: Request) {
+	const contentType = request.headers.get('content-type') ?? '';
+	if (contentType.includes('application/json')) {
+		const body = (await request.json().catch(() => null)) as Record<string, unknown> | null;
+		if (!body) return null;
+		return {
+			name: String(body.name ?? '').trim(),
+			email: String(body.email ?? '').trim(),
+			message: String(body.message ?? '').trim(),
+			company: String(body.company ?? '').trim(),
+		};
+	}
+
 	const formData = await request.formData();
-	const name = String(formData.get('name') ?? '').trim();
-	const email = String(formData.get('email') ?? '').trim();
-	const message = String(formData.get('message') ?? '').trim();
-	const company = String(formData.get('company') ?? '').trim();
+	return {
+		name: String(formData.get('name') ?? '').trim(),
+		email: String(formData.get('email') ?? '').trim(),
+		message: String(formData.get('message') ?? '').trim(),
+		company: String(formData.get('company') ?? '').trim(),
+	};
+}
+
+export const POST: APIRoute = async ({ request }) => {
+	const payload = await parseContactPayload(request);
+	if (!payload) {
+		return json({ error: 'Invalid request body.' }, 400);
+	}
+
+	const { name, email, message, company } = payload;
 
 	// Honeypot: bots fill hidden fields; pretend success so they do not retry.
 	if (company) {

@@ -19,7 +19,8 @@ const siteProtocol = protocol.replace(':', '');
 export default defineConfig({
 	site: siteUrl,
 	security: {
-		// Protocol and hostname must be separate entries — combined patterns break forwarded-proto validation.
+		// Proxy stacks (Cloudflare → Dokploy) often omit headers Astro needs for form CSRF checks.
+		checkOrigin: !isNixpacks,
 		allowedDomains: [
 			{ protocol: siteProtocol },
 			{ hostname },

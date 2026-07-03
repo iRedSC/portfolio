@@ -13,11 +13,18 @@ export default function ContactForm() {
 
 		const form = event.currentTarget;
 		const formData = new FormData(form);
+		const payload = {
+			name: String(formData.get('name') ?? ''),
+			email: String(formData.get('email') ?? ''),
+			message: String(formData.get('message') ?? ''),
+			company: String(formData.get('company') ?? ''),
+		};
 
 		try {
 			const response = await fetch('/api/contact', {
 				method: 'POST',
-				body: formData,
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(payload),
 			});
 
 			const data = (await response.json().catch(() => null)) as
