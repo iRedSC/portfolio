@@ -116,6 +116,16 @@ export default function TocScrollSpy() {
 			}
 		};
 
+		/* The details ships open (desktop needs it open; closed-details content
+		   can't be revealed with CSS anymore). Collapse it on mobile. */
+		const syncDisclosure = () => {
+			if (disclosure instanceof HTMLDetailsElement) {
+				disclosure.open = !mobileMq.matches;
+			}
+		};
+		syncDisclosure();
+		mobileMq.addEventListener('change', syncDisclosure);
+
 		const onTocClick = (e: MouseEvent) => {
 			const a = (e.target as HTMLElement | null)?.closest?.('a[href^="#"]');
 			if (!a || !toc.contains(a)) return;
@@ -146,10 +156,11 @@ export default function TocScrollSpy() {
 			window.removeEventListener('scroll', schedule);
 			window.removeEventListener('resize', schedule);
 			window.removeEventListener('hashchange', onHashChange);
+			mobileMq.removeEventListener('change', syncDisclosure);
 			ro.disconnect();
 			setActive(null);
 		};
 	}, []);
 
-	return null;
+	return <></>;
 }

@@ -1185,6 +1185,7 @@ a {
 	.post-toc {
 		order: -1;
 		position: static;
+		align-self: stretch;
 		border-left: none;
 		padding-left: 0;
 		margin-bottom: 0;
@@ -1265,10 +1266,6 @@ a {
 @media (min-width: 901px) {
 	.post-toc-disclosure > summary {
 		display: none;
-	}
-
-	.post-toc-disclosure:not([open]) .post-toc-list {
-		display: flex;
 	}
 }
 
