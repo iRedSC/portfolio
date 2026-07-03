@@ -162,7 +162,7 @@ export default function FloatingNav({ links, isHomeActive = false }: FloatingNav
 
   const showBar = !mobileCollapsed || transitioningToCircle;
   const showCircle = mobileCollapsed || transitioningToBar;
-  const themeBesideMenu = isNavCramped;
+  const themeBesideMenu = isNavCramped && mobileCollapsed;
 
   useLayoutEffect(() => {
     if (!showBar || !hasMounted) return;
@@ -393,7 +393,6 @@ export default function FloatingNav({ links, isHomeActive = false }: FloatingNav
               )}
             </div>
           </nav>
-          {themeBesideMenu && <ThemeToggle />}
           </div>
         )}
       </header>
