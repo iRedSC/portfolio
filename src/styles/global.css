@@ -807,6 +807,14 @@ a {
 	opacity: 1;
 }
 
+.tooltip-text--wrap {
+	white-space: normal;
+	max-width: min(280px, 80vw);
+	text-align: center;
+	line-height: 1.45;
+	font-size: 0.8125rem;
+}
+
 .progress {
 	height: 8px;
 	background: var(--border);
@@ -979,6 +987,33 @@ a {
 .post-project-icon-link svg {
 	width: 1.25rem;
 	height: 1.25rem;
+}
+
+.post-project-demo-link {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4rem;
+	padding: 0.5rem 0.95rem;
+	font-size: 0.875rem;
+	font-weight: 600;
+	line-height: 1;
+	color: #fff;
+	background: var(--accent);
+	border: 1px solid transparent;
+	border-radius: 999px;
+	text-decoration: none;
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.post-project-demo-link:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 4px 16px color-mix(in srgb, var(--accent) 45%, transparent);
+}
+
+.post-project-demo-link svg {
+	width: 1rem;
+	height: 1rem;
+	flex-shrink: 0;
 }
 
 .post-body {

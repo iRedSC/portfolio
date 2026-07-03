@@ -1,8 +1,13 @@
 ---
-const { text } = Astro.props;
+interface Props {
+	text: string;
+	wrap?: boolean;
+}
+
+const { text, wrap = false } = Astro.props;
 ---
 
 <span class="tooltip">
 	<slot />
-	<span class="tooltip-text">{text}</span>
+	<span class:list={['tooltip-text', wrap && 'tooltip-text--wrap']}>{text}</span>
 </span>
