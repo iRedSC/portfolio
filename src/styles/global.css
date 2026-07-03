@@ -1073,7 +1073,7 @@ a {
 	height: 100%;
 	object-fit: cover;
 	object-position: center;
-	transform: scale(0.9);
+	transform: scale(1.1);
 }
 
 .post-hero-banner::before {
