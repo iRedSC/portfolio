@@ -12,6 +12,7 @@ import { getCollection } from 'astro:content';
 import { getEnrichedProjects } from '../lib/build-projects';
 import { getReadingTimeMinutes } from '../lib/readingTime';
 import { getSiteConfig } from '../lib/site-config';
+import HomeCodeTyping from '../components/ui/HomeCodeTyping.astro';
 
 const { sections } = await getSiteConfig();
 const allProjects = sections.projects ? await getEnrichedProjects() : [];
@@ -56,6 +57,9 @@ const featuredCaseStudies = caseStudyEntries
   title="Home"
   description="Portfolio of projects, writing, and highlights from my engineering journey."
 >
+  <div class="home-page">
+    <HomeCodeTyping />
+    <div class="home-page__content">
   <section class="hero-wrapper">
     <div class="hero">
       <div class="hero-content">
@@ -158,9 +162,20 @@ const featuredCaseStudies = caseStudyEntries
       <ContactForm client:load />
     </section>
   </div>
+    </div>
+  </div>
 </Layout>
 
 <style>
+  .home-page {
+    position: relative;
+  }
+
+  .home-page__content {
+    position: relative;
+    z-index: 1;
+  }
+
   .hero-wrapper {
     position: relative;
     min-height: 600px;
