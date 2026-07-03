@@ -7,6 +7,7 @@
 	--border: #f0dcc7;
 	--accent: #ea5a2e;
 	--accent-soft: #ffe8df;
+	--accent-deep: color-mix(in srgb, var(--accent) 72%, black);
 	--shadow: rgba(234, 90, 46, 0.08);
 	--max-width: 1100px;
 	/* Mobile bottom nav: safe-area aware for browser chrome / search bar */
@@ -938,7 +939,7 @@ a {
 	font-size: 2.75rem;
 	line-height: 1.2;
 	margin: 0.5rem 0;
-	background: linear-gradient(135deg, var(--accent) 0%, #d94815 100%);
+	background: linear-gradient(135deg, var(--accent) 0%, var(--accent-deep) 100%);
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
 	background-clip: text;
@@ -1567,7 +1568,7 @@ a {
 }
 
 .contact-form button:hover:not(:disabled) {
-	background: #d94815;
+	background: var(--accent-deep);
 	transform: translateY(-2px);
 	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -1811,46 +1812,5 @@ a {
 	to {
 		opacity: 1;
 		transform: translateY(0);
-	}
-}
-
-/* Easter egg: type "awesome" (when not in a text field) to cycle accent colors */
-@property --accent-h {
-	syntax: '<number>';
-	inherits: true;
-	initial-value: 20;
-}
-
-html.accent-rgb-cycle {
-	--accent: hsl(var(--accent-h) 75% 55%);
-	--accent-soft: hsl(var(--accent-h) 80% 92%);
-	--shadow: hsl(var(--accent-h) 75% 55% / 0.15);
-	animation: accent-rgb-cycle 12s linear infinite;
-}
-
-html.accent-rgb-cycle.theme-dark {
-	--accent-soft: hsl(var(--accent-h) 50% 18%);
-	--shadow: hsl(var(--accent-h) 75% 55% / 0.3);
-}
-
-@media (prefers-color-scheme: dark) {
-	html.accent-rgb-cycle:not(.theme-light) {
-		--accent-soft: hsl(var(--accent-h) 50% 18%);
-		--shadow: hsl(var(--accent-h) 75% 55% / 0.3);
-	}
-}
-
-@keyframes accent-rgb-cycle {
-	from {
-		--accent-h: 0;
-	}
-	to {
-		--accent-h: 360;
-	}
-}
-
-@media (prefers-reduced-motion: reduce) {
-	html.accent-rgb-cycle {
-		animation: none;
 	}
 }
