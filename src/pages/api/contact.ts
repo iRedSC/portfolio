@@ -48,8 +48,9 @@ export const POST: APIRoute = async ({ request }) => {
 	const message = String(formData.get('message') ?? '').trim();
 	const company = String(formData.get('company') ?? '').trim();
 
+	// Honeypot: bots fill hidden fields; pretend success so they do not retry.
 	if (company) {
-		return json({ error: 'Invalid submission.' }, 400);
+		return json({ ok: true });
 	}
 
 	if (!name || !email || !message) {

@@ -47,9 +47,16 @@ export default function ContactForm() {
 				<label htmlFor="email">Email</label>
 				<input id="email" name="email" type="email" required autoComplete="email" />
 			</div>
-			<div className="sr-only" aria-hidden="true">
-				<label htmlFor="company">Leave this empty</label>
-				<input id="company" name="company" type="text" tabIndex={-1} autoComplete="off" />
+			<div className="form-honeypot" aria-hidden="true">
+				<label htmlFor="company">Company</label>
+				<input
+					id="company"
+					name="company"
+					type="text"
+					tabIndex={-1}
+					autoComplete="off"
+					defaultValue=""
+				/>
 			</div>
 			<div className="form-field">
 				<label htmlFor="message">Message</label>
