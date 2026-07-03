@@ -222,7 +222,7 @@ export default function FloatingNav({ links, isHomeActive = false }: FloatingNav
               href="/"
               className={`nav-link nav-logo${isHomeActive ? ' active' : ''}`}
               style={{
-                fontWeight: isHomeActive ? 600 : 700,
+                fontWeight: 700,
                 fontSize: isMobile ? '1.05rem' : '1.1rem',
                 color: isHomeActive ? 'var(--accent)' : 'var(--text)',
                 textDecoration: 'none',
