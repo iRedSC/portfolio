@@ -11,10 +11,10 @@ import ContactForm from '../components/ContactForm';
 >
   <article class="resume">
     <div class="resume-toolbar">
-      <button type="button" class="button button-primary" id="print-resume">
+      <a href="/resume.pdf" class="button button-primary" download="Mason-Trout-Resume.pdf">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3"/><path d="m7 10 5 5 5-5"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg>
-        Save as PDF
-      </button>
+        Download PDF
+      </a>
     </div>
 
     <div class="resume-page">
@@ -104,10 +104,6 @@ import ContactForm from '../components/ContactForm';
     <ContactForm client:load />
   </section>
 </Layout>
-
-<script>
-  document.getElementById('print-resume')?.addEventListener('click', () => window.print());
-</script>
 
 <style>
   .resume {
