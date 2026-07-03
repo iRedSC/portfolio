@@ -11,7 +11,7 @@ const ariaLabel = note ? `Live demo — ${note}` : 'Live demo';
 ---
 
 {note ? (
-	<Tooltip text={note} wrap>
+	<Tooltip text={note} wrap placement="bottom">
 		<a
 			href={href}
 			class="post-project-demo-link"

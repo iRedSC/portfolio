@@ -790,17 +790,20 @@ a {
 
 .tooltip-text {
 	position: absolute;
-	bottom: calc(100% + 10px);
+	bottom: calc(100% + 8px);
 	left: 50%;
 	transform: translateX(-50%) translateY(4px);
+	width: max-content;
+	max-width: min(280px, 80vw);
 	background: var(--card);
 	border: 1px solid var(--border);
-	padding: 0.35rem 0.65rem;
-	border-radius: 8px;
+	padding: 0.5rem 0.75rem;
+	border-radius: 12px;
 	white-space: nowrap;
 	font-size: 0.8125rem;
+	line-height: 1.5;
 	color: var(--text);
-	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 	opacity: 0;
 	pointer-events: none;
 	transition: opacity 0.15s ease, transform 0.15s ease;
@@ -827,16 +830,38 @@ a {
 	border-top-color: var(--card);
 }
 
+.tooltip-text--below {
+	top: calc(100% + 8px);
+	bottom: auto;
+	transform: translateX(-50%) translateY(-4px);
+}
+
+.tooltip-text--below::before {
+	top: auto;
+	bottom: 100%;
+	border-top-color: transparent;
+	border-bottom-color: var(--border);
+}
+
+.tooltip-text--below::after {
+	top: auto;
+	bottom: calc(100% - 1px);
+	border-top-color: transparent;
+	border-bottom-color: var(--card);
+}
+
 .tooltip:hover .tooltip-text {
 	opacity: 1;
 	transform: translateX(-50%) translateY(0);
 }
 
+.tooltip:hover .tooltip-text--below {
+	transform: translateX(-50%) translateY(0);
+}
+
 .tooltip-text--wrap {
 	white-space: normal;
-	max-width: min(280px, 80vw);
 	text-align: center;
-	line-height: 1.45;
 }
 
 .progress {
@@ -1016,26 +1041,24 @@ a {
 .post-project-demo-link {
 	display: inline-flex;
 	align-items: center;
-	gap: 0.35rem;
-	padding: 0.5rem 1.1rem;
+	justify-content: center;
+	gap: 0.4rem;
+	height: 2.75rem;
+	padding: 0 1rem;
 	font-size: 0.875rem;
 	font-weight: 600;
 	line-height: 1;
-	letter-spacing: 0.01em;
 	color: #fff;
 	background: var(--accent);
-	border: 1px solid color-mix(in srgb, var(--accent) 70%, #000 30%);
-	border-radius: 999px;
+	border: 1px solid transparent;
+	border-radius: 12px;
 	text-decoration: none;
-	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 1px 3px rgba(0, 0, 0, 0.14);
-	transition: background 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .post-project-demo-link:hover {
-	background: color-mix(in srgb, var(--accent) 88%, #fff 12%);
-	transform: translateY(-1px);
-	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22),
-		0 6px 20px color-mix(in srgb, var(--accent) 50%, transparent);
+	transform: translateY(-2px);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .post-project-demo-link svg {

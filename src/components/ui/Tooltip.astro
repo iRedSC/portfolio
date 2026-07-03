@@ -2,12 +2,21 @@
 interface Props {
 	text: string;
 	wrap?: boolean;
+	placement?: 'top' | 'bottom';
 }
 
-const { text, wrap = false } = Astro.props;
+const { text, wrap = false, placement = 'top' } = Astro.props;
 ---
 
 <span class="tooltip">
 	<slot />
-	<span class:list={['tooltip-text', wrap && 'tooltip-text--wrap']}>{text}</span>
+	<span
+		class:list={[
+			'tooltip-text',
+			wrap && 'tooltip-text--wrap',
+			placement === 'bottom' && 'tooltip-text--below',
+		]}
+	>
+		{text}
+	</span>
 </span>
