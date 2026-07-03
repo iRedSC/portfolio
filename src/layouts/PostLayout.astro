@@ -1,8 +1,8 @@
 ---
 import Layout from './Layout.astro';
+import PostBanner from '../components/PostBanner.astro';
 import PostToc from '../components/PostToc.astro';
 import TocScrollSpy from '../components/TocScrollSpy';
-import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 
 type TocItem = {
@@ -15,16 +15,20 @@ type Props = {
 	title: string;
 	description?: string;
 	image?: ImageMetadata;
+	thumbnail?: ImageMetadata;
 	publishedDate: Date;
 	readingTime?: string;
 	toc?: TocItem[];
 	backgroundVideo?: string;
 };
 
-const { title, description, image, publishedDate, readingTime, toc = [], backgroundVideo } = Astro.props;
+const { title, description, image, thumbnail, publishedDate, readingTime, toc = [], backgroundVideo } =
+	Astro.props;
+const bannerImage = thumbnail ?? image;
+const socialImage = thumbnail ?? image;
 ---
 
-<Layout title={title} description={description} image={image}>
+<Layout title={title} description={description} image={socialImage}>
 	{backgroundVideo ? (
 		<div class="post-with-video">
 			<div class="video-background" aria-hidden>
@@ -32,22 +36,14 @@ const { title, description, image, publishedDate, readingTime, toc = [], backgro
 			</div>
 			<div class="video-overlay" aria-hidden />
 			<article class="post">
-				<header class="post-hero">
-					<div>
+				<header class:list={['post-hero', bannerImage && 'post-hero--has-banner']}>
+					{bannerImage && <PostBanner src={bannerImage} />}
+					<div class="post-hero-content">
 						<p class="eyebrow">{publishedDate.toLocaleDateString()}</p>
 						<h1>{title}</h1>
 						{description && <p class="lead">{description}</p>}
 						{readingTime && <p class="meta">{readingTime}</p>}
 					</div>
-					{image && (
-						<Image
-							src={image}
-							alt=""
-							class="post-hero-image"
-							width={720}
-							height={420}
-						/>
-					)}
 				</header>
 				<div class="post-body">
 					<div class="post-content"><slot /></div>
@@ -57,22 +53,14 @@ const { title, description, image, publishedDate, readingTime, toc = [], backgro
 		</div>
 	) : (
 		<article class="post">
-			<header class="post-hero">
-				<div>
+			<header class:list={['post-hero', bannerImage && 'post-hero--has-banner']}>
+				{bannerImage && <PostBanner src={bannerImage} />}
+				<div class="post-hero-content">
 					<p class="eyebrow">{publishedDate.toLocaleDateString()}</p>
 					<h1>{title}</h1>
 					{description && <p class="lead">{description}</p>}
 					{readingTime && <p class="meta">{readingTime}</p>}
 				</div>
-				{image && (
-					<Image
-						src={image}
-						alt=""
-						class="post-hero-image"
-						width={720}
-						height={420}
-					/>
-				)}
 			</header>
 			<div class="post-body">
 				<div class="post-content"><slot /></div>

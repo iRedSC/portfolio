@@ -1,12 +1,12 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import PostBanner from '../../components/PostBanner.astro';
 import PostToc from '../../components/PostToc.astro';
 import TocScrollSpy from '../../components/TocScrollSpy';
 import { getCollection } from 'astro:content';
 import { getSiteConfig } from '../../lib/site-config';
 import { getCommitActivity } from '../../lib/github';
 import CommitHeatmap from '../../components/ui/CommitHeatmap.astro';
-import { Image } from 'astro:assets';
 import Tag from '../../components/ui/Tag.astro';
 import ProjectDemoLink from '../../components/ui/ProjectDemoLink.astro';
 
@@ -36,12 +36,14 @@ const toc = headings
 		text: heading.text,
 	}));
 const buildDate = new Date().toLocaleDateString();
+const bannerImage = entry.data.thumbnail ?? entry.data.image;
 ---
 
-<Layout title={entry.data.title} description={entry.data.description} image={entry.data.image}>
+<Layout title={entry.data.title} description={entry.data.description} image={bannerImage}>
 	<article class="post">
-		<header class="post-hero">
-			<div>
+		<header class:list={['post-hero', bannerImage && 'post-hero--has-banner']}>
+			{bannerImage && <PostBanner src={bannerImage} />}
+			<div class="post-hero-content">
 				<p class="eyebrow">{entry.data.pubDate.toLocaleDateString()}</p>
 				<div class="post-project-title-row">
 					<h1>{entry.data.title}</h1>
@@ -75,9 +77,6 @@ const buildDate = new Date().toLocaleDateString();
 					<p class="meta">Commit activity last updated: {buildDate}</p>
 				</div>
 			</div>
-			{entry.data.image && (
-				<Image src={entry.data.image} alt="" class="post-hero-image" width={720} height={420} />
-			)}
 		</header>
 		<div class="post-body">
 			<div class="post-content">

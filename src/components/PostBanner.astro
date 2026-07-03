@@ -1,0 +1,14 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+type Props = {
+	src: ImageMetadata;
+};
+
+const { src } = Astro.props;
+---
+
+<div class="post-hero-banner" aria-hidden="true">
+	<Image src={src} alt="" class="post-hero-banner-image" width={1440} height={640} />
+</div>
