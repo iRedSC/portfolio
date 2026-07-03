@@ -10,12 +10,13 @@ interface Props {
   tags: string[];
   commitActivity?: CommitDay[];
   language?: string;
+  clickableTags?: boolean;
 }
 
-const { slug, title, description, image, tags, commitActivity, language } = Astro.props;
+const { slug, title, description, image, tags, commitActivity, language, clickableTags = false } = Astro.props;
 ---
 
-<article class="project-card">
+<article class="project-card" data-slug={slug}>
   {slug && (
     <a href={`/projects/${slug}`} class="project-card-link" aria-label={`View ${title}`}></a>
   )}
@@ -33,9 +34,15 @@ const { slug, title, description, image, tags, commitActivity, language } = Astr
 
     <div class="project-card-bottom">
       <div class="project-tags">
-        {tags.map((tag: string) => (
-          <span class="tag">{tag}</span>
-        ))}
+        {tags.map((tag: string) =>
+          clickableTags ? (
+            <button type="button" class="tag tag-clickable" data-tag={tag} aria-label={`Filter by ${tag}`}>
+              {tag}
+            </button>
+          ) : (
+            <span class="tag">{tag}</span>
+          )
+        )}
       </div>
       {language && (
         <span class="project-language">{language}</span>

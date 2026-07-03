@@ -70,87 +70,44 @@ const projectsForFilter = projects.map((p) => ({
           tags={project.tags}
           commitActivity={project.commitActivity}
           language={project.language}
+          clickableTags
         />
       ))}
     </div>
 
-    {projects.length === 0 && (
-      <div class="empty-state">
-        <p>No projects available yet. Check back soon!</p>
-      </div>
-    )}
+    <div class="empty-state" id="projects-empty-state" hidden={projects.length > 0}>
+      <p>
+        {projects.length === 0
+          ? 'No projects available yet. Check back soon!'
+          : 'No projects match your filters.'}
+      </p>
+    </div>
   </section>
 </Layout>
 
-<script define:vars={{ projectsJson: JSON.stringify(projectsForFilter) }}>
-  import { renderCommitHeatmapHtml } from '../../lib/commit-heatmap.ts';
-
-  function escapeHtml(s) {
-    if (s == null) return '';
-    const str = String(s);
-    const div = document.createElement('div');
-    div.textContent = str;
-    return div.innerHTML;
-  }
-
-  function renderProjectCard(project) {
-    const slug = project.slug;
-    const title = project.title;
-    const description = project.description;
-    const tags = Array.isArray(project.tags) ? project.tags : [];
-    const heroImage = project.heroImage;
-    const commitActivity = project.commitActivity;
-    const language = project.language;
-
-    const tagsHtml = tags
-      .map(
-        (tag) =>
-          `<button type="button" class="tag tag-clickable" data-tag="${escapeHtml(tag)}" aria-label="Filter by ${escapeHtml(tag)}">${escapeHtml(tag)}</button>`
-      )
-      .join('');
-
-    const languageHtml = language
-      ? `<span class="project-language">${escapeHtml(language)}</span>`
-      : '';
-
-    const commitActivityHtml =
-      Array.isArray(commitActivity) && commitActivity.length > 0
-        ? `<div class="project-commit-activity">${renderCommitHeatmapHtml(commitActivity)}</div>`
-        : '';
-
-    return `
-      <article class="project-card">
-        ${slug ? `<a href="/projects/${escapeHtml(slug)}" class="project-card-link" aria-label="View ${escapeHtml(title)}"></a>` : ''}
-        ${heroImage ? `<div class="project-image"><img src="${escapeHtml(heroImage)}" alt="${escapeHtml(title)}" loading="lazy" /></div>` : ''}
-        <div class="project-content">
-          <div class="project-card-top">
-            <h3 class="project-title">${escapeHtml(title)}</h3>
-            <p class="project-description">${escapeHtml(description)}</p>
-          </div>
-          <div class="project-card-bottom">
-            <div class="project-tags">${tagsHtml}</div>
-            ${languageHtml}
-            ${commitActivityHtml}
-          </div>
-        </div>
-      </article>
-    `;
-  }
-
-  function updateFilteredProjects(filteredProjects) {
-    const grid = document.getElementById('filtered-projects');
-    if (!grid) return;
-    const projects = typeof projectsJson !== 'undefined' ? JSON.parse(projectsJson) : [];
-    const list = Array.isArray(filteredProjects) ? filteredProjects : projects;
-    grid.innerHTML = list.map((p) => renderProjectCard(p)).join('');
-  }
+<script>
+  // The cards are server-rendered; filtering just hides the ones that don't
+  // match the slugs the ProjectsFilter island emits.
+  const grid = document.getElementById('filtered-projects');
+  const emptyState = document.getElementById('projects-empty-state');
 
   window.addEventListener('filteredProjectsUpdate', (e) => {
-    updateFilteredProjects(e.detail ?? []);
+    if (!grid) return;
+    const detail = (e as CustomEvent<Array<{ slug: string }>>).detail;
+    const visibleSlugs = new Set((Array.isArray(detail) ? detail : []).map((p) => p.slug));
+    let visibleCount = 0;
+
+    for (const card of grid.querySelectorAll<HTMLElement>('.project-card[data-slug]')) {
+      const visible = visibleSlugs.has(card.dataset.slug ?? '');
+      card.style.display = visible ? '' : 'none';
+      if (visible) visibleCount++;
+    }
+
+    if (emptyState) emptyState.hidden = visibleCount > 0;
   });
 
-  document.getElementById('filtered-projects')?.addEventListener('click', (e) => {
-    const target = e.target.closest('.tag-clickable');
+  grid?.addEventListener('click', (e) => {
+    const target = (e.target as Element).closest<HTMLElement>('.tag-clickable');
     if (!target) return;
     e.preventDefault();
     e.stopPropagation();

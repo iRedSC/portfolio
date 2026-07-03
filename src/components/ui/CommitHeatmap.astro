@@ -9,25 +9,48 @@ interface Props {
 const { days } = Astro.props;
 const levels = getCommitLevels(days);
 const totalCommits = days.reduce((sum, day) => sum + day.count, 0);
+const summary = `${totalCommits} commit${totalCommits === 1 ? '' : 's'} in the last ${COMMIT_HEATMAP_DAYS} days`;
 ---
 
-<div class="commit-heatmap" role="img" aria-label={`${totalCommits} commits in the last ${COMMIT_HEATMAP_DAYS} days`}>
-	{
-		days.map((day, index) => {
-			const countLabel = day.count === 1 ? '1 commit' : `${day.count} commits`;
-			return (
+<div class="commit-heatmap">
+	<div class="commit-heatmap-track" role="img" aria-label={summary}>
+		{
+			days.map((day, index) => (
 				<span
 					class={`commit-heatmap-box level-${levels[index]}`}
-					tabindex="0"
-					role="gridcell"
-					aria-label={`${countLabel}, ${day.date}`}
-				>
-					<span class="commit-heatmap-tooltip" aria-hidden="true">
-						<strong>{countLabel}</strong>
-						<span>{formatDayLabel(day.date)}</span>
-					</span>
-				</span>
-			);
-		})
-	}
+					data-count={day.count}
+					data-label={formatDayLabel(day.date)}
+				/>
+			))
+		}
+	</div>
+	<p class="commit-heatmap-caption" data-summary={summary}>{summary}</p>
 </div>
+
+<script>
+	// One delegated listener pair drives every heatmap on the page: hovering a
+	// box swaps the caption to that day's detail, leaving swaps it back.
+	function captionFor(box: Element): HTMLElement | null {
+		return box.closest('.commit-heatmap')?.querySelector('.commit-heatmap-caption') ?? null;
+	}
+
+	document.addEventListener('mouseover', (event) => {
+		const box = (event.target as Element).closest?.('.commit-heatmap-box');
+		if (!box) return;
+		const caption = captionFor(box);
+		if (!caption) return;
+		const count = Number(box.getAttribute('data-count') ?? 0);
+		const label = box.getAttribute('data-label') ?? '';
+		caption.textContent = `${count} commit${count === 1 ? '' : 's'} · ${label}`;
+		caption.classList.add('is-detail');
+	});
+
+	document.addEventListener('mouseout', (event) => {
+		const box = (event.target as Element).closest?.('.commit-heatmap-box');
+		if (!box) return;
+		const caption = captionFor(box);
+		if (!caption) return;
+		caption.textContent = caption.getAttribute('data-summary');
+		caption.classList.remove('is-detail');
+	});
+</script>

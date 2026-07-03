@@ -5,7 +5,7 @@ import TocScrollSpy from '../../components/TocScrollSpy';
 import { getCollection } from 'astro:content';
 import { getSiteConfig } from '../../lib/site-config';
 import { getCommitActivity } from '../../lib/github';
-import CommitHeatmap from '../../components/CommitHeatmap.tsx';
+import CommitHeatmap from '../../components/ui/CommitHeatmap.astro';
 import { Image } from 'astro:assets';
 import Tag from '../../components/ui/Tag.astro';
 
@@ -90,8 +90,8 @@ const buildDate = new Date().toLocaleDateString();
 						<Tag label={tag} />
 					))}
 				</div>
-				<div class="section-title">
-					<CommitHeatmap client:load days={commitActivity.days} />
+				<div class="post-commit-activity">
+					<CommitHeatmap days={commitActivity.days} />
 					<p class="meta">Commit activity last updated: {buildDate}</p>
 				</div>
 			</div>
@@ -108,3 +108,14 @@ const buildDate = new Date().toLocaleDateString();
 	</article>
 	{toc.length > 0 && <TocScrollSpy client:load />}
 </Layout>
+
+<style>
+	.post-commit-activity {
+		max-width: 420px;
+		margin-top: 1.25rem;
+	}
+
+	.post-commit-activity .meta {
+		margin: 0.35rem 0 0;
+	}
+</style>

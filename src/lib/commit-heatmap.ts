@@ -27,20 +27,3 @@ export function formatDayLabel(date: string): string {
 		year: 'numeric',
 	});
 }
-
-export function renderCommitHeatmapHtml(days: CommitDay[]): string {
-	if (!days.length) return '';
-
-	const levels = getCommitLevels(days);
-	const totalCommits = days.reduce((sum, day) => sum + day.count, 0);
-
-	const boxes = days
-		.map((day, index) => {
-			const countLabel = day.count === 1 ? '1 commit' : `${day.count} commits`;
-			const label = formatDayLabel(day.date);
-			return `<span class="commit-heatmap-box level-${levels[index]}" tabindex="0" role="gridcell" aria-label="${countLabel}, ${day.date}"><span class="commit-heatmap-tooltip" aria-hidden="true"><strong>${countLabel}</strong><span>${label}</span></span></span>`;
-		})
-		.join('');
-
-	return `<div class="commit-heatmap" role="img" aria-label="${totalCommits} commits in the last ${COMMIT_HEATMAP_DAYS} days">${boxes}</div>`;
-}
