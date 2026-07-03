@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useLayoutEffect, useState, useRef, useCallback } from 'react';
 import ThemeToggle from './ThemeToggle';
 
 const MOBILE_BREAKPOINT = 768;
@@ -35,9 +35,36 @@ export default function FloatingNav({ links, isHomeActive = false }: FloatingNav
   );
   const [isAtTop, setIsAtTop] = useState(true);
   const [hasMounted, setHasMounted] = useState(false);
+  const [isNavCramped, setIsNavCramped] = useState(false);
+  const navInnerRef = useRef<HTMLElement>(null);
+  const navLinksRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setHasMounted(true);
+  }, []);
+
+  const checkNavCramped = useCallback(() => {
+    const inner = navInnerRef.current;
+    const linksEl = navLinksRef.current;
+    if (!inner || !linksEl) return;
+
+    const isMobileView = window.innerWidth <= MOBILE_BREAKPOINT;
+    const themeInBar = inner.querySelector('.theme-toggle');
+    const themeWidth = themeInBar?.getBoundingClientRect().width ?? 0;
+
+    const cramped = isMobileView
+      ? linksEl.scrollWidth > linksEl.clientWidth + 2 ||
+        (!!themeInBar && linksEl.scrollWidth + themeWidth > linksEl.clientWidth + 2)
+      : inner.scrollWidth + (themeInBar ? themeWidth + 8 : 0) > window.innerWidth - 48;
+
+    setIsNavCramped((prev) => {
+      if (cramped) return true;
+      if (!prev) return false;
+      if (isMobileView) {
+        return linksEl.scrollWidth > linksEl.clientWidth - 40;
+      }
+      return inner.scrollWidth > window.innerWidth - 96;
+    });
   }, []);
 
   useEffect(() => {
@@ -135,6 +162,35 @@ export default function FloatingNav({ links, isHomeActive = false }: FloatingNav
 
   const showBar = !mobileCollapsed || transitioningToCircle;
   const showCircle = mobileCollapsed || transitioningToBar;
+  const themeBesideMenu = isNavCramped;
+
+  useLayoutEffect(() => {
+    if (!showBar || !hasMounted) return;
+
+    let frame = 0;
+    const scheduleCheck = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        checkNavCramped();
+      });
+    };
+
+    scheduleCheck();
+    const inner = navInnerRef.current;
+    const linksEl = navLinksRef.current;
+    if (!inner || !linksEl) return;
+
+    const observer = new ResizeObserver(scheduleCheck);
+    observer.observe(inner);
+    observer.observe(linksEl);
+    window.addEventListener('resize', scheduleCheck);
+
+    return () => {
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+      window.removeEventListener('resize', scheduleCheck);
+    };
+  }, [showBar, hasMounted, links.length, isMobile, checkNavCramped]);
 
   const handleCircleClick = () => triggerExpandTransition();
   const handleHamburgerClick = () => triggerCollapseTransition();
@@ -162,6 +218,7 @@ export default function FloatingNav({ links, isHomeActive = false }: FloatingNav
         className="floating-nav"
         data-mobile={isMobile}
         data-collapsed={mobileCollapsed}
+        data-nav-cramped={isNavCramped}
         style={
           !hasMounted
             ? undefined
@@ -172,32 +229,79 @@ export default function FloatingNav({ links, isHomeActive = false }: FloatingNav
       >
         {/* Mobile: circle (collapsed) or bar (expanded); use transition states to animate */}
         {showCircle ? (
-          <button
-            type="button"
-            onClick={transitioningToBar ? undefined : handleCircleClick}
-            aria-label="Open menu"
-            className={`floating-nav-collapsed-btn${transitioningToBar ? ' floating-nav-collapsed-btn--slide-down' : circleSlideUp ? ' floating-nav-collapsed-btn--slide-up' : ''}`}
+          themeBesideMenu ? (
+            <div
+              className={`floating-nav-collapsed-group${transitioningToBar ? ' floating-nav-collapsed-group--slide-down' : circleSlideUp ? ' floating-nav-collapsed-group--slide-up' : ''}`}
+              style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0 }}
+            >
+              <ThemeToggle />
+              <button
+                type="button"
+                onClick={transitioningToBar ? undefined : handleCircleClick}
+                aria-label="Open menu"
+                className="floating-nav-collapsed-btn"
+                style={{
+                  width: '2.75rem',
+                  height: '2.75rem',
+                  borderRadius: '50%',
+                  border: '2px solid var(--border)',
+                  background: 'var(--card)',
+                  backdropFilter: 'blur(10px)',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '5px',
+                  flexShrink: 0,
+                  boxShadow: '0 2px 12px rgba(0,0,0,0.1)',
+                }}
+              >
+                <HamburgerIcon />
+              </button>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={transitioningToBar ? undefined : handleCircleClick}
+              aria-label="Open menu"
+              className={`floating-nav-collapsed-btn${transitioningToBar ? ' floating-nav-collapsed-btn--slide-down' : circleSlideUp ? ' floating-nav-collapsed-btn--slide-up' : ''}`}
+              style={{
+                width: '2.75rem',
+                height: '2.75rem',
+                borderRadius: '50%',
+                border: '2px solid var(--border)',
+                background: 'var(--card)',
+                backdropFilter: 'blur(10px)',
+                cursor: 'pointer',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '5px',
+                flexShrink: 0,
+                boxShadow: '0 2px 12px rgba(0,0,0,0.1)',
+              }}
+            >
+              <HamburgerIcon />
+            </button>
+          )
+        ) : (
+          <div
             style={{
-              width: '2.75rem',
-              height: '2.75rem',
-              borderRadius: '50%',
-              border: '2px solid var(--border)',
-              background: 'var(--card)',
-              backdropFilter: 'blur(10px)',
-              cursor: 'pointer',
               display: 'flex',
-              flexDirection: 'column',
               alignItems: 'center',
-              justifyContent: 'center',
-              gap: '5px',
-              flexShrink: 0,
-              boxShadow: '0 2px 12px rgba(0,0,0,0.1)',
+              gap: '0.5rem',
+              ...(isMobile
+                ? {
+                    width: '100%',
+                    maxWidth: 'min(100%, 560px)',
+                  }
+                : {}),
             }}
           >
-            <HamburgerIcon />
-          </button>
-        ) : (
           <nav
+            ref={navInnerRef}
             className={`floating-nav-inner${transitioningToCircle ? ' floating-nav-inner--slide-down' : isMobile && slideUp ? ' floating-nav-inner--slide-up' : ''}`}
             style={{
               background: 'var(--card)',
@@ -211,9 +315,11 @@ export default function FloatingNav({ links, isHomeActive = false }: FloatingNav
               transition: 'padding 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
               ...(isMobile
                 ? {
-                    width: '100%',
-                    maxWidth: 'min(100%, 560px)',
+                    flex: themeBesideMenu ? 1 : undefined,
+                    width: themeBesideMenu ? 'auto' : '100%',
+                    maxWidth: themeBesideMenu ? 'none' : 'min(100%, 560px)',
                     justifyContent: 'space-between',
+                    minWidth: 0,
                   }
                 : {}),
             }}
@@ -235,6 +341,7 @@ export default function FloatingNav({ links, isHomeActive = false }: FloatingNav
             </a>
 
             <div
+              ref={navLinksRef}
               style={{
                 display: 'flex',
                 gap: isMobile ? '1rem' : '1.5rem',
@@ -263,7 +370,7 @@ export default function FloatingNav({ links, isHomeActive = false }: FloatingNav
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0 }}>
-              <ThemeToggle />
+              {!themeBesideMenu && <ThemeToggle />}
               {isMobile && (
                 <button
                   type="button"
@@ -286,6 +393,8 @@ export default function FloatingNav({ links, isHomeActive = false }: FloatingNav
               )}
             </div>
           </nav>
+          {themeBesideMenu && <ThemeToggle />}
+          </div>
         )}
       </header>
 
@@ -349,6 +458,12 @@ export default function FloatingNav({ links, isHomeActive = false }: FloatingNav
             animation: floating-nav-slide-up 0.28s ease-out forwards;
           }
           .floating-nav-collapsed-btn--slide-down {
+            animation: floating-nav-slide-down 0.28s ease-out forwards;
+          }
+          .floating-nav-collapsed-group--slide-up {
+            animation: floating-nav-slide-up 0.28s ease-out forwards;
+          }
+          .floating-nav-collapsed-group--slide-down {
             animation: floating-nav-slide-down 0.28s ease-out forwards;
           }
         }
