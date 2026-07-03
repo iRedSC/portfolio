@@ -464,7 +464,7 @@ a {
 #filtered-projects .project-card-link {
 	position: absolute;
 	inset: 0;
-	z-index: 1;
+	z-index: 0;
 }
 
 #filtered-projects .project-card-thumbnail {
@@ -506,7 +506,8 @@ a {
 
 #filtered-projects .project-content {
 	position: relative;
-	z-index: 0;
+	z-index: 1;
+	pointer-events: none;
 	flex: 1 1 auto;
 	padding: 1.75rem;
 	display: flex;
@@ -515,8 +516,7 @@ a {
 }
 
 #filtered-projects .project-card .tag-clickable {
-	position: relative;
-	z-index: 2;
+	pointer-events: auto;
 }
 
 #filtered-projects .project-card-top {
@@ -548,8 +548,7 @@ a {
 #filtered-projects .project-commit-activity {
 	margin: 0;
 	flex-shrink: 0;
-	position: relative;
-	z-index: 2;
+	pointer-events: auto;
 }
 
 .commit-heatmap {
