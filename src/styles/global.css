@@ -491,6 +491,19 @@ a {
 	opacity: 0.9;
 }
 
+/* Card thumbnails are authored for dark backgrounds — flip luminance in light mode */
+:root.theme-light .blog-card-thumbnail img,
+:root.theme-light .project-card-thumbnail img {
+	filter: invert(1) hue-rotate(180deg);
+}
+
+@media (prefers-color-scheme: light) {
+	:root:not(.theme-dark) .blog-card-thumbnail img,
+	:root:not(.theme-dark) .project-card-thumbnail img {
+		filter: invert(1) hue-rotate(180deg);
+	}
+}
+
 #filtered-projects .project-content {
 	position: relative;
 	z-index: 0;
