@@ -2,6 +2,7 @@
 export const prerender = true;
 
 import Layout from '../layouts/Layout.astro';
+import ContactForm from '../components/ContactForm';
 ---
 
 <Layout
@@ -91,6 +92,17 @@ import Layout from '../layouts/Layout.astro';
       </section>
     </div>
   </article>
+
+  <section class="section resume-contact-section">
+    <div class="section-title section-title--divider section-title--centered">
+      <div class="section-title__group">
+        <span class="section-title__line" aria-hidden="true"></span>
+        <h2 class="section-title__heading">Contact</h2>
+        <span class="section-title__line" aria-hidden="true"></span>
+      </div>
+    </div>
+    <ContactForm client:load />
+  </section>
 </Layout>
 
 <script>
@@ -99,7 +111,12 @@ import Layout from '../layouts/Layout.astro';
 
 <style>
   .resume {
-    padding: 2rem 0 3rem;
+    padding: 2rem 0 0;
+  }
+
+  .resume-contact-section {
+    padding-top: 2rem;
+    padding-bottom: 0;
   }
 
   .resume-toolbar {
@@ -426,12 +443,12 @@ import Layout from '../layouts/Layout.astro';
     }
 
     .resume-section {
-      margin-top: 13pt;
+      margin-top: 11pt;
     }
 
     .resume-section h2 {
       font-size: 10pt;
-      margin-bottom: 7pt;
+      margin-bottom: 5pt;
     }
 
     .resume-section h2::after {
@@ -443,8 +460,23 @@ import Layout from '../layouts/Layout.astro';
       line-height: 1.45;
     }
 
+    .job-head {
+      flex-wrap: nowrap;
+    }
+
     .job-head h3 {
       font-size: 12pt;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .edu-note {
+      font-size: 9pt;
+    }
+
+    .dates {
+      font-size: 8.5pt;
+      flex-shrink: 0;
     }
 
     .job-title {
@@ -452,8 +484,9 @@ import Layout from '../layouts/Layout.astro';
       margin-top: 1pt;
     }
 
-    .dates {
-      font-size: 8.5pt;
+    .resume-section:last-child {
+      break-inside: avoid;
+      page-break-inside: avoid;
     }
 
     .resume-section ul {
@@ -506,7 +539,8 @@ import Layout from '../layouts/Layout.astro';
   @media print {
     .floating-nav,
     .site-footer,
-    footer {
+    footer,
+    .resume-contact-section {
       display: none !important;
     }
 
