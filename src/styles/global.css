@@ -1042,15 +1042,16 @@ a {
 	position: relative;
 	isolation: isolate;
 	grid-template-columns: 1fr;
-	padding: 3rem 0 2rem;
-	margin-bottom: 2rem;
+	padding: 3rem 0 3.5rem;
+	margin-bottom: 2.5rem;
 }
 
 .post-hero-banner {
 	position: absolute;
-	inset: 0;
+	top: 0;
 	left: 50%;
-	width: 100vw;
+	bottom: -3.5rem;
+	width: calc(100% + 2.5rem);
 	transform: translateX(-50%);
 	overflow: hidden;
 	pointer-events: none;
@@ -1062,15 +1063,26 @@ a {
 	height: 100%;
 	object-fit: cover;
 	object-position: center;
+	transform: scale(0.9);
+}
+
+.post-hero-banner::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+	background: var(--bg);
+	opacity: 0.88;
 }
 
 .post-hero-banner::after {
 	content: '';
 	position: absolute;
 	inset: 0;
+	z-index: 2;
 	background:
-		linear-gradient(to right, var(--bg) 0%, transparent 16%, transparent 84%, var(--bg) 100%),
-		linear-gradient(to bottom, transparent 0%, color-mix(in srgb, var(--bg) 35%, transparent) 55%, var(--bg) 100%);
+		linear-gradient(to right, var(--bg) 0%, transparent 12%, transparent 88%, var(--bg) 100%),
+		linear-gradient(to bottom, transparent 0%, transparent 45%, color-mix(in srgb, var(--bg) 50%, transparent) 72%, var(--bg) 100%);
 }
 
 .post-hero-content {
