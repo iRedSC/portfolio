@@ -13,13 +13,13 @@ thumbnail: ./images/invokify/thumbnail.png
 
 ## Overview
 
-Most CLI libraries want you to learn their entire framework before you write a single command. You subclass things, configure parsers, wire up help text — and suddenly a five-line script has more boilerplate than logic.
+Most CLI libraries ask you to learn a framework before you can write a single command: subclasses, parser configuration, help text wiring. For a small script, the boilerplate outweighs the logic.
 
-I wanted the opposite: decorate a function, feed a list of strings to a parser, call the result. That's Invokify. It's a small Python library that turns regular functions into commands you can invoke from a string or argument list, with nested subcommands when you need them.
+Invokify takes a simpler approach. You decorate a function, feed a list of strings to a parser, and call the result. It's a small Python library that turns regular functions into commands you can invoke from a string or argument list, with nested subcommands when you need them.
 
 ## Commands from decorators
 
-The whole API fits on one screen. Create an engine, decorate your functions, parse input:
+The core API is three steps: create an engine, decorate your functions, parse input.
 
 ```py
 from invokify import InvokeEngine
@@ -34,7 +34,7 @@ cmd, args, callstack = engine.parse(["greet", "Jeff"])
 cmd(*args)
 ```
 
-`parse` walks the argument list recursively, matching commands and subcommands until it hits a leaf. Whatever's left becomes the arguments passed to your function. The callstack tells you exactly which commands were traversed — useful for debugging nested command trees.
+`parse` walks the argument list recursively, matching commands and subcommands until it hits a leaf. Whatever remains becomes the arguments passed to your function. The callstack records which commands were traversed, which helps when debugging nested command trees.
 
 ## Subcommands
 
@@ -50,11 +50,11 @@ def all(*_):
     return sell(10000000)
 ```
 
-This mirrors how real CLIs work (`git remote add`, `docker container ls`) without forcing you into a rigid command tree API. You define subcommands right on the parent, same decorator pattern.
+This mirrors how established CLIs are structured (`git remote add`, `docker container ls`). Subcommands are defined directly on the parent with the same decorator pattern, so there's no separate command tree API to learn.
 
 ## String parsing built in
 
-For interactive REPL-style tools, Invokify ships `string_to_args()` — a tokenizer that turns a raw input string into typed Python values. Quoted strings stay strings, bare numbers become `int` or `float`, and bracket syntax becomes nested lists:
+For interactive REPL-style tools, Invokify ships `string_to_args()`, a tokenizer that turns a raw input string into typed Python values. Quoted strings stay strings, bare numbers become `int` or `float`, and bracket syntax becomes nested lists:
 
 ```py
 from invokify import string_to_args
@@ -63,15 +63,15 @@ string_to_args('greet "Jeff Bridges" 42 [1, 2, 3]')
 # → ['greet', 'Jeff Bridges', 42, [1, 2, 3]]
 ```
 
-Drop it in an input loop and you have a working command shell without reaching for `argparse` or `shlex`.
+Combined with an input loop, this is enough for a working command shell without `argparse` or `shlex`.
 
 ## Dependency injection
 
 The `meta` helpers let commands declare what they need injected at call time:
 
-- **`meta.require`** — ask for the engine or the command object itself, or define custom requirements your command can inspect.
-- **`meta.inject`** — pass in shared state (a database connection, a game player object) without threading it through every parse call.
-- **`meta.help`** — attach help text to a command for when you build your own help output.
+- **`meta.require`** asks for the engine or the command object itself, or defines custom requirements your command can inspect.
+- **`meta.inject`** passes in shared state, like a database connection or a game player object, without threading it through every parse call.
+- **`meta.help`** attaches help text to a command for when you build your own help output.
 
 This keeps command functions clean while still supporting patterns like command chaining, where one command parses and forwards to the next.
 
@@ -87,4 +87,4 @@ This keeps command functions clean while still supporting patterns like command 
 pip install invokify
 ```
 
-Check the [examples](https://github.com/iRedSC/invokify/tree/master/examples) for a blackjack game, multi-command chains, and passthrough patterns. The [README](https://github.com/iRedSC/invokify) walks through the basics in a few minutes.
+The [examples](https://github.com/iRedSC/invokify/tree/master/examples) include a blackjack game, multi-command chains, and passthrough patterns, and the [README](https://github.com/iRedSC/invokify) covers the basics.
