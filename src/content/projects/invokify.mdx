@@ -1,0 +1,90 @@
+---
+title: Invokify
+description: A lightweight library that turns functions into parsable commands.
+tags: [python, cli]
+pubDate: 2026-07-03
+draft: false
+githubRepo: "iredsc/invokify"
+githubMilestoneId: 1
+featured: false
+repoUrl: "https://github.com/iRedSC/invokify"
+status: complete
+---
+
+## Overview
+
+Most CLI libraries want you to learn their entire framework before you write a single command. You subclass things, configure parsers, wire up help text — and suddenly a five-line script has more boilerplate than logic.
+
+I wanted the opposite: decorate a function, feed a list of strings to a parser, call the result. That's Invokify. It's a small Python library that turns regular functions into commands you can invoke from a string or argument list, with nested subcommands when you need them.
+
+## Commands from decorators
+
+The whole API fits on one screen. Create an engine, decorate your functions, parse input:
+
+```py
+from invokify import InvokeEngine
+
+engine = InvokeEngine()
+
+@engine.command
+def greet(user: str):
+    print(f"Hello {user}!")
+
+cmd, args, callstack = engine.parse(["greet", "Jeff"])
+cmd(*args)
+```
+
+`parse` walks the argument list recursively, matching commands and subcommands until it hits a leaf. Whatever's left becomes the arguments passed to your function. The callstack tells you exactly which commands were traversed — useful for debugging nested command trees.
+
+## Subcommands
+
+Commands can have children, and those children can have their own aliases:
+
+```py
+@engine.command
+def sell(amount: int):
+    ...
+
+@sell.subcommand(aliases=["alot"])
+def all(*_):
+    return sell(10000000)
+```
+
+This mirrors how real CLIs work (`git remote add`, `docker container ls`) without forcing you into a rigid command tree API. You define subcommands right on the parent, same decorator pattern.
+
+## String parsing built in
+
+For interactive REPL-style tools, Invokify ships `string_to_args()` — a tokenizer that turns a raw input string into typed Python values. Quoted strings stay strings, bare numbers become `int` or `float`, and bracket syntax becomes nested lists:
+
+```py
+from invokify import string_to_args
+
+string_to_args('greet "Jeff Bridges" 42 [1, 2, 3]')
+# → ['greet', 'Jeff Bridges', 42, [1, 2, 3]]
+```
+
+Drop it in an input loop and you have a working command shell without reaching for `argparse` or `shlex`.
+
+## Dependency injection
+
+The `meta` helpers let commands declare what they need injected at call time:
+
+- **`meta.require`** — ask for the engine or the command object itself, or define custom requirements your command can inspect.
+- **`meta.inject`** — pass in shared state (a database connection, a game player object) without threading it through every parse call.
+- **`meta.help`** — attach help text to a command for when you build your own help output.
+
+This keeps command functions clean while still supporting patterns like command chaining, where one command parses and forwards to the next.
+
+## How it's built
+
+- **Minimal surface area.** Three modules: the engine and command decorators, a string tokenizer, and the public exports. No plugin system, no code generation.
+- **Typed and dataclass-based.** Commands and the engine use `@dataclass(slots=True)` for a small memory footprint and clear structure.
+- **Published on PyPI.** Install with `pip install invokify` or `poetry add invokify`. Requires Python 3.10+.
+
+## Try it
+
+```shell
+pip install invokify
+```
+
+Check the [examples](https://github.com/iRedSC/invokify/tree/master/examples) for a blackjack game, multi-command chains, and passthrough patterns. The [README](https://github.com/iRedSC/invokify) walks through the basics in a few minutes.
