@@ -40,7 +40,7 @@ const projects = defineCollection({
 		updatedDate: z.coerce.date().optional(),
 		draft: z.boolean().default(false),
 		githubRepo: z.string(),
-		githubMilestoneId: z.number(),
+		githubMilestoneId: z.number().optional(),
 		featured: z.boolean().default(false),
 		demoUrl: z.string().url().optional(),
 		demoNote: z.string().optional(),
