@@ -6,23 +6,23 @@ interface Props {
   slug?: string;
   title: string;
   description: string;
-  image?: string;
+  thumbnail?: string;
   tags: string[];
   commitActivity?: CommitDay[];
   language?: string;
   clickableTags?: boolean;
 }
 
-const { slug, title, description, image, tags, commitActivity, language, clickableTags = false } = Astro.props;
+const { slug, title, description, thumbnail, tags, commitActivity, language, clickableTags = false } = Astro.props;
 ---
 
-<article class="project-card" data-slug={slug}>
+<article class:list={['project-card', thumbnail && 'project-card--has-thumbnail']} data-slug={slug}>
   {slug && (
     <a href={`/projects/${slug}`} class="project-card-link" aria-label={`View ${title}`}></a>
   )}
-  {image && (
-    <div class="project-image">
-      <img src={image} alt={title} loading="lazy" />
+  {thumbnail && (
+    <div class="project-card-thumbnail" aria-hidden="true">
+      <img src={thumbnail} alt="" loading="lazy" />
     </div>
   )}
 
@@ -80,22 +80,33 @@ const { slug, title, description, image, tags, commitActivity, language, clickab
     z-index: 1;
   }
 
-  .project-image {
-    aspect-ratio: 16 / 9;
+  .project-card-thumbnail {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
     overflow: hidden;
-    border-radius: 20px 20px 0 0;
+    border-radius: inherit;
+    pointer-events: none;
   }
 
-  .project-image img {
+  .project-card-thumbnail img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: inherit;
+    object-position: center;
+  }
+
+  .project-card--has-thumbnail .project-card-thumbnail::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--card);
+    opacity: 0.9;
   }
 
   .project-content {
     position: relative;
-    z-index: 0;
+    z-index: 1;
     flex: 1 1 auto;
     padding: 1.75rem;
     display: flex;

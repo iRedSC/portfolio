@@ -20,6 +20,7 @@ const projectsForFilter = projects.map((p) => ({
   description: p.description,
   tags: p.tags ?? [],
   heroImage: p.heroImage,
+  thumbnail: p.thumbnail,
   commitActivity: p.commitActivity,
   language: p.language,
 }));
@@ -68,7 +69,7 @@ const projectsForFilter = projects.map((p) => ({
           slug={project.slug}
           title={project.title}
           description={project.description}
-          image={project.heroImage}
+          thumbnail={project.thumbnail}
           tags={project.tags}
           commitActivity={project.commitActivity}
           language={project.language}

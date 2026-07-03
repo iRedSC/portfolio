@@ -9,6 +9,7 @@ export interface EnrichedProject {
   pubDate: Date;
   updatedDate?: Date;
   heroImage?: string;
+  thumbnail?: string;
   tags: string[];
   draft: boolean;
   featured: boolean;
@@ -68,6 +69,7 @@ export async function getEnrichedProjects(): Promise<EnrichedProject[]> {
         pubDate: project.data.pubDate,
         updatedDate: project.data.updatedDate,
         heroImage: project.data.heroImage,
+        thumbnail: project.data.thumbnail?.src,
         tags,
         draft: project.data.draft,
         featured: project.data.featured ?? false,
