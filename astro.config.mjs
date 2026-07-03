@@ -10,7 +10,8 @@ import rehypeSlug from 'rehype-slug';
 
 // Use Node adapter for Nixpacks/Dokploy; Vercel adapter otherwise
 const isNixpacks = process.env.NIXPACKS === '1';
-const siteUrl = process.env.SITE_URL ?? 'http://localhost:4321';
+const siteUrl =
+	process.env.SITE_URL ?? (isNixpacks ? 'https://masonltrout.me' : 'http://localhost:4321');
 const { hostname, protocol } = new URL(siteUrl);
 const siteProtocol = protocol.replace(':', '');
 
@@ -18,11 +19,12 @@ const siteProtocol = protocol.replace(':', '');
 export default defineConfig({
 	site: siteUrl,
 	security: {
-		// Trust proxy X-Forwarded-* headers so same-origin POSTs work behind Cloudflare/Dokploy.
+		// Protocol and hostname must be separate entries — combined patterns break forwarded-proto validation.
 		allowedDomains: [
-			{ hostname, protocol: siteProtocol },
+			{ protocol: siteProtocol },
+			{ hostname },
 			...(hostname !== 'localhost' && !hostname.startsWith('www.')
-				? [{ hostname: `www.${hostname}`, protocol: 'https' }]
+				? [{ hostname: `www.${hostname}` }]
 				: []),
 		],
 	},

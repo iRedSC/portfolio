@@ -1,11 +1,12 @@
 # Nixpacks config for Dokploy deployment
 # Use npm (not bun) in the container to avoid arch issues (exit 132) on some hosts.
 # NIXPACKS=1 makes Astro use the Node adapter (standalone server).
-# Enable persistent build cache in Dokploy so the install layer is reused between deploys.
-
+# SITE_URL must be set at build time so Astro CSRF allowedDomains matches the public domain.
 [variables]
 NIXPACKS_NODE_VERSION = "20"
 PUPPETEER_SKIP_DOWNLOAD = "true"
+NIXPACKS = "1"
+SITE_URL = "https://masonltrout.me"
 
 [phases.install]
 cmds = ["npm ci --omit=dev"]
