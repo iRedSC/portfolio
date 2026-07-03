@@ -11,19 +11,11 @@ repoUrl: "https://github.com/iRedSC/invokify"
 status: complete
 ---
 
-import InvokifySandbox from '../../components/InvokifySandbox';
-
 ## Overview
 
 Most CLI libraries want you to learn their entire framework before you write a single command. You subclass things, configure parsers, wire up help text — and suddenly a five-line script has more boilerplate than logic.
 
 I wanted the opposite: decorate a function, feed a list of strings to a parser, call the result. That's Invokify. It's a small Python library that turns regular functions into commands you can invoke from a string or argument list, with nested subcommands when you need them.
-
-## Try it in the browser
-
-This demo is running a TypeScript port of Invokify inside a sandboxed iframe. The examples are adapted from the repo: a basic command parser, the player buy/sell example, and the passthrough command chain.
-
-<InvokifySandbox client:load />
 
 ## Commands from decorators
 
