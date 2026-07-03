@@ -2,8 +2,6 @@ import { useEffect, useState, useRef, useCallback } from 'react';
 import ThemeToggle from './ThemeToggle';
 
 const MOBILE_BREAKPOINT = 768;
-/** Below this viewport width on mobile, hide "MT" so nav links and toggle don't overlap */
-const HIDE_NAME_BELOW_PX = 420;
 const TOP_THRESHOLD = 24;
 
 interface NavLink {
@@ -36,9 +34,6 @@ export default function FloatingNav({ links }: FloatingNavProps) {
   );
   const [isAtTop, setIsAtTop] = useState(true);
   const [hasMounted, setHasMounted] = useState(false);
-  const [hideNameWhenTight, setHideNameWhenTight] = useState(
-    () => (typeof window !== 'undefined' && window.innerWidth <= MOBILE_BREAKPOINT && window.innerWidth < HIDE_NAME_BELOW_PX)
-  );
 
   useEffect(() => {
     setHasMounted(true);
@@ -46,9 +41,7 @@ export default function FloatingNav({ links }: FloatingNavProps) {
 
   useEffect(() => {
     const update = () => {
-      const w = window.innerWidth;
-      setIsMobile(w <= MOBILE_BREAKPOINT);
-      setHideNameWhenTight(w <= MOBILE_BREAKPOINT && w < HIDE_NAME_BELOW_PX);
+      setIsMobile(window.innerWidth <= MOBILE_BREAKPOINT);
     };
     update();
     window.addEventListener('resize', update);
@@ -224,21 +217,19 @@ export default function FloatingNav({ links }: FloatingNavProps) {
                 : {}),
             }}
           >
-            {(!isMobile || !hideNameWhenTight) && (
-              <a
-                href="/"
-                style={{
-                  fontWeight: 700,
-                  fontSize: isMobile ? '1.05rem' : '1.1rem',
-                  color: 'var(--text)',
-                  textDecoration: 'none',
-                  transition: 'color 0.2s ease',
-                  flexShrink: 0,
-                }}
-              >
-                {isMobile ? 'MT' : 'Mason Trout'}
-              </a>
-            )}
+            <a
+              href="/"
+              style={{
+                fontWeight: 700,
+                fontSize: isMobile ? '1.05rem' : '1.1rem',
+                color: 'var(--text)',
+                textDecoration: 'none',
+                transition: 'color 0.2s ease',
+                flexShrink: 0,
+              }}
+            >
+              {isMobile ? 'MT' : 'Mason Trout'}
+            </a>
 
             <div
               style={{

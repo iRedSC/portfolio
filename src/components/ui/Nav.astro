@@ -10,7 +10,7 @@ interface NavItem {
 const { sections } = await getSiteConfig();
 
 const navItems: NavItem[] = [
-  { label: 'Home', href: '/' },
+  { label: 'Resume', href: '/resume' },
   { label: 'Blog', href: '/blog' },
   ...(sections.projects ? [{ label: 'Projects', href: '/projects' }] : []),
   ...(sections.caseStudies ? [{ label: 'Cases', href: '/case-studies' }] : []),

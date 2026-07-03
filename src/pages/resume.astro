@@ -1,0 +1,367 @@
+---
+export const prerender = true;
+
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+  title="Resume"
+  description="Mason Trout — Full-Stack Software Engineer. Experience, projects, and skills."
+>
+  <article class="resume">
+    <div class="resume-page">
+      <header class="resume-header">
+        <div>
+          <h1>Mason Trout</h1>
+          <div class="resume-role">Full-Stack Software Engineer</div>
+        </div>
+        <div class="resume-contact">
+          <div>Harrisburg, PA</div>
+          <div>
+            <a href="https://masonltrout.me">masonltrout.me</a>
+          </div>
+          <div>
+            <a href="https://github.com/iRedSC">github.com/iRedSC</a><span class="sep" aria-hidden="true">&middot;</span><a href="https://linkedin.com/in/masonltrout">linkedin.com/in/masonltrout</a>
+          </div>
+        </div>
+      </header>
+
+      <section class="resume-section resume-summary">
+        <h2>Summary</h2>
+        <p>Self-taught full-stack engineer, writing software since 2016. Sole technical owner of a $1M+ e-commerce operation since 2021. Designing for least-friction: ultra-fast, easy-to-use workflows that save hundreds of hours a month.</p>
+      </section>
+
+      <section class="resume-section">
+        <h2>Experience</h2>
+        <div class="job-head">
+          <h3>East Coast Drywall Tools</h3>
+          <div class="dates">Aug 2021 &ndash; Present</div>
+        </div>
+        <div class="job-title">Software Engineer</div>
+        <ul>
+          <li>Enabled 4x annual revenue growth, from $250K to over $1M in 12 months, by taking the company from no online presence to 25+ orders per day with integrated sales and fulfillment systems.</li>
+          <li>Sole engineer for the e-commerce and logistics stack, in production since 2021 and operated daily by non-technical staff; gather requirements, write documentation, train staff, and maintain every system.</li>
+          <li>Built <strong>Priceprint</strong> in 3 days: a barcode-scanning PWA that keeps retail shelf pricing in sync with Shopify and prints grouped labels through LabelLIVE. Saves dozens of hours weekly and nearly eliminates pricing errors.</li>
+          <li>Built <strong>Flashpart</strong>, a guided photo-capture tool that creates Shopify products for hundreds of near-identical parts, cutting product creation time by up to 90%.</li>
+          <li>Built <strong>Schematimaker</strong>, a tool that converts PDF part schematics into interactive HTML for the storefront, cutting creation time from hours to minutes.</li>
+          <li>Built a <strong>profit tracker</strong> that unifies Amazon, eBay, and Shopify order data via REST APIs and calculates true margins after fees and shipping, cutting manual reporting work by more than 50%.</li>
+          <li>Handled all IT and infrastructure for the operation, including hardware upgrades, software rollouts, and internal support.</li>
+        </ul>
+      </section>
+
+      <section class="resume-section">
+        <h2>Projects</h2>
+        <div class="project">
+          <h3>Homelab.</h3>
+          <p>Long-running Ubuntu infrastructure: Dokploy, GitHub Actions deployments, Docker services, Home Assistant, Pi-hole, and custom apps I build and operate end to end.</p>
+        </div>
+        <div class="project">
+          <h3>Invokify.</h3>
+          <p>Open-source Python library that turns decorated functions into parsable CLI commands; published on PyPI.</p>
+        </div>
+      </section>
+
+      <section class="resume-section">
+        <h2>Skills</h2>
+        <dl class="skills-grid">
+          <dt>Languages</dt>
+          <dd><span class="chip">TypeScript</span><span class="chip">JavaScript</span><span class="chip">Python</span><span class="chip">SQL</span><span class="chip">HTML/CSS</span></dd>
+          <dt>Frameworks</dt>
+          <dd><span class="chip">React</span><span class="chip">Node.js</span><span class="chip">PWAs</span></dd>
+          <dt>Data &amp; APIs</dt>
+          <dd><span class="chip">Convex</span><span class="chip">SQLite</span><span class="chip">PostgreSQL</span><span class="chip">REST APIs</span><span class="chip">Shopify / Amazon / eBay APIs</span></dd>
+          <dt>Infrastructure</dt>
+          <dd><span class="chip">Docker</span><span class="chip">Linux (Ubuntu)</span><span class="chip">GitHub Actions (CI/CD)</span><span class="chip">Dokploy</span><span class="chip">Vercel</span></dd>
+          <dt>Workflow</dt>
+          <dd><span class="chip">Git / GitHub</span><span class="chip">Agentic development (Cursor)</span><span class="chip">Least-friction UX design</span></dd>
+        </dl>
+      </section>
+
+      <section class="resume-section">
+        <h2>Education</h2>
+        <div class="job-head">
+          <h3>Homeschool High School Diploma <span class="edu-note">/ Self-directed software education since 2016</span></h3>
+          <div class="dates">Graduated 2020</div>
+        </div>
+      </section>
+    </div>
+  </article>
+</Layout>
+
+<style>
+  .resume {
+    padding: 1.5rem 0 3rem;
+  }
+
+  .resume-page {
+    max-width: 8.5in;
+    margin: 0 auto;
+    padding: clamp(1.25rem, 4vw, 2.75rem) clamp(1rem, 4vw, 2.5rem);
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    box-shadow: 0 8px 32px var(--shadow);
+    font-size: 0.95rem;
+    line-height: 1.43;
+    color: var(--text);
+  }
+
+  .resume-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    border-bottom: 3px solid var(--accent);
+    padding-bottom: 0.85rem;
+  }
+
+  .resume-header h1 {
+    font-size: clamp(1.75rem, 5vw, 2.1rem);
+    font-weight: 800;
+    letter-spacing: -0.75px;
+    line-height: 1.1;
+    margin: 0;
+  }
+
+  .resume-role {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--accent);
+    margin-top: 0.2rem;
+    letter-spacing: 0.2px;
+  }
+
+  .resume-contact {
+    text-align: right;
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .resume-contact a {
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .resume-contact a:hover {
+    color: var(--accent);
+  }
+
+  .resume-contact .sep {
+    color: var(--accent);
+    padding: 0 0.2rem;
+    font-weight: 600;
+  }
+
+  .resume-section {
+    margin-top: 1.1rem;
+  }
+
+  .resume-section h2 {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--accent);
+    margin: 0 0 0.45rem;
+  }
+
+  .resume-section h2::before {
+    content: '';
+    width: 1rem;
+    height: 3.5px;
+    background: var(--accent);
+    border-radius: 2px;
+    flex-shrink: 0;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .resume-section h2::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .resume-summary p {
+    font-size: 0.98rem;
+    margin: 0;
+  }
+
+  .job-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .job-head h3 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: -0.2px;
+    margin: 0;
+  }
+
+  .job-title {
+    font-weight: 500;
+    font-size: 0.95rem;
+    color: var(--muted);
+    margin-top: 0.1rem;
+  }
+
+  .edu-note {
+    font-weight: 500;
+    font-size: 0.92rem;
+    color: var(--muted);
+  }
+
+  .dates {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .resume-section ul {
+    margin: 0.35rem 0 0;
+    padding-left: 1.1rem;
+  }
+
+  .resume-section li {
+    margin-bottom: 0.35rem;
+    padding-left: 0.15rem;
+  }
+
+  .resume-section li::marker {
+    color: var(--accent);
+  }
+
+  .project {
+    margin-bottom: 0.35rem;
+  }
+
+  .project h3 {
+    display: inline;
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .project p {
+    display: inline;
+    margin: 0;
+  }
+
+  .skills-grid {
+    display: grid;
+    grid-template-columns: minmax(5.5rem, 6.5rem) 1fr;
+    row-gap: 0.35rem;
+    align-items: baseline;
+    margin: 0;
+  }
+
+  .skills-grid dt {
+    font-weight: 700;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--accent);
+    margin: 0;
+  }
+
+  .skills-grid dd {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.2rem 0.5rem;
+    margin: 0;
+  }
+
+  .chip {
+    position: relative;
+    font-size: 0.72rem;
+    font-weight: 500;
+    padding: 0 0.25rem 0.15rem;
+    white-space: nowrap;
+    color: var(--text);
+  }
+
+  .chip::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1.25px;
+    background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--text) 60%, transparent), transparent);
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  @media (max-width: 640px) {
+    .resume-contact {
+      text-align: left;
+      width: 100%;
+    }
+
+    .skills-grid {
+      grid-template-columns: 1fr;
+      gap: 0.15rem 0;
+    }
+
+    .skills-grid dt {
+      margin-top: 0.35rem;
+    }
+  }
+
+  @media print {
+    .resume {
+      padding: 0;
+    }
+
+    .resume-page {
+      max-width: none;
+      margin: 0;
+      padding: 0;
+      border: none;
+      border-radius: 0;
+      box-shadow: none;
+      background: #fff;
+      color: #2d1810;
+    }
+
+    .resume-role,
+    .resume-section h2,
+    .skills-grid dt {
+      color: #ea5a2e;
+    }
+
+    .resume-contact,
+    .job-title,
+    .dates,
+    .edu-note {
+      color: #8b6e5a;
+    }
+
+    .resume-section h2::after {
+      background: #f0dcc7;
+    }
+
+    .resume-contact a {
+      color: inherit;
+    }
+  }
+
+  @page {
+    size: letter;
+    margin: 0.45in 0.6in;
+  }
+</style>

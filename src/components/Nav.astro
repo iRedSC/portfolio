@@ -5,7 +5,7 @@ import { getSiteConfig } from '../lib/site-config';
 const { sections } = await getSiteConfig();
 
 const navLinks = [
-	{ href: '/', label: 'Home' },
+	{ href: '/resume', label: 'Resume' },
 	{ href: '/blog', label: 'Blog' },
 	...(sections.projects ? [{ href: '/projects', label: 'Projects' }] : []),
 	...(sections.caseStudies ? [{ href: '/case-studies', label: 'Cases' }] : []),
