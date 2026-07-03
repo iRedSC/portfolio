@@ -10,6 +10,10 @@
 
 <style is:global>
 	.home-code-typing {
+		/* Safari iOS auto-inflates small inline text (token spans) after load */
+		-webkit-text-size-adjust: 100%;
+		text-size-adjust: 100%;
+
 		--code-base: color-mix(in srgb, var(--accent) 24%, transparent);
 		--code-keyword: color-mix(in srgb, var(--accent) 42%, transparent);
 		--code-string: color-mix(in srgb, #6a9f78 32%, transparent);
