@@ -20,24 +20,37 @@ const ACCENT = '#ea5a2e';
 const ACCENT_SOFT = '#ffe8df';
 const BORDER = '#f0dcc7';
 
-// Favicon "M" mark, normalized to a 0..1 box (source viewBox is 225x226).
-const M_PATH_1 =
+// Actual site logo (the "MT" monogram from public/favicon.svg), source viewBox 225x226.
+const LOGO_PATH_1 =
 	'M0.324707 112.673V0H0.471799L60.6329 85.3141L51.5131 83.2548L111.527 0H111.821V112.673H90.4929V48.0995L91.8167 59.1315L55.1905 111.202H54.8963L17.2404 59.1315L20.9178 48.982V112.673H0.324707Z';
-const M_PATH_2 =
+const LOGO_PATH_2 =
 	'M111.497 112.674L111.497 225.347L111.35 225.347L51.1885 140.033L60.3083 142.092L0.294228 225.347L3.05176e-05 225.347L4.03678e-05 112.673L21.3286 112.673L21.3286 177.247L20.0047 166.215L56.6309 114.144L56.9251 114.144L94.581 166.215L90.9037 176.365L90.9037 112.674L111.497 112.674Z';
-const M_PATH_3 =
+const LOGO_PATH_3 =
 	'M111.716 112.673H223.2V133.266H177.729V225.235H156.4V133.266H111.716V112.673Z';
-const M_PATH_4 =
+const LOGO_PATH_4 =
 	'M223.2 112.588L111.716 112.588L111.716 91.9948L157.188 91.9948L157.188 0.0261707L178.516 0.0261725L178.516 91.9948L223.2 91.9948L223.2 112.588Z';
 
-function markGroup({ x, y, size, opacity = 1, fill = ACCENT }) {
+// Renders the real logo. Paths 2 & 4 are the original design's soft tapering
+// accents (gradient to transparent) that make the M/T legs read cleanly instead
+// of turning into a cross/plus shape — keep that fade, just recolor it.
+function markGroup({ x, y, size, opacity = 1, fill = ACCENT, id }) {
 	const scale = size / 226;
 	return `
+	<defs>
+		<linearGradient id="markFadeM-${id}" x1="55.7484" y1="225.347" x2="55.7484" y2="112.674" gradientUnits="userSpaceOnUse">
+			<stop offset="0%" stop-color="${fill}" stop-opacity="0" />
+			<stop offset="100%" stop-color="${fill}" stop-opacity="1" />
+		</linearGradient>
+		<linearGradient id="markFadeT-${id}" x1="167.458" y1="112.588" x2="167.458" y2="0.0261716" gradientUnits="userSpaceOnUse">
+			<stop offset="0%" stop-color="${fill}" stop-opacity="1" />
+			<stop offset="100%" stop-color="${fill}" stop-opacity="0" />
+		</linearGradient>
+	</defs>
 	<g transform="translate(${x} ${y}) scale(${scale})" opacity="${opacity}">
-		<path d="${M_PATH_1}" fill="${fill}" />
-		<path d="${M_PATH_2}" fill="${fill}" />
-		<path d="${M_PATH_3}" fill="${fill}" />
-		<path d="${M_PATH_4}" fill="${fill}" />
+		<path d="${LOGO_PATH_1}" fill="${fill}" />
+		<path d="${LOGO_PATH_2}" fill="url(#markFadeM-${id})" />
+		<path d="${LOGO_PATH_3}" fill="${fill}" />
+		<path d="${LOGO_PATH_4}" fill="url(#markFadeT-${id})" />
 	</g>`;
 }
 
@@ -64,13 +77,13 @@ const svg = `
 	<rect width="${W}" height="${H}" fill="url(#glow)" />
 
 	<g clip-path="url(#frame)">
-		${markGroup({ x: 905, y: -70, size: 560, opacity: 0.05, fill: TEXT })}
+		${markGroup({ x: 905, y: -70, size: 560, opacity: 0.06, fill: TEXT, id: 'bg' })}
 	</g>
 
 	<rect x="1" y="1" width="${W - 2}" height="${H - 2}" fill="none" stroke="${BORDER}" stroke-width="2" />
 
 	<!-- Wordmark -->
-	${markGroup({ x: 80, y: 74, size: 46 })}
+	${markGroup({ x: 80, y: 68, size: 50, id: 'main' })}
 	<text x="140" y="115" font-family="Inter, sans-serif" font-weight="700" font-size="26" letter-spacing="0.5" fill="${TEXT}">Mason Trout</text>
 
 	<!-- Headline -->
