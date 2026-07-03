@@ -1038,20 +1038,30 @@ a {
 	margin-bottom: 2rem;
 }
 
-.post-hero--has-banner {
+.post--has-banner {
 	position: relative;
 	isolation: isolate;
+	padding-top: 0;
+}
+
+.post--has-banner .post-hero,
+.post--has-banner .post-body {
+	position: relative;
+	z-index: 1;
+}
+
+.post--has-banner .post-hero {
 	grid-template-columns: 1fr;
-	padding: 3rem 0 4.5rem;
-	margin-bottom: 3rem;
+	padding-top: 3rem;
 }
 
 .post-hero-banner {
+	--post-banner-spill: 5rem;
 	position: absolute;
 	top: -2rem;
 	left: 50%;
-	bottom: -6rem;
-	width: calc(100% + 4rem);
+	width: min(calc(100% + 2 * var(--post-banner-spill)), calc(100vw - 4rem));
+	height: clamp(24rem, 52vh, 34rem);
 	transform: translateX(-50%);
 	overflow: hidden;
 	pointer-events: none;
@@ -1081,18 +1091,13 @@ a {
 	inset: 0;
 	z-index: 2;
 	background:
-		linear-gradient(to right, var(--bg) 0%, transparent 10%, transparent 90%, var(--bg) 100%),
+		linear-gradient(to right, var(--bg) 0%, transparent 5%, transparent 95%, var(--bg) 100%),
 		linear-gradient(to bottom, var(--bg) 0%, transparent 22%),
-		linear-gradient(to bottom, transparent 0%, transparent 52%, color-mix(in srgb, var(--bg) 50%, transparent) 78%, var(--bg) 100%);
+		linear-gradient(to bottom, transparent 0%, transparent 58%, color-mix(in srgb, var(--bg) 50%, transparent) 82%, var(--bg) 100%);
 }
 
 .post-hero-content {
 	position: relative;
-	z-index: 1;
-}
-
-.post:has(.post-hero--has-banner) {
-	padding-top: 0;
 }
 
 :root.theme-light .post-hero-banner-image {

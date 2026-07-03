@@ -35,16 +35,16 @@ const socialImage = thumbnail ?? image;
 				<video src={backgroundVideo} autoplay muted loop playsinline />
 			</div>
 			<div class="video-overlay" aria-hidden />
-			<article class="post">
-				<header class:list={['post-hero', bannerImage && 'post-hero--has-banner']}>
-					{bannerImage && <PostBanner src={bannerImage} />}
-					<div class="post-hero-content">
-						<p class="eyebrow">{publishedDate.toLocaleDateString()}</p>
-						<h1>{title}</h1>
-						{description && <p class="lead">{description}</p>}
-						{readingTime && <p class="meta">{readingTime}</p>}
-					</div>
-				</header>
+		<article class:list={['post', bannerImage && 'post--has-banner']}>
+			{bannerImage && <PostBanner src={bannerImage} />}
+			<header class="post-hero">
+				<div class="post-hero-content">
+					<p class="eyebrow">{publishedDate.toLocaleDateString()}</p>
+					<h1>{title}</h1>
+					{description && <p class="lead">{description}</p>}
+					{readingTime && <p class="meta">{readingTime}</p>}
+				</div>
+			</header>
 				<div class="post-body">
 					<div class="post-content"><slot /></div>
 					{toc.length > 0 && <PostToc items={toc} />}
@@ -52,9 +52,9 @@ const socialImage = thumbnail ?? image;
 			</article>
 		</div>
 	) : (
-		<article class="post">
-			<header class:list={['post-hero', bannerImage && 'post-hero--has-banner']}>
-				{bannerImage && <PostBanner src={bannerImage} />}
+		<article class:list={['post', bannerImage && 'post--has-banner']}>
+			{bannerImage && <PostBanner src={bannerImage} />}
+			<header class="post-hero">
 				<div class="post-hero-content">
 					<p class="eyebrow">{publishedDate.toLocaleDateString()}</p>
 					<h1>{title}</h1>
