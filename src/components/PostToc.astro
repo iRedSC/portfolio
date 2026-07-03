@@ -1,0 +1,45 @@
+---
+export type TocItem = {
+	depth: number;
+	slug: string;
+	text: string;
+};
+
+type Props = {
+	items: TocItem[];
+};
+
+const { items } = Astro.props;
+---
+
+<aside class="post-toc">
+	<p class="toc-title post-toc-desktop-title">On this page</p>
+	<details class="post-toc-disclosure">
+		<summary class="post-toc-summary">
+			<span class="post-toc-summary-text">
+				<span class="toc-title">On this page</span>
+				<span class="post-toc-current"></span>
+			</span>
+			<svg
+				class="post-toc-chevron"
+				xmlns="http://www.w3.org/2000/svg"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				aria-hidden="true"
+			>
+				<polyline points="6 9 12 15 18 9"></polyline>
+			</svg>
+		</summary>
+		<ul class="post-toc-list">
+			{items.map((item) => (
+				<li class={`depth-${item.depth}`}>
+					<a href={`#${item.slug}`}>{item.text}</a>
+				</li>
+			))}
+		</ul>
+	</details>
+</aside>

@@ -1,5 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import PostToc from '../../components/PostToc.astro';
 import TocScrollSpy from '../../components/TocScrollSpy';
 import { getCollection } from 'astro:content';
 import { getSiteConfig } from '../../lib/site-config';
@@ -102,18 +103,7 @@ const buildDate = new Date().toLocaleDateString();
 			<div class="post-content">
 				<Content />
 			</div>
-			{toc.length > 0 && (
-				<aside class="post-toc">
-					<p class="toc-title">On this page</p>
-					<ul>
-						{toc.map((item) => (
-							<li class={`depth-${item.depth}`}>
-								<a href={`#${item.slug}`}>{item.text}</a>
-							</li>
-						))}
-					</ul>
-				</aside>
-			)}
+			{toc.length > 0 && <PostToc items={toc} />}
 		</div>
 	</article>
 	{toc.length > 0 && <TocScrollSpy client:load />}

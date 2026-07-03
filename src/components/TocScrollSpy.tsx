@@ -1,4 +1,7 @@
 import { useEffect } from 'react';
+import { flashSectionAfterScroll } from '../lib/section-flash';
+
+const MOBILE_TOC_MQ = '(max-width: 900px)';
 
 function offsetPx(): number {
 	const rootFont = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
@@ -23,6 +26,10 @@ export default function TocScrollSpy() {
 		const postBody = toc.closest('.post-body');
 		const content = postBody?.querySelector('.post-content');
 		if (!content) return;
+
+		const disclosure = toc.querySelector('.post-toc-disclosure');
+		const currentLabel = toc.querySelector('.post-toc-current');
+		const mobileMq = window.matchMedia(MOBILE_TOC_MQ);
 
 		const links = [...toc.querySelectorAll<HTMLAnchorElement>('a[href^="#"]')];
 		if (links.length === 0) return;
@@ -49,17 +56,20 @@ export default function TocScrollSpy() {
 		syncPinFromHash();
 
 		const setActive = (activeId: string | null) => {
+			let activeText = '';
 			for (const link of links) {
 				const id = decodeURIComponent(link.hash.slice(1));
 				const li = link.closest('li');
 				if (id === activeId) {
 					link.setAttribute('aria-current', 'location');
 					li?.classList.add('toc-active');
+					activeText = link.textContent?.trim() ?? '';
 				} else {
 					link.removeAttribute('aria-current');
 					li?.classList.remove('toc-active');
 				}
 			}
+			if (currentLabel) currentLabel.textContent = activeText;
 		};
 
 		let ticking = false;
@@ -100,6 +110,12 @@ export default function TocScrollSpy() {
 			}
 		};
 
+		const closeMobileDisclosure = () => {
+			if (mobileMq.matches && disclosure instanceof HTMLDetailsElement) {
+				disclosure.open = false;
+			}
+		};
+
 		const onTocClick = (e: MouseEvent) => {
 			const a = (e.target as HTMLElement | null)?.closest?.('a[href^="#"]');
 			if (!a || !toc.contains(a)) return;
@@ -107,6 +123,8 @@ export default function TocScrollSpy() {
 			if (idSet.has(id)) {
 				pinnedId = id;
 				schedule();
+				closeMobileDisclosure();
+				flashSectionAfterScroll(id, content, headings);
 			}
 		};
 
