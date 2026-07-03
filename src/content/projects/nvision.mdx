@@ -16,60 +16,60 @@ thumbnail: ./images/nvision/thumbnail.png
 
 ## Overview
 
-Home Assistant is incredible at collecting data, and mediocre at showing it off. The built-in cards are functional, but a dashboard full of them feels like a spreadsheet. I wanted my dashboard to feel alive.
+Home Assistant collects a lot of data but doesn't do much to present it. The built-in cards are functional, and a dashboard full of them reads like a spreadsheet.
 
-Nvision is my answer: a collection of custom lovelace cards that are visual first. Every card is theme-aware, built on HA's native web components, and fully configurable from the visual editor. No YAML required.
+Nvision is a collection of custom lovelace cards designed around visual presentation. Every card is theme-aware, built on Home Assistant's native web components, and fully configurable from the visual editor, so no YAML is required.
 
 ## The cards
 
 ### Waveform
 
-Live power draw rendered as a glowing waveform, colored per device. You can tell at a glance whether the PC is idling or gaming without reading a single number.
+Live power draw rendered as a glowing waveform, colored per device. The shape of the wave shows whether a PC is idling or under load without reading any numbers.
 
 ![Waveform cards showing live power draw for several devices](./images/nvision/electricity-card.gif)
 
 ### Heat map
 
-A temporal heat map for any numeric sensor. Think GitHub contribution graph, but for your house: hours across, days down, color for intensity. Patterns you would never spot in a line graph jump right out, like exactly when the fridge compressor kicks on.
+A temporal heat map for any numeric sensor, laid out like a GitHub contribution graph: hours across, days down, color for intensity. It surfaces patterns a line graph hides, like when the fridge compressor kicks on each day.
 
 ![Heat map cards showing sensor history as hourly and weekly grids](./images/nvision/heatmap-card.png)
 
 ### Reactor
 
-An ambient orb that pulses based on a sensor's value. It's less about reading a precise number and more about feeling the state of something from across the room.
+An ambient orb that pulses based on a sensor's value. It's meant for reading state from across the room rather than showing a precise number.
 
 ![Reactor cards with pulsing ambient orbs](./images/nvision/reactor-card.gif)
 
 ### Liquid
 
-A fill gauge where the level is literal liquid, waves and all. Battery levels, tank levels, anything with a percentage feels right at home.
+A fill gauge rendered as animated liquid. It works for battery levels, tank levels, or anything expressed as a percentage.
 
 ![Liquid fill cards with animated waves](./images/nvision/liquid-card.gif)
 
 ### Entity overview
 
-Every entity in an area becomes a particle floating in a constellation. Active entities glow bigger and brighter, and key sensors get called out below. It turns "what's going on in this room?" into one glance.
+Every entity in an area becomes a particle in a floating constellation. Active entities glow bigger and brighter, and key sensors are called out below, giving a one-glance summary of a room.
 
 ![Entity overview card rendering entities as a particle constellation](./images/nvision/entity-overview-card.gif)
 
 ### Circle gauge
 
-A clean circular progress ring for when you do just want the number, without the visual noise of the stock gauge.
+A circular progress ring for when you just want the number, without the visual noise of the stock gauge.
 
 ![Circle gauge cards showing battery level and a daily timer](./images/nvision/circle-gauge-card.png)
 
 ### Air quality
 
-A gauge tuned for air quality sensors, sweeping from green to red so the reading is meaningful without memorizing PPB thresholds.
+A gauge tuned for air quality sensors. The scale sweeps from green to red, so the reading is meaningful without memorizing PPB thresholds.
 
 ![Air quality gauge cards](./images/nvision/air-quality-card.gif)
 
 ## How it's built
 
-- **HA-native under the hood.** Cards are built from Home Assistant's own elements and theme variables, so they inherit your theme instead of fighting it.
-- **Visual editor first.** Every card gets a proper config editor. If you have to open a YAML file to use a card, I consider that a bug.
-- **One template, many cards.** New cards start as a copy of a minimal blank card, so the whole collection stays consistent and adding a card is fast.
+- **HA-native under the hood.** Cards are built from Home Assistant's own elements and theme variables, so they inherit your theme rather than overriding it.
+- **Visual editor first.** Every card has a full config editor; nothing requires editing YAML.
+- **One template, many cards.** New cards start as a copy of a minimal blank card, which keeps the collection consistent and makes adding a card fast.
 
 ## Try it
 
-Nvision installs through [HACS](https://hacs.xyz/) as a custom repository. Add [the repo](https://github.com/iRedSC/nvision), install, and the cards show up in your dashboard's card picker.
+Nvision installs through [HACS](https://hacs.xyz/) as a custom repository. Add [the repo](https://github.com/iRedSC/nvision), install it, and the cards appear in your dashboard's card picker.
