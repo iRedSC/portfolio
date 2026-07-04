@@ -1400,10 +1400,14 @@ main.container {
 }
 
 @media (max-width: 900px) {
+	.post-hero {
+		margin-bottom: 1.25rem;
+	}
+
 	.post-body {
 		display: flex;
 		flex-direction: column;
-		gap: 1.5rem;
+		gap: 1rem;
 	}
 
 	.post-toc {
@@ -1426,6 +1430,30 @@ main.container {
 	.post-toc-disclosure[open] {
 		border-bottom-left-radius: 0;
 		border-bottom-right-radius: 0;
+	}
+
+	/* Collapse the details content slot so the open list overlays instead of pushing layout */
+	.post-toc-disclosure::details-content {
+		block-size: 0;
+		overflow: visible;
+	}
+
+	.post-toc-disclosure[open]::details-content {
+		position: absolute;
+		top: 100%;
+		left: -1px;
+		right: -1px;
+		z-index: 1;
+		block-size: auto;
+		max-block-size: min(40vh, 16rem);
+		overflow-y: auto;
+		-webkit-overflow-scrolling: touch;
+		padding: 0 1rem 0.75rem;
+		border: 1px solid var(--border);
+		border-top: none;
+		border-radius: 0 0 12px 12px;
+		background: var(--card);
+		box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
 	}
 
 	.post-toc-summary {
@@ -1477,20 +1505,26 @@ main.container {
 	}
 
 	.post-toc-list {
-		position: absolute;
-		top: 100%;
-		left: -1px;
-		right: -1px;
-		z-index: 1;
-		padding: 0 1rem 0.75rem;
-		max-height: min(40vh, 16rem);
-		overflow-y: auto;
-		-webkit-overflow-scrolling: touch;
-		border: 1px solid var(--border);
-		border-top: none;
-		border-radius: 0 0 12px 12px;
-		background: var(--card);
-		box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+		padding: 0;
+	}
+
+	@supports not selector(::details-content) {
+		.post-toc-list {
+			position: absolute;
+			top: 100%;
+			left: -1px;
+			right: -1px;
+			z-index: 1;
+			padding: 0 1rem 0.75rem;
+			max-height: min(40vh, 16rem);
+			overflow-y: auto;
+			-webkit-overflow-scrolling: touch;
+			border: 1px solid var(--border);
+			border-top: none;
+			border-radius: 0 0 12px 12px;
+			background: var(--card);
+			box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+		}
 	}
 
 	.post-toc-disclosure:not([open]) .post-toc-list {
