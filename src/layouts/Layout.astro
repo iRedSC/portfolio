@@ -25,8 +25,20 @@ const socialImage = rawSocialImage
 <html lang="en" class="theme-auto" transition:animate="none">
 	<head>
 		<meta charset="utf-8" />
-		<ClientRouter />
+		<ClientRouter fallback="swap" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+		<script is:inline>
+			(function () {
+				if (document.getElementById('page-transition-root')) return;
+				var root = document.createElement('div');
+				root.id = 'page-transition-root';
+				root.className = 'page-transition-host';
+				root.setAttribute('aria-hidden', 'true');
+				root.innerHTML =
+					'<div class="page-transition"><div class="page-transition__curtain"></div></div>';
+				document.documentElement.appendChild(root);
+			})();
+		</script>
 		<script is:inline>
 			(function(){
 				try {
@@ -55,11 +67,6 @@ const socialImage = rawSocialImage
 		<meta name="twitter:image" content={socialImage} />
 	</head>
 	<body>
-		<div class="page-transition-host" transition:persist="page-transition" aria-hidden="true">
-			<div class="page-transition">
-				<div class="page-transition__curtain"></div>
-			</div>
-		</div>
 		<Nav />
 		<main class="container"><slot /></main>
 		<Footer />

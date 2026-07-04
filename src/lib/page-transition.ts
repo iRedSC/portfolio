@@ -1,3 +1,4 @@
+const OVERLAY_ROOT_ID = 'page-transition-root';
 const FADE_MS = 380;
 const REVEAL_MS = 780;
 let initialized = false;
@@ -7,14 +8,18 @@ function prefersReducedMotion(): boolean {
 	return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
 
-function getOverlay(): HTMLElement | null {
-	const overlay = document.querySelector('.page-transition');
-	return overlay instanceof HTMLElement ? overlay : null;
-}
+function getElements(): {
+	overlay: HTMLElement;
+	curtain: HTMLElement;
+} | null {
+	const host = document.getElementById(OVERLAY_ROOT_ID);
+	if (!(host instanceof HTMLElement)) return null;
 
-function getCurtain(overlay: HTMLElement): HTMLElement | null {
-	const curtain = overlay.querySelector('.page-transition__curtain');
-	return curtain instanceof HTMLElement ? curtain : null;
+	const overlay = host.querySelector('.page-transition');
+	const curtain = overlay?.querySelector('.page-transition__curtain');
+	if (!(overlay instanceof HTMLElement) || !(curtain instanceof HTMLElement)) return null;
+
+	return { overlay, curtain };
 }
 
 function resetTransition(overlay: HTMLElement, curtain: HTMLElement): void {
@@ -26,16 +31,11 @@ function resetTransition(overlay: HTMLElement, curtain: HTMLElement): void {
 		'page-transition--reveal',
 	);
 	curtain.style.opacity = '';
-	curtain.style.removeProperty('-webkit-mask-image');
-	curtain.style.removeProperty('mask-image');
-	curtain.style.removeProperty('-webkit-mask-size');
-	curtain.style.removeProperty('mask-size');
-	curtain.style.removeProperty('-webkit-mask-position');
-	curtain.style.removeProperty('mask-position');
+	curtain.getAnimations().forEach((animation) => animation.cancel());
 }
 
 function lockCovered(overlay: HTMLElement, curtain: HTMLElement): void {
-	overlay.classList.remove('page-transition--fade-out');
+	overlay.classList.remove('page-transition--fade-out', 'page-transition--reveal');
 	overlay.classList.add('page-transition--active', 'page-transition--covered');
 	curtain.style.opacity = '1';
 }
@@ -54,10 +54,10 @@ function waitForAnimation(el: Element, animationName: string, fallbackMs: number
 }
 
 async function fadeOut(): Promise<void> {
-	const overlay = getOverlay();
-	const curtain = overlay ? getCurtain(overlay) : null;
-	if (!overlay || !curtain) return;
+	const elements = getElements();
+	if (!elements) return;
 
+	const { overlay, curtain } = elements;
 	resetTransition(overlay, curtain);
 	transitioning = true;
 	overlay.classList.add('page-transition--active', 'page-transition--fade-out');
@@ -66,15 +66,21 @@ async function fadeOut(): Promise<void> {
 }
 
 async function revealIn(): Promise<void> {
-	const overlay = getOverlay();
-	const curtain = overlay ? getCurtain(overlay) : null;
-	if (!overlay || !curtain || !transitioning) return;
+	const elements = getElements();
+	if (!elements || !transitioning) return;
 
+	const { overlay, curtain } = elements;
 	lockCovered(overlay, curtain);
 	void curtain.offsetWidth;
 	overlay.classList.add('page-transition--reveal');
 	await waitForAnimation(curtain, 'page-transition-reveal', REVEAL_MS + 80);
 	resetTransition(overlay, curtain);
+}
+
+function skipBrowserViewTransition(event: Event): void {
+	if (!('viewTransition' in event)) return;
+	const viewTransition = (event as { viewTransition?: { skipTransition?: () => void } }).viewTransition;
+	viewTransition?.skipTransition?.();
 }
 
 export function initPageTransition(): void {
@@ -89,14 +95,25 @@ export function initPageTransition(): void {
 		};
 	});
 
-	document.addEventListener('astro:before-swap', () => {
-		const overlay = getOverlay();
-		const curtain = overlay ? getCurtain(overlay) : null;
-		if (!overlay || !curtain || !transitioning) return;
-		lockCovered(overlay, curtain);
+	document.addEventListener('astro:after-preparation', () => {
+		if (!transitioning) return;
+		const elements = getElements();
+		if (!elements) return;
+		lockCovered(elements.overlay, elements.curtain);
+	});
+
+	document.addEventListener('astro:before-swap', (event) => {
+		skipBrowserViewTransition(event);
+		if (!transitioning) return;
+		const elements = getElements();
+		if (!elements) return;
+		lockCovered(elements.overlay, elements.curtain);
 	});
 
 	document.addEventListener('astro:after-swap', () => {
-		void revealIn();
+		if (!transitioning) return;
+		requestAnimationFrame(() => {
+			void revealIn();
+		});
 	});
 }

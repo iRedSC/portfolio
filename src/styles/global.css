@@ -1402,6 +1402,14 @@ main.container {
 	pointer-events: none;
 }
 
+::view-transition-old(root),
+::view-transition-new(root),
+::view-transition-group(root),
+::view-transition-image-pair(root) {
+	animation: none !important;
+	opacity: 0 !important;
+}
+
 .page-transition {
 	position: absolute;
 	inset: 0;
