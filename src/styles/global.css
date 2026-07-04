@@ -55,6 +55,10 @@
 	tap-highlight-color: transparent;
 }
 
+html {
+	overflow-x: clip;
+}
+
 body {
 	margin: 0;
 	padding-top: 5rem;
@@ -207,14 +211,14 @@ a {
 	gap: 1.5rem;
 	/* auto-fill (not auto-fit) keeps empty tracks so a single card stays a
 	   normal column width instead of stretching to fill the whole row. */
-	grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+	grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
 }
 
 /* Blog & case study index grids: responsive columns that scale with the
    viewport and never blow a lone card up to full width. */
 #filtered-posts.card-grid,
 #filtered-case-studies.card-grid {
-	grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+	grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
 }
 
 @media (max-width: 768px) {
@@ -441,7 +445,7 @@ a {
 
 /* Projects index grid: style both Astro-rendered and script-injected cards */
 #filtered-projects.card-grid {
-	grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+	grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
 }
 
 #filtered-projects .project-card {

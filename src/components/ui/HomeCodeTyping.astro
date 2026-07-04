@@ -25,6 +25,7 @@
 			(100vw - min(100vw - 2rem, var(--max-width, 1100px))) / 2
 		);
 		--code-gutter: max(0.75rem, env(safe-area-inset-left, 0px));
+		--code-gutter-right: max(0.75rem, env(safe-area-inset-right, 0px));
 		--code-fade-end: calc(var(--code-content-inset) - var(--code-gutter));
 		--code-fade-min: 0.21;
 
@@ -33,8 +34,7 @@
 		bottom: 0;
 		left: calc(50% - 50vw + var(--code-gutter));
 		z-index: 0;
-		width: max-content;
-		max-width: none;
+		width: calc(100vw - var(--code-gutter) - var(--code-gutter-right));
 		overflow: hidden;
 		pointer-events: none;
 		user-select: none;
