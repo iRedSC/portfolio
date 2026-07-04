@@ -1408,7 +1408,8 @@ main.container {
 
 	.post-toc {
 		order: -1;
-		position: static;
+		position: relative;
+		z-index: 20;
 		align-self: stretch;
 		border-left: none;
 		padding-left: 0;
@@ -1416,10 +1417,15 @@ main.container {
 	}
 
 	.post-toc-disclosure {
+		position: relative;
 		border: 1px solid var(--border);
 		border-radius: 12px;
 		background: var(--card);
-		overflow: hidden;
+	}
+
+	.post-toc-disclosure[open] {
+		border-bottom-left-radius: 0;
+		border-bottom-right-radius: 0;
 	}
 
 	.post-toc-summary {
@@ -1471,11 +1477,20 @@ main.container {
 	}
 
 	.post-toc-list {
+		position: absolute;
+		top: 100%;
+		left: -1px;
+		right: -1px;
+		z-index: 1;
 		padding: 0 1rem 0.75rem;
 		max-height: min(40vh, 16rem);
 		overflow-y: auto;
 		-webkit-overflow-scrolling: touch;
-		border-top: 1px solid var(--border);
+		border: 1px solid var(--border);
+		border-top: none;
+		border-radius: 0 0 12px 12px;
+		background: var(--card);
+		box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
 	}
 
 	.post-toc-disclosure:not([open]) .post-toc-list {
