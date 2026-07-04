@@ -1395,6 +1395,85 @@ main.container {
 	}
 }
 
+.page-transition-host {
+	position: fixed;
+	inset: 0;
+	z-index: 10000;
+	pointer-events: none;
+}
+
+.page-transition {
+	position: absolute;
+	inset: 0;
+	background: var(--bg);
+	opacity: 0;
+	visibility: hidden;
+	overflow: hidden;
+}
+
+.page-transition--active {
+	visibility: visible;
+}
+
+.page-transition--fade-out {
+	opacity: 1;
+	animation: page-transition-fade-out 0.42s ease forwards;
+}
+
+.page-transition--reveal {
+	opacity: 1;
+	-webkit-mask-image: linear-gradient(
+		90deg,
+		transparent 0%,
+		color-mix(in srgb, var(--bg) 0%, transparent) 18%,
+		#000 32%,
+		#000 68%,
+		color-mix(in srgb, var(--bg) 0%, transparent) 82%,
+		transparent 100%
+	);
+	mask-image: linear-gradient(
+		90deg,
+		transparent 0%,
+		color-mix(in srgb, var(--bg) 0%, transparent) 18%,
+		#000 32%,
+		#000 68%,
+		color-mix(in srgb, var(--bg) 0%, transparent) 82%,
+		transparent 100%
+	);
+	-webkit-mask-size: 320% 100%;
+	mask-size: 320% 100%;
+	-webkit-mask-position: 0% 0;
+	mask-position: 0% 0;
+	animation: page-transition-reveal 1.35s ease-in-out forwards;
+}
+
+@keyframes page-transition-fade-out {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes page-transition-reveal {
+	from {
+		-webkit-mask-position: 0% 0;
+		mask-position: 0% 0;
+	}
+	to {
+		-webkit-mask-position: 100% 0;
+		mask-position: 100% 0;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.page-transition--fade-out,
+	.page-transition--reveal {
+		animation: none;
+	}
+}
+
 @media (max-width: 900px) {
 	.post-hero {
 		margin-bottom: 1.25rem;
