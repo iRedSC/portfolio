@@ -16,11 +16,6 @@ const { items } = Astro.props;
 	<p class="toc-title post-toc-desktop-title">On this page</p>
 	{/* Rendered open so the list is visible on desktop (and without JS); TocScrollSpy collapses it on mobile. */}
 	<details class="post-toc-disclosure" open>
-		<script is:inline>
-			if (window.matchMedia('(max-width: 900px)').matches) {
-				document.currentScript.parentElement.removeAttribute('open');
-			}
-		</script>
 		<summary class="post-toc-summary">
 			<span class="post-toc-summary-text">
 				<span class="toc-title">On this page</span>

@@ -79,10 +79,10 @@ const bannerImage = entry.data.thumbnail ?? entry.data.image;
 			</div>
 		</header>
 		<div class="post-body">
+			{toc.length > 0 && <PostToc items={toc} />}
 			<div class="post-content">
 				<Content />
 			</div>
-			{toc.length > 0 && <PostToc items={toc} />}
 		</div>
 	</article>
 	{toc.length > 0 && <TocScrollSpy client:load />}

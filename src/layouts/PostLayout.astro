@@ -36,8 +36,8 @@ const socialImage = thumbnail ?? image;
 			</div>
 			<div class="video-overlay" aria-hidden />
 		<article class:list={['post', bannerImage && 'post--has-banner']}>
+			{bannerImage && <PostBanner src={bannerImage} />}
 			<header class="post-hero">
-				{bannerImage && <PostBanner src={bannerImage} />}
 				<div class="post-hero-content">
 					<p class="eyebrow">{publishedDate.toLocaleDateString()}</p>
 					<h1>{title}</h1>
@@ -53,8 +53,8 @@ const socialImage = thumbnail ?? image;
 		</div>
 	) : (
 		<article class:list={['post', bannerImage && 'post--has-banner']}>
+			{bannerImage && <PostBanner src={bannerImage} />}
 			<header class="post-hero">
-				{bannerImage && <PostBanner src={bannerImage} />}
 				<div class="post-hero-content">
 					<p class="eyebrow">{publishedDate.toLocaleDateString()}</p>
 					<h1>{title}</h1>
