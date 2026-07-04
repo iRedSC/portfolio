@@ -55,7 +55,8 @@
 	tap-highlight-color: transparent;
 }
 
-html {
+html,
+body {
 	overflow-x: clip;
 }
 
@@ -89,6 +90,12 @@ a {
 .container {
 	width: min(100% - 2rem, var(--max-width));
 	margin: 0 auto;
+	min-width: 0;
+	max-width: 100%;
+}
+
+main.container {
+	overflow-x: clip;
 }
 
 /* Floating nav styles are inline in FloatingNav component */
@@ -841,6 +848,8 @@ a {
 .tooltip {
 	position: relative;
 	display: inline-flex;
+	max-width: 100%;
+	overflow-x: clip;
 }
 
 .tooltip-text {
@@ -1032,11 +1041,13 @@ a {
 
 .post {
 	padding: 3rem 0;
+	min-width: 0;
+	max-width: 100%;
 }
 
 .post-hero {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+	grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
 	gap: 2rem;
 	align-items: center;
 	margin-bottom: 2rem;
@@ -1046,6 +1057,7 @@ a {
 	position: relative;
 	isolation: isolate;
 	padding-top: 0;
+	overflow-x: clip;
 }
 
 .post--has-banner .post-hero,
@@ -1061,15 +1073,28 @@ a {
 
 .post-hero-banner {
 	--post-banner-spill: 5rem;
+	/* Match container side margins (1rem each) instead of 100vw — vw is wider than
+	   the visible viewport on mobile Safari and misaligns with article-centered banners. */
+	--post-banner-max-width: calc(100% + 2rem);
 	position: absolute;
 	top: -2rem;
 	left: 50%;
-	width: min(calc(100% + 2 * var(--post-banner-spill)), calc(100vw - 4rem));
+	width: min(calc(100% + 2 * var(--post-banner-spill)), var(--post-banner-max-width));
 	height: clamp(24rem, 52vh, 34rem);
 	transform: translateX(-50%);
-	overflow: hidden;
+	overflow: clip;
+	contain: paint;
 	pointer-events: none;
 	z-index: 0;
+}
+
+@media (max-width: 768px) {
+	.post-hero-banner {
+		--post-banner-spill: 0rem;
+		left: 0;
+		width: 100%;
+		transform: none;
+	}
 }
 
 .post-hero-banner-image {
@@ -1077,7 +1102,6 @@ a {
 	height: 100%;
 	object-fit: cover;
 	object-position: center;
-	transform: scale(1.1);
 }
 
 .post-hero-banner::before {
@@ -1126,6 +1150,7 @@ a {
 	justify-content: space-between;
 	gap: 1rem 1.5rem;
 	margin-bottom: 1rem;
+	min-width: 0;
 }
 
 .post-project-title-row h1 {
@@ -1198,12 +1223,24 @@ a {
 	display: grid;
 	grid-template-columns: minmax(0, 1fr) 220px;
 	gap: 2rem;
+	min-width: 0;
 }
 
 /* Let post content shrink on narrow viewports so code blocks don't force page width */
 .post-content {
 	min-width: 0;
 	max-width: 100%;
+	overflow-x: clip;
+}
+
+.post-content :where(p, ul, ol, blockquote, figure, h2, h3, h4, h5, h6) {
+	max-width: 100%;
+}
+
+.post-content table {
+	display: block;
+	max-width: 100%;
+	overflow-x: auto;
 }
 
 .post-content :is(h2, h3) {
