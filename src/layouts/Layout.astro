@@ -55,7 +55,11 @@ const socialImage = rawSocialImage
 		<meta name="twitter:image" content={socialImage} />
 	</head>
 	<body>
-		<div class="page-transition-host" transition:persist="page-transition" aria-hidden="true"></div>
+		<div class="page-transition-host" transition:persist="page-transition" aria-hidden="true">
+			<div class="page-transition">
+				<div class="page-transition__curtain"></div>
+			</div>
+		</div>
 		<Nav />
 		<main class="container"><slot /></main>
 		<Footer />
