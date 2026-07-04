@@ -1235,8 +1235,7 @@ main.container {
 }
 
 .post-toc {
-	grid-column: 2;
-	grid-row: 1;
+	color: var(--muted);
 }
 
 .post-content :where(p, ul, ol, blockquote, figure, h2, h3, h4, h5, h6) {
@@ -1308,15 +1307,6 @@ main.container {
 
 .post-content video.content-video--mobile {
 	max-width: 320px;
-}
-
-.post-toc {
-	position: sticky;
-	top: 6rem;
-	align-self: start;
-	border-left: 1px solid var(--border);
-	padding-left: 1rem;
-	color: var(--muted);
 }
 
 .post-toc-disclosure > summary {
@@ -1424,11 +1414,6 @@ main.container {
 		position: relative;
 		z-index: 20;
 		align-self: stretch;
-		border-left: none;
-		padding-left: 0;
-		margin-bottom: 0;
-		grid-column: auto;
-		grid-row: auto;
 	}
 
 	.post-toc-disclosure {
@@ -1548,6 +1533,16 @@ main.container {
 }
 
 @media (min-width: 901px) {
+	.post-toc {
+		grid-column: 2;
+		grid-row: 1;
+		position: sticky;
+		top: 6rem;
+		align-self: start;
+		border-left: 1px solid var(--border);
+		padding-left: 1rem;
+	}
+
 	.post-toc-disclosure > summary {
 		display: none;
 	}
