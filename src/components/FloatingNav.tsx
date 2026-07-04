@@ -154,7 +154,7 @@ export default function FloatingNav({ links, isHomeActive = false }: FloatingNav
 
   const showBar = !mobileCollapsed || transitioningToCircle;
   const showCircle = mobileCollapsed || transitioningToBar;
-  const themeBesideMenu = isNavCramped && mobileCollapsed;
+  const themeBesideMenu = isMobile && mobileCollapsed;
 
   useLayoutEffect(() => {
     if (!showBar) return;
