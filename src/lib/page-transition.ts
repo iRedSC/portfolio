@@ -1,25 +1,45 @@
 const OVERLAY_ROOT_ID = 'page-transition-root';
 const FADE_MS = 380;
 const REVEAL_MS = 780;
+
 let initialized = false;
 let transitioning = false;
+let hostEl: HTMLElement | null = null;
+let overlayEl: HTMLElement | null = null;
+let curtainEl: HTMLElement | null = null;
 
 function prefersReducedMotion(): boolean {
 	return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
 
-function getElements(): {
+function ensureOverlay(): {
 	overlay: HTMLElement;
 	curtain: HTMLElement;
-} | null {
-	const host = document.getElementById(OVERLAY_ROOT_ID);
-	if (!(host instanceof HTMLElement)) return null;
+} {
+	if (!hostEl) {
+		hostEl = document.createElement('div');
+		hostEl.id = OVERLAY_ROOT_ID;
+		hostEl.className = 'page-transition-host';
+		hostEl.setAttribute('aria-hidden', 'true');
 
-	const overlay = host.querySelector('.page-transition');
-	const curtain = overlay?.querySelector('.page-transition__curtain');
-	if (!(overlay instanceof HTMLElement) || !(curtain instanceof HTMLElement)) return null;
+		overlayEl = document.createElement('div');
+		overlayEl.className = 'page-transition';
 
-	return { overlay, curtain };
+		curtainEl = document.createElement('div');
+		curtainEl.className = 'page-transition__curtain';
+		overlayEl.appendChild(curtainEl);
+		hostEl.appendChild(overlayEl);
+	}
+
+	if (!overlayEl || !curtainEl) {
+		throw new Error('Page transition overlay failed to initialize');
+	}
+
+	if (!hostEl.isConnected) {
+		document.body.appendChild(hostEl);
+	}
+
+	return { overlay: overlayEl, curtain: curtainEl };
 }
 
 function resetTransition(overlay: HTMLElement, curtain: HTMLElement): void {
@@ -31,6 +51,12 @@ function resetTransition(overlay: HTMLElement, curtain: HTMLElement): void {
 		'page-transition--reveal',
 	);
 	curtain.style.opacity = '';
+	curtain.style.removeProperty('-webkit-mask-image');
+	curtain.style.removeProperty('mask-image');
+	curtain.style.removeProperty('-webkit-mask-size');
+	curtain.style.removeProperty('mask-size');
+	curtain.style.removeProperty('-webkit-mask-position');
+	curtain.style.removeProperty('mask-position');
 	curtain.getAnimations().forEach((animation) => animation.cancel());
 }
 
@@ -54,10 +80,7 @@ function waitForAnimation(el: Element, animationName: string, fallbackMs: number
 }
 
 async function fadeOut(): Promise<void> {
-	const elements = getElements();
-	if (!elements) return;
-
-	const { overlay, curtain } = elements;
+	const { overlay, curtain } = ensureOverlay();
 	resetTransition(overlay, curtain);
 	transitioning = true;
 	overlay.classList.add('page-transition--active', 'page-transition--fade-out');
@@ -66,21 +89,28 @@ async function fadeOut(): Promise<void> {
 }
 
 async function revealIn(): Promise<void> {
-	const elements = getElements();
-	if (!elements || !transitioning) return;
+	if (!overlayEl || !curtainEl || !hostEl || !transitioning) return;
 
-	const { overlay, curtain } = elements;
-	lockCovered(overlay, curtain);
-	void curtain.offsetWidth;
-	overlay.classList.add('page-transition--reveal');
-	await waitForAnimation(curtain, 'page-transition-reveal', REVEAL_MS + 80);
-	resetTransition(overlay, curtain);
+	lockCovered(overlayEl, curtainEl);
+	overlayEl.classList.add('page-transition--reveal');
+	await waitForAnimation(curtainEl, 'page-transition-reveal', REVEAL_MS + 80);
+	resetTransition(overlayEl, curtainEl);
 }
 
-function skipBrowserViewTransition(event: Event): void {
-	if (!('viewTransition' in event)) return;
-	const viewTransition = (event as { viewTransition?: { skipTransition?: () => void } }).viewTransition;
-	viewTransition?.skipTransition?.();
+function preserveOverlayThroughSwap(event: TransitionBeforeSwapEvent): void {
+	if (!transitioning || !hostEl) return;
+
+	const savedHost = hostEl;
+	const { overlay, curtain } = ensureOverlay();
+	lockCovered(overlay, curtain);
+
+	const runSwap = event.swap;
+	event.swap = () => {
+		savedHost.remove();
+		runSwap();
+		document.body.prepend(savedHost);
+		lockCovered(overlay, curtain);
+	};
 }
 
 export function initPageTransition(): void {
@@ -96,24 +126,22 @@ export function initPageTransition(): void {
 	});
 
 	document.addEventListener('astro:after-preparation', () => {
-		if (!transitioning) return;
-		const elements = getElements();
-		if (!elements) return;
-		lockCovered(elements.overlay, elements.curtain);
+		if (!transitioning || !overlayEl || !curtainEl) return;
+		lockCovered(overlayEl, curtainEl);
 	});
 
 	document.addEventListener('astro:before-swap', (event) => {
-		skipBrowserViewTransition(event);
-		if (!transitioning) return;
-		const elements = getElements();
-		if (!elements) return;
-		lockCovered(elements.overlay, elements.curtain);
+		event.viewTransition?.skipTransition();
+		preserveOverlayThroughSwap(event);
 	});
 
 	document.addEventListener('astro:after-swap', () => {
 		if (!transitioning) return;
-		requestAnimationFrame(() => {
-			void revealIn();
-		});
+		void revealIn();
 	});
 }
+
+type TransitionBeforeSwapEvent = Event & {
+	swap: () => void;
+	viewTransition?: { skipTransition?: () => void };
+};

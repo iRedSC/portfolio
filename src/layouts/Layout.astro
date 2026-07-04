@@ -28,18 +28,6 @@ const socialImage = rawSocialImage
 		<ClientRouter fallback="swap" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 		<script is:inline>
-			(function () {
-				if (document.getElementById('page-transition-root')) return;
-				var root = document.createElement('div');
-				root.id = 'page-transition-root';
-				root.className = 'page-transition-host';
-				root.setAttribute('aria-hidden', 'true');
-				root.innerHTML =
-					'<div class="page-transition"><div class="page-transition__curtain"></div></div>';
-				document.documentElement.appendChild(root);
-			})();
-		</script>
-		<script is:inline>
 			(function(){
 				try {
 					var stored = localStorage.getItem('theme');
