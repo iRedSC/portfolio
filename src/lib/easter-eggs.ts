@@ -1,8 +1,4 @@
-const AWESOME = 'awesome';
-const BUFFER_RESET_MS = 2500;
 const RGB_CYCLE_CLASS = 'accent-rgb-cycle';
-const CYCLE_DURATION_MS = 12000;
-const STORAGE_KEY = 'portfolio:accent-rgb-cycle';
 const ACCENT_VARS = ['--accent', '--accent-soft', '--accent-deep'] as const;
 const ACCENT_PHASE_OFFSETS: Record<(typeof ACCENT_VARS)[number], number> = {
 	'--accent': 0,
@@ -10,50 +6,16 @@ const ACCENT_PHASE_OFFSETS: Record<(typeof ACCENT_VARS)[number], number> = {
 	'--accent-deep': 240,
 };
 
-let buffer = '';
-let resetTimer: ReturnType<typeof setTimeout> | null = null;
 let rafId: number | null = null;
-let cycleAnchor: number | null = null;
-let cycling = false;
-
-type CycleState = {
-	startedAt: number;
-};
-
-function isTypingInTextField(): boolean {
-	const el = document.activeElement;
-	if (!el) return false;
-	const tag = el.tagName;
-	if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return true;
-	return el instanceof HTMLElement && el.isContentEditable;
-}
+let active = false;
+let normX = 0.5;
+let normY = 0.5;
 
 function isDarkTheme(): boolean {
 	const root = document.documentElement;
 	if (root.classList.contains('theme-dark')) return true;
 	if (root.classList.contains('theme-light')) return false;
 	return window.matchMedia('(prefers-color-scheme: dark)').matches;
-}
-
-function readCycleState(): CycleState | null {
-	try {
-		const raw = sessionStorage.getItem(STORAGE_KEY);
-		if (!raw) return null;
-		const parsed = JSON.parse(raw) as CycleState;
-		if (typeof parsed.startedAt !== 'number') return null;
-		return parsed;
-	} catch {
-		return null;
-	}
-}
-
-function writeCycleState(state: CycleState | null): void {
-	try {
-		if (state === null) sessionStorage.removeItem(STORAGE_KEY);
-		else sessionStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-	} catch {
-		/* storage unavailable */
-	}
 }
 
 function accentColor(prop: (typeof ACCENT_VARS)[number], hue: number): string {
@@ -68,45 +30,41 @@ function accentColor(prop: (typeof ACCENT_VARS)[number], hue: number): string {
 	}
 }
 
-function hueAt(now: number, phaseOffset = 0): number {
-	if (cycleAnchor === null) return phaseOffset % 360;
-	const elapsed =
-		(((now - cycleAnchor) % CYCLE_DURATION_MS) + CYCLE_DURATION_MS) % CYCLE_DURATION_MS;
-	return ((elapsed / CYCLE_DURATION_MS) * 360 + phaseOffset) % 360;
+function baseHueFromPosition(x: number, y: number): number {
+	const cx = x - 0.5;
+	const cy = y - 0.5;
+	const angle = Math.atan2(cy, cx);
+	return ((angle / (2 * Math.PI)) * 360 + 360) % 360;
 }
 
-function applyCycle(now: number): void {
+function applyFromPosition(x: number, y: number): void {
+	const baseHue = baseHueFromPosition(x, y);
 	const root = document.documentElement;
 	for (const prop of ACCENT_VARS) {
-		const hue = hueAt(now, ACCENT_PHASE_OFFSETS[prop]);
+		const hue = (baseHue + ACCENT_PHASE_OFFSETS[prop]) % 360;
 		root.style.setProperty(prop, accentColor(prop, hue));
 	}
 }
 
-function tick(now: number): void {
-	if (!cycling) return;
-	applyCycle(now);
-	rafId = requestAnimationFrame(tick);
-}
-
-function startCycle(anchor = Date.now()): void {
-	if (cycling) return;
-	cycling = true;
-	cycleAnchor = anchor;
-	writeCycleState({ startedAt: anchor });
-	document.documentElement.classList.add(RGB_CYCLE_CLASS);
-	rafId = requestAnimationFrame(tick);
-}
-
-function stopCycle(): void {
-	if (!cycling) return;
-	cycling = false;
-	if (rafId !== null) {
-		cancelAnimationFrame(rafId);
+function scheduleApply(): void {
+	if (rafId !== null) return;
+	rafId = requestAnimationFrame(() => {
 		rafId = null;
-	}
-	cycleAnchor = null;
-	writeCycleState(null);
+		if (!active) return;
+		applyFromPosition(normX, normY);
+	});
+}
+
+function activate(): void {
+	if (active) return;
+	active = true;
+	document.documentElement.classList.add(RGB_CYCLE_CLASS);
+	scheduleApply();
+}
+
+function deactivate(): void {
+	if (!active) return;
+	active = false;
 	document.documentElement.classList.remove(RGB_CYCLE_CLASS);
 	const root = document.documentElement;
 	for (const prop of ACCENT_VARS) {
@@ -114,60 +72,28 @@ function stopCycle(): void {
 	}
 }
 
-function toggleRgbCycle(): void {
+function onPointerMove(e: PointerEvent): void {
+	normX = e.clientX / Math.max(window.innerWidth, 1);
+	normY = e.clientY / Math.max(window.innerHeight, 1);
+	if (!active) activate();
+	scheduleApply();
+}
+
+function onPointerLeave(): void {
+	deactivate();
+}
+
+function initPositionAccentEgg(): void {
 	if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-	if (cycling) stopCycle();
-	else startCycle();
-}
 
-function restoreCycleIfActive(): void {
-	if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-		writeCycleState(null);
-		return;
-	}
-	const state = readCycleState();
-	if (!state) return;
-	startCycle(state.startedAt);
-}
-
-function clearBuffer(): void {
-	buffer = '';
-	if (resetTimer !== null) {
-		clearTimeout(resetTimer);
-		resetTimer = null;
-	}
-}
-
-function initAwesomeEasterEgg(): void {
-	restoreCycleIfActive();
-
-	document.addEventListener('keydown', (e) => {
-		if (e.ctrlKey || e.metaKey || e.altKey) return;
-		if (isTypingInTextField()) {
-			clearBuffer();
-			return;
-		}
-		if (e.key.length !== 1) return;
-
-		buffer += e.key.toLowerCase();
-		if (buffer.length > AWESOME.length) {
-			buffer = buffer.slice(-AWESOME.length);
-		}
-
-		if (resetTimer !== null) clearTimeout(resetTimer);
-		resetTimer = setTimeout(clearBuffer, BUFFER_RESET_MS);
-
-		if (buffer === AWESOME) {
-			toggleRgbCycle();
-			clearBuffer();
-		}
-	});
+	document.addEventListener('pointermove', onPointerMove, { passive: true });
+	document.addEventListener('pointerleave', onPointerLeave);
 }
 
 if (typeof document !== 'undefined') {
 	if (document.readyState === 'loading') {
-		document.addEventListener('DOMContentLoaded', initAwesomeEasterEgg, { once: true });
+		document.addEventListener('DOMContentLoaded', initPositionAccentEgg, { once: true });
 	} else {
-		initAwesomeEasterEgg();
+		initPositionAccentEgg();
 	}
 }
