@@ -233,7 +233,18 @@ export default function FloatingNav({ links, isHomeActive = false }: FloatingNav
           themeBesideMenu ? (
             <div
               className={`floating-nav-collapsed-group${transitioningToBar ? ' floating-nav-collapsed-group--slide-down' : circleSlideUp ? ' floating-nav-collapsed-group--slide-up' : ''}`}
-              style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0 }}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.25rem',
+                flexShrink: 0,
+                borderRadius: '999px',
+                border: '2px solid var(--border)',
+                background: 'var(--card)',
+                backdropFilter: 'blur(10px)',
+                padding: '0.35rem 0.5rem 0.35rem 0.35rem',
+                boxShadow: '0 2px 12px rgba(0,0,0,0.1)',
+              }}
             >
               <ThemeToggle />
               <button
@@ -242,20 +253,16 @@ export default function FloatingNav({ links, isHomeActive = false }: FloatingNav
                 aria-label="Open menu"
                 className="floating-nav-collapsed-btn"
                 style={{
-                  width: '2.75rem',
-                  height: '2.75rem',
-                  borderRadius: '50%',
-                  border: '2px solid var(--border)',
-                  background: 'var(--card)',
-                  backdropFilter: 'blur(10px)',
+                  background: 'none',
+                  border: 'none',
                   cursor: 'pointer',
+                  padding: '0.35rem',
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: '5px',
                   flexShrink: 0,
-                  boxShadow: '0 2px 12px rgba(0,0,0,0.1)',
                 }}
               >
                 <HamburgerIcon />
