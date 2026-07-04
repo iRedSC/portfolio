@@ -4,6 +4,11 @@ const RGB_CYCLE_CLASS = 'accent-rgb-cycle';
 const CYCLE_DURATION_MS = 12000;
 const STORAGE_KEY = 'portfolio:accent-rgb-cycle';
 const ACCENT_VARS = ['--accent', '--accent-soft', '--accent-deep'] as const;
+const ACCENT_PHASE_OFFSETS: Record<(typeof ACCENT_VARS)[number], number> = {
+	'--accent': 0,
+	'--accent-soft': 120,
+	'--accent-deep': 240,
+};
 
 let buffer = '';
 let resetTimer: ReturnType<typeof setTimeout> | null = null;
@@ -51,33 +56,36 @@ function writeCycleState(state: CycleState | null): void {
 	}
 }
 
-function accentColors(hue: number): Record<(typeof ACCENT_VARS)[number], string> {
+function accentColor(prop: (typeof ACCENT_VARS)[number], hue: number): string {
 	const dark = isDarkTheme();
-	return {
-		'--accent': `hsl(${hue} 75% 55%)`,
-		'--accent-soft': dark ? `hsl(${hue} 50% 18%)` : `hsl(${hue} 80% 92%)`,
-		'--accent-deep': `hsl(${hue} 75% 42%)`,
-	};
-}
-
-function applyHue(hue: number): void {
-	const colors = accentColors(hue);
-	const root = document.documentElement;
-	for (const prop of ACCENT_VARS) {
-		root.style.setProperty(prop, colors[prop]);
+	switch (prop) {
+		case '--accent':
+			return `hsl(${hue} 75% 55%)`;
+		case '--accent-soft':
+			return dark ? `hsl(${hue} 50% 18%)` : `hsl(${hue} 80% 92%)`;
+		case '--accent-deep':
+			return `hsl(${hue} 75% 42%)`;
 	}
 }
 
-function hueAt(now: number): number {
-	if (cycleAnchor === null) return 0;
+function hueAt(now: number, phaseOffset = 0): number {
+	if (cycleAnchor === null) return phaseOffset % 360;
 	const elapsed =
 		(((now - cycleAnchor) % CYCLE_DURATION_MS) + CYCLE_DURATION_MS) % CYCLE_DURATION_MS;
-	return (elapsed / CYCLE_DURATION_MS) * 360;
+	return ((elapsed / CYCLE_DURATION_MS) * 360 + phaseOffset) % 360;
+}
+
+function applyCycle(now: number): void {
+	const root = document.documentElement;
+	for (const prop of ACCENT_VARS) {
+		const hue = hueAt(now, ACCENT_PHASE_OFFSETS[prop]);
+		root.style.setProperty(prop, accentColor(prop, hue));
+	}
 }
 
 function tick(now: number): void {
 	if (!cycling) return;
-	applyHue(hueAt(now));
+	applyCycle(now);
 	rafId = requestAnimationFrame(tick);
 }
 
