@@ -141,7 +141,7 @@ const modalId = `project-demo-modal-${Math.random().toString(36).slice(2, 9)}`;
 	.project-demo-modal {
 		position: fixed;
 		inset: 0;
-		z-index: 10000;
+		z-index: 99999;
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -156,6 +156,7 @@ const modalId = `project-demo-modal-${Math.random().toString(36).slice(2, 9)}`;
 	.project-demo-modal-backdrop {
 		position: absolute;
 		inset: 0;
+		z-index: 0;
 		border: none;
 		padding: 0;
 		margin: 0;
@@ -165,6 +166,7 @@ const modalId = `project-demo-modal-${Math.random().toString(36).slice(2, 9)}`;
 
 	.project-demo-modal-panel {
 		position: relative;
+		z-index: 1;
 		width: min(100%, 22rem);
 		padding: 1.25rem 1rem 1rem;
 		background: var(--card);
@@ -252,10 +254,15 @@ const modalId = `project-demo-modal-${Math.random().toString(36).slice(2, 9)}`;
 			if (!trigger || !modal) return;
 
 			let lastFocus: HTMLElement | null = null;
+			let modalHome: HTMLElement | null = null;
 
 			const open = () => {
 				if (!window.matchMedia(MOBILE_MQ).matches) return;
 				lastFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+				if (modal.parentElement !== document.body) {
+					modalHome = modal.parentElement instanceof HTMLElement ? modal.parentElement : wrap;
+					document.body.appendChild(modal);
+				}
 				modal.hidden = false;
 				document.body.style.overflow = 'hidden';
 				closeBtn?.focus();
@@ -264,6 +271,9 @@ const modalId = `project-demo-modal-${Math.random().toString(36).slice(2, 9)}`;
 			const close = () => {
 				modal.hidden = true;
 				document.body.style.overflow = '';
+				if (modalHome && modal.parentElement === document.body) {
+					modalHome.appendChild(modal);
+				}
 				lastFocus?.focus();
 			};
 
