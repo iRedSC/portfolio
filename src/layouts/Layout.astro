@@ -1,5 +1,4 @@
 ---
-import { ClientRouter } from 'astro:transitions';
 import '../styles/global.css';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
@@ -22,10 +21,9 @@ const socialImage = rawSocialImage
 ---
 
 <!doctype html>
-<html lang="en" class="theme-auto" transition:animate="none">
+<html lang="en" class="theme-auto">
 	<head>
 		<meta charset="utf-8" />
-		<ClientRouter fallback="swap" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 		<script is:inline>
 			(function(){
@@ -68,8 +66,6 @@ const socialImage = rawSocialImage
 		</script>
 		<script>
 			import '../lib/easter-eggs';
-			import { initPageTransition } from '../lib/page-transition';
-			initPageTransition();
 		</script>
 	</body>
 </html>
