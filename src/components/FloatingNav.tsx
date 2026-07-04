@@ -30,18 +30,11 @@ export default function FloatingNav({ links, isHomeActive = false }: FloatingNav
   const isTransitioningRef = useRef(false);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [mouseNearTop, setMouseNearTop] = useState(false);
-  const [isMobile, setIsMobile] = useState(
-    () => (typeof window !== 'undefined' ? window.innerWidth <= MOBILE_BREAKPOINT : false)
-  );
+  const [isMobile, setIsMobile] = useState(false);
   const [isAtTop, setIsAtTop] = useState(true);
-  const [hasMounted, setHasMounted] = useState(false);
   const [isNavCramped, setIsNavCramped] = useState(false);
   const navInnerRef = useRef<HTMLElement>(null);
   const navLinksRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    setHasMounted(true);
-  }, []);
 
   const checkNavCramped = useCallback(() => {
     const inner = navInnerRef.current;
@@ -49,7 +42,7 @@ export default function FloatingNav({ links, isHomeActive = false }: FloatingNav
     if (!inner || !linksEl) return;
 
     const isMobileView = window.innerWidth <= MOBILE_BREAKPOINT;
-    const themeInBar = inner.querySelector('.theme-toggle');
+    const themeInBar = inner.querySelector('.floating-nav-theme-in-bar .theme-toggle');
     const themeWidth = themeInBar?.getBoundingClientRect().width ?? 0;
 
     const cramped = isMobileView
@@ -67,13 +60,12 @@ export default function FloatingNav({ links, isHomeActive = false }: FloatingNav
     });
   }, []);
 
-  useEffect(() => {
-    const update = () => {
-      setIsMobile(window.innerWidth <= MOBILE_BREAKPOINT);
-    };
+  useLayoutEffect(() => {
+    const mq = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT}px)`);
+    const update = () => setIsMobile(mq.matches);
     update();
-    window.addEventListener('resize', update);
-    return () => window.removeEventListener('resize', update);
+    mq.addEventListener('change', update);
+    return () => mq.removeEventListener('change', update);
   }, []);
 
   const triggerCollapseTransition = useCallback(() => {
@@ -163,10 +155,9 @@ export default function FloatingNav({ links, isHomeActive = false }: FloatingNav
   const showBar = !mobileCollapsed || transitioningToCircle;
   const showCircle = mobileCollapsed || transitioningToBar;
   const themeBesideMenu = isNavCramped && mobileCollapsed;
-  const showThemeInBar = !isMobile || !isNavCramped;
 
   useLayoutEffect(() => {
-    if (!showBar || !hasMounted) return;
+    if (!showBar) return;
 
     let frame = 0;
     const scheduleCheck = () => {
@@ -191,25 +182,16 @@ export default function FloatingNav({ links, isHomeActive = false }: FloatingNav
       observer.disconnect();
       window.removeEventListener('resize', scheduleCheck);
     };
-  }, [showBar, hasMounted, links.length, isMobile, checkNavCramped]);
+  }, [showBar, links.length, checkNavCramped]);
 
   const handleCircleClick = () => triggerExpandTransition();
   const handleHamburgerClick = () => triggerCollapseTransition();
 
-  const linkStyle = {
-    color: 'var(--text)',
-    textDecoration: 'none' as const,
-    fontWeight: 400,
-    fontSize: '0.95rem',
-    transition: 'color 0.2s ease',
-    position: 'relative' as const,
-  };
-
   const HamburgerIcon = () => (
     <>
-      <span style={{ width: '18px', height: '2px', background: 'var(--text)', display: 'block', borderRadius: '2px' }} />
-      <span style={{ width: '18px', height: '2px', background: 'var(--text)', display: 'block', borderRadius: '2px' }} />
-      <span style={{ width: '18px', height: '2px', background: 'var(--text)', display: 'block', borderRadius: '2px' }} />
+      <span className="floating-nav-hamburger-line" />
+      <span className="floating-nav-hamburger-line" />
+      <span className="floating-nav-hamburger-line" />
     </>
   );
 
@@ -217,53 +199,22 @@ export default function FloatingNav({ links, isHomeActive = false }: FloatingNav
     <>
       <header
         className="floating-nav"
-        data-mobile={isMobile}
         data-collapsed={mobileCollapsed}
         data-nav-cramped={isNavCramped}
-        style={
-          !hasMounted
-            ? undefined
-            : isMobile
-              ? { justifyContent: showCircle ? 'flex-end' : 'center' }
-              : { top: !desktopVisible ? '-3rem' : '1rem' }
-        }
+        data-desktop-hidden={!desktopVisible}
       >
         {/* Mobile: circle (collapsed) or bar (expanded); use transition states to animate */}
         {showCircle ? (
           themeBesideMenu ? (
             <div
               className={`floating-nav-collapsed-group${transitioningToBar ? ' floating-nav-collapsed-group--slide-down' : circleSlideUp ? ' floating-nav-collapsed-group--slide-up' : ''}`}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.25rem',
-                flexShrink: 0,
-                borderRadius: '999px',
-                border: '2px solid var(--border)',
-                background: 'var(--card)',
-                backdropFilter: 'blur(10px)',
-                padding: '0.35rem 0.5rem 0.35rem 0.35rem',
-                boxShadow: '0 2px 12px rgba(0,0,0,0.1)',
-              }}
             >
               <ThemeToggle />
               <button
                 type="button"
                 onClick={transitioningToBar ? undefined : handleCircleClick}
                 aria-label="Open menu"
-                className="floating-nav-collapsed-btn"
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  padding: '0.35rem',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '5px',
-                  flexShrink: 0,
-                }}
+                className="floating-nav-collapsed-btn floating-nav-collapsed-btn--plain"
               >
                 <HamburgerIcon />
               </button>
@@ -274,166 +225,181 @@ export default function FloatingNav({ links, isHomeActive = false }: FloatingNav
               onClick={transitioningToBar ? undefined : handleCircleClick}
               aria-label="Open menu"
               className={`floating-nav-collapsed-btn${transitioningToBar ? ' floating-nav-collapsed-btn--slide-down' : circleSlideUp ? ' floating-nav-collapsed-btn--slide-up' : ''}`}
-              style={{
-                width: '2.75rem',
-                height: '2.75rem',
-                borderRadius: '50%',
-                border: '2px solid var(--border)',
-                background: 'var(--card)',
-                backdropFilter: 'blur(10px)',
-                cursor: 'pointer',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '5px',
-                flexShrink: 0,
-                boxShadow: '0 2px 12px rgba(0,0,0,0.1)',
-              }}
             >
               <HamburgerIcon />
             </button>
           )
         ) : (
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              ...(isMobile
-                ? {
-                    width: '100%',
-                    maxWidth: 'min(100%, 560px)',
-                  }
-                : {}),
-            }}
-          >
-          <nav
-            ref={navInnerRef}
-            className={`floating-nav-inner${transitioningToCircle ? ' floating-nav-inner--slide-down' : isMobile && slideUp ? ' floating-nav-inner--slide-up' : ''}`}
-            style={{
-              background: 'var(--card)',
-              border: '2px solid var(--border)',
-              borderRadius: '999px',
-              padding: isMobile ? '0.6rem 1rem' : '0.6rem 1.5rem',
-              backdropFilter: 'blur(10px)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: isMobile ? '1rem' : '1.5rem',
-              transition: 'padding 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-              ...(isMobile
-                ? {
-                    flex: themeBesideMenu ? 1 : undefined,
-                    width: themeBesideMenu ? 'auto' : '100%',
-                    maxWidth: themeBesideMenu ? 'none' : 'min(100%, 560px)',
-                    justifyContent: 'space-between',
-                    minWidth: 0,
-                  }
-                : {}),
-            }}
-          >
-            <a
-              href="/"
-              className={`nav-link nav-logo${isHomeActive ? ' active' : ''}`}
-              style={{
-                fontWeight: 700,
-                fontSize: isMobile ? '1.05rem' : '1.1rem',
-                color: isHomeActive ? 'var(--accent)' : 'var(--text)',
-                textDecoration: 'none',
-                transition: 'color 0.2s ease',
-                flexShrink: 0,
-                position: 'relative',
-              }}
+          <div className="floating-nav-bar-wrap">
+            <nav
+              ref={navInnerRef}
+              className={`floating-nav-inner${transitioningToCircle ? ' floating-nav-inner--slide-down' : slideUp ? ' floating-nav-inner--slide-up' : ''}`}
             >
-              {isMobile ? 'MT' : 'Mason Trout'}
-            </a>
+              <a
+                href="/"
+                className={`nav-link nav-logo${isHomeActive ? ' active' : ''}`}
+                style={{ color: isHomeActive ? 'var(--accent)' : 'var(--text)' }}
+              >
+                <span className="nav-logo-long">Mason Trout</span>
+                <span className="nav-logo-short">MT</span>
+              </a>
 
-            <div
-              ref={navLinksRef}
-              style={{
-                display: 'flex',
-                gap: isMobile ? '1rem' : '1.5rem',
-                alignItems: 'center',
-                flex: isMobile ? 1 : 'none',
-                justifyContent: isMobile ? 'center' : undefined,
-                minWidth: 0,
-              }}
-              className="nav-links"
-            >
-              {links.map((link) => (
-                <a
-                  key={link.href}
-                  href={link.href}
-                  className={`nav-link${link.isActive ? ' active' : ''}`}
-                  style={{
-                    ...linkStyle,
-                    color: link.isActive ? 'var(--accent)' : 'var(--text)',
-                    fontWeight: link.isActive ? 600 : 400,
-                    fontSize: isMobile ? '0.9rem' : '0.95rem',
-                  }}
-                >
-                  {link.label}
-                </a>
-              ))}
-            </div>
+              <div ref={navLinksRef} className="nav-links">
+                {links.map((link) => (
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    className={`nav-link${link.isActive ? ' active' : ''}`}
+                    style={{
+                      color: link.isActive ? 'var(--accent)' : 'var(--text)',
+                      fontWeight: link.isActive ? 600 : 400,
+                    }}
+                  >
+                    {link.label}
+                  </a>
+                ))}
+              </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0 }}>
-              {showThemeInBar && <ThemeToggle />}
-              {isMobile && (
+              <div className="floating-nav-actions">
+                <div className="floating-nav-theme-in-bar">
+                  <ThemeToggle />
+                </div>
                 <button
                   type="button"
                   onClick={transitioningToCircle ? undefined : handleHamburgerClick}
                   aria-label="Collapse menu"
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    cursor: 'pointer',
-                    padding: '0.35rem',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '4px',
-                  }}
+                  className="floating-nav-hamburger"
                 >
                   <HamburgerIcon />
                 </button>
-              )}
-            </div>
-          </nav>
+              </div>
+            </nav>
           </div>
         )}
       </header>
 
       <style>{`
-        /* Base positioning via media queries — correct from first paint, no JS-dependent jump */
         .floating-nav {
           position: fixed;
           z-index: 50;
           transition: top 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        @media (max-width: 768px) {
-          .floating-nav {
-            left: 0;
-            right: 0;
-            bottom: var(--mobile-nav-bottom);
-            top: auto;
-            display: flex;
-            justify-content: center;
-            padding-left: max(1rem, env(safe-area-inset-left));
-            padding-right: max(1rem, env(safe-area-inset-right));
-          }
+
+        .floating-nav-bar-wrap {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
         }
-        @media (min-width: 769px) {
-          .floating-nav {
-            left: 50%;
-            transform: translateX(-50%);
-            top: 1rem;
-            bottom: auto;
-            width: fit-content;
-            display: flex;
-          }
+
+        .floating-nav-inner {
+          background: var(--card);
+          border: 2px solid var(--border);
+          border-radius: 999px;
+          padding: 0.6rem 1.5rem;
+          backdrop-filter: blur(10px);
+          display: flex;
+          align-items: center;
+          gap: 1.5rem;
+          transition: padding 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
+
+        .nav-logo {
+          font-weight: 700;
+          font-size: 1.1rem;
+          text-decoration: none;
+          transition: color 0.2s ease;
+          flex-shrink: 0;
+          position: relative;
+        }
+
+        .nav-logo-short {
+          display: none;
+        }
+
+        .nav-links {
+          display: flex;
+          gap: 1.5rem;
+          align-items: center;
+          flex: none;
+          min-width: 0;
+        }
+
+        .nav-link {
+          color: var(--text);
+          text-decoration: none;
+          font-weight: 400;
+          font-size: 0.95rem;
+          transition: color 0.2s ease;
+          position: relative;
+        }
+
+        .floating-nav-actions {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          flex-shrink: 0;
+        }
+
+        .floating-nav-hamburger {
+          display: none;
+          background: none;
+          border: none;
+          cursor: pointer;
+          padding: 0.35rem;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 4px;
+        }
+
+        .floating-nav-hamburger-line {
+          width: 18px;
+          height: 2px;
+          background: var(--text);
+          display: block;
+          border-radius: 2px;
+        }
+
+        .floating-nav-collapsed-group {
+          display: flex;
+          align-items: center;
+          gap: 0.25rem;
+          flex-shrink: 0;
+          border-radius: 999px;
+          border: 2px solid var(--border);
+          background: var(--card);
+          backdrop-filter: blur(10px);
+          padding: 0.35rem 0.5rem 0.35rem 0.35rem;
+          box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .floating-nav-collapsed-btn {
+          width: 2.75rem;
+          height: 2.75rem;
+          border-radius: 50%;
+          border: 2px solid var(--border);
+          background: var(--card);
+          backdrop-filter: blur(10px);
+          cursor: pointer;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 5px;
+          flex-shrink: 0;
+          box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .floating-nav-collapsed-btn--plain {
+          width: auto;
+          height: auto;
+          border: none;
+          background: none;
+          box-shadow: none;
+          border-radius: 0;
+          padding: 0.35rem;
+        }
+
         .nav-link::after {
           content: '';
           position: absolute;
@@ -447,33 +413,119 @@ export default function FloatingNav({ links, isHomeActive = false }: FloatingNav
           transform-origin: center;
           transition: transform 0.2s ease;
         }
+
         .nav-link:hover::after,
         .nav-link.active::after {
           transform: scaleX(1);
         }
+
         @media (max-width: 768px) {
+          .floating-nav {
+            left: 0;
+            right: 0;
+            bottom: var(--mobile-nav-bottom);
+            top: auto;
+            display: flex;
+            justify-content: center;
+            padding-left: max(1rem, env(safe-area-inset-left));
+            padding-right: max(1rem, env(safe-area-inset-right));
+          }
+
+          .floating-nav[data-collapsed='true'] {
+            justify-content: flex-end;
+          }
+
+          .floating-nav-bar-wrap {
+            width: 100%;
+            max-width: min(100%, 560px);
+          }
+
+          .floating-nav-inner {
+            width: 100%;
+            max-width: min(100%, 560px);
+            justify-content: space-between;
+            min-width: 0;
+            padding: 0.6rem 1rem;
+            gap: 1rem;
+          }
+
+          .floating-nav[data-nav-cramped='true'] .floating-nav-inner {
+            flex: 1;
+            width: auto;
+            max-width: none;
+          }
+
+          .nav-logo {
+            font-size: 1.05rem;
+          }
+
+          .nav-logo-long {
+            display: none;
+          }
+
+          .nav-logo-short {
+            display: inline;
+          }
+
           .nav-links {
             display: flex !important;
+            gap: 1rem;
+            flex: 1;
+            justify-content: center;
           }
+
+          .nav-link {
+            font-size: 0.9rem;
+          }
+
+          .floating-nav-hamburger {
+            display: flex;
+          }
+
+          .floating-nav[data-nav-cramped='true'] .floating-nav-theme-in-bar {
+            display: none;
+          }
+
           .floating-nav-inner--slide-up {
             animation: floating-nav-slide-up 0.28s ease-out forwards;
           }
+
           .floating-nav-inner--slide-down {
             animation: floating-nav-slide-down 0.28s ease-out forwards;
           }
+
           .floating-nav-collapsed-btn--slide-up {
             animation: floating-nav-slide-up 0.28s ease-out forwards;
           }
+
           .floating-nav-collapsed-btn--slide-down {
             animation: floating-nav-slide-down 0.28s ease-out forwards;
           }
+
           .floating-nav-collapsed-group--slide-up {
             animation: floating-nav-slide-up 0.28s ease-out forwards;
           }
+
           .floating-nav-collapsed-group--slide-down {
             animation: floating-nav-slide-down 0.28s ease-out forwards;
           }
         }
+
+        @media (min-width: 769px) {
+          .floating-nav {
+            left: 50%;
+            transform: translateX(-50%);
+            top: 1rem;
+            bottom: auto;
+            width: fit-content;
+            display: flex;
+          }
+
+          .floating-nav[data-desktop-hidden='true'] {
+            top: -3rem;
+          }
+        }
+
         @keyframes floating-nav-slide-up {
           from {
             transform: translateY(100%);
@@ -484,6 +536,7 @@ export default function FloatingNav({ links, isHomeActive = false }: FloatingNav
             opacity: 1;
           }
         }
+
         @keyframes floating-nav-slide-down {
           from {
             transform: translateY(0);
