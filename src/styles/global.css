@@ -98,6 +98,11 @@ main.container {
 	overflow-x: clip;
 }
 
+/* Home ambient code extends into the viewport margin via the 50vw breakout trick */
+main.container:has(.home-page) {
+	overflow-x: visible;
+}
+
 /* Floating nav — in global.css so mobile layout is styled from first paint (head) */
 .floating-nav {
 	position: fixed;
