@@ -1,5 +1,5 @@
 ---
-import Tooltip from './Tooltip.astro';
+import { markdownToPlainText, renderMarkdown } from '../../lib/render-markdown';
 
 interface Props {
 	href: string;
@@ -7,41 +7,17 @@ interface Props {
 }
 
 const { href, note } = Astro.props;
-const ariaLabel = note ? `Live demo — ${note}` : 'Live demo';
+const noteHtml = note ? await renderMarkdown(note) : undefined;
+const notePlain = note ? markdownToPlainText(note) : undefined;
+const ariaLabel = notePlain ? `Live demo — ${notePlain}` : 'Live demo';
 const modalId = `project-demo-modal-${Math.random().toString(36).slice(2, 9)}`;
 ---
 
 {note ? (
 	<div class="project-demo-link-with-note">
-		<Tooltip text={note} wrap placement="bottom">
-			<a
-				href={href}
-				class="post-project-demo-link project-demo-link-desktop"
-				target="_blank"
-				rel="noreferrer"
-				aria-label={ariaLabel}
-			>
-				Live demo
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="2"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					aria-hidden="true"
-				>
-					<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-					<polyline points="15 3 21 3 21 9"></polyline>
-					<line x1="10" y1="14" x2="21" y2="3"></line>
-				</svg>
-			</a>
-		</Tooltip>
-
 		<button
 			type="button"
-			class="post-project-demo-link project-demo-link-mobile-trigger"
+			class="post-project-demo-link project-demo-link-trigger"
 			aria-label={ariaLabel}
 			aria-haspopup="dialog"
 			aria-controls={modalId}
@@ -79,7 +55,7 @@ const modalId = `project-demo-modal-${Math.random().toString(36).slice(2, 9)}`;
 						<line x1="6" y1="6" x2="18" y2="18"></line>
 					</svg>
 				</button>
-				<p id={`${modalId}-title`} class="project-demo-modal-note">{note}</p>
+				<div id={`${modalId}-title`} class="project-demo-modal-note" set:html={noteHtml} />
 				<a
 					href={href}
 					class="post-project-demo-link project-demo-modal-link"
@@ -132,8 +108,7 @@ const modalId = `project-demo-modal-${Math.random().toString(36).slice(2, 9)}`;
 )}
 
 <style>
-	.project-demo-link-mobile-trigger {
-		display: none;
+	.project-demo-link-trigger {
 		cursor: pointer;
 		font-family: inherit;
 	}
@@ -167,7 +142,7 @@ const modalId = `project-demo-modal-${Math.random().toString(36).slice(2, 9)}`;
 	.project-demo-modal-panel {
 		position: relative;
 		z-index: 1;
-		width: min(100%, 22rem);
+		width: min(100%, 24rem);
 		padding: 1.25rem 1rem 1rem;
 		background: var(--card);
 		border: 1px solid var(--border);
@@ -209,7 +184,39 @@ const modalId = `project-demo-modal-${Math.random().toString(36).slice(2, 9)}`;
 		font-size: 0.9375rem;
 		line-height: 1.5;
 		color: var(--text);
-		text-align: center;
+		text-align: left;
+	}
+
+	.project-demo-modal-note :global(p) {
+		margin: 0;
+	}
+
+	.project-demo-modal-note :global(p + p),
+	.project-demo-modal-note :global(p + ul),
+	.project-demo-modal-note :global(p + ol),
+	.project-demo-modal-note :global(ul + p),
+	.project-demo-modal-note :global(ol + p) {
+		margin-top: 0.75rem;
+	}
+
+	.project-demo-modal-note :global(ul),
+	.project-demo-modal-note :global(ol) {
+		margin: 0;
+		padding-left: 1.25rem;
+	}
+
+	.project-demo-modal-note :global(li + li) {
+		margin-top: 0.35rem;
+	}
+
+	.project-demo-modal-note :global(code) {
+		font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+			'Liberation Mono', 'Courier New', monospace;
+		font-size: 0.875em;
+	}
+
+	.project-demo-modal-note :global(a) {
+		color: var(--accent);
 	}
 
 	.project-demo-modal-link {
@@ -226,27 +233,15 @@ const modalId = `project-demo-modal-${Math.random().toString(36).slice(2, 9)}`;
 			transform: scale(1) translateY(0);
 		}
 	}
-
-	@media (max-width: 768px) {
-		.project-demo-link-with-note > :global(.tooltip) {
-			display: none;
-		}
-
-		.project-demo-link-mobile-trigger {
-			display: inline-flex;
-		}
-	}
 </style>
 
 <script>
-	const MOBILE_MQ = '(max-width: 768px)';
-
 	function initProjectDemoModals() {
 		document.querySelectorAll('.project-demo-link-with-note').forEach((wrap) => {
 			if (wrap.hasAttribute('data-demo-modal-init')) return;
 			wrap.setAttribute('data-demo-modal-init', '');
 
-			const trigger = wrap.querySelector<HTMLButtonElement>('.project-demo-link-mobile-trigger');
+			const trigger = wrap.querySelector<HTMLButtonElement>('.project-demo-link-trigger');
 			const modal = wrap.querySelector<HTMLElement>('.project-demo-modal');
 			const backdrop = wrap.querySelector<HTMLButtonElement>('.project-demo-modal-backdrop');
 			const closeBtn = wrap.querySelector<HTMLButtonElement>('.project-demo-modal-close');
@@ -257,7 +252,6 @@ const modalId = `project-demo-modal-${Math.random().toString(36).slice(2, 9)}`;
 			let modalHome: HTMLElement | null = null;
 
 			const open = () => {
-				if (!window.matchMedia(MOBILE_MQ).matches) return;
 				lastFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
 				if (modal.parentElement !== document.body) {
 					modalHome = modal.parentElement instanceof HTMLElement ? modal.parentElement : wrap;
