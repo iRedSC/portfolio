@@ -123,8 +123,6 @@ main.container {
 	align-items: center;
 	gap: 1.5rem;
 	transition: padding 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-	container-type: inline-size;
-	container-name: floating-nav-inner;
 }
 
 .floating-nav .nav-logo {
@@ -243,13 +241,18 @@ main.container {
 	transform: scaleX(1);
 }
 
-@container floating-nav-inner (max-width: 520px) {
-	.floating-nav-theme-in-bar {
-		display: none;
-	}
-}
-
 @media (max-width: 768px) {
+	.floating-nav-bar-wrap {
+		container-type: inline-size;
+		container-name: floating-nav-inner;
+	}
+
+	@container floating-nav-inner (max-width: 520px) {
+		.floating-nav-theme-in-bar {
+			display: none;
+		}
+	}
+
 	.floating-nav {
 		left: 0;
 		right: 0;
