@@ -98,8 +98,9 @@ main.container {
 	overflow-x: clip;
 }
 
-/* Home ambient code extends into the viewport margin via the 50vw breakout trick */
-main.container:has(.home-page) {
+/* Pages with viewport-margin bleed: home code typing, post hero banners */
+main.container:has(.home-page),
+main.container:has(.post--has-banner) {
 	overflow-x: visible;
 }
 
@@ -1333,7 +1334,6 @@ main.container:has(.home-page) {
 	position: relative;
 	isolation: isolate;
 	padding-top: 0;
-	overflow-x: clip;
 }
 
 .post--has-banner .post-hero,
@@ -1349,13 +1349,13 @@ main.container:has(.home-page) {
 
 .post-hero-banner {
 	--post-banner-spill: 5rem;
-	/* Match container side margins (1rem each) instead of 100vw — vw is wider than
-	   the visible viewport on mobile Safari and misaligns with article-centered banners. */
-	--post-banner-max-width: calc(100% + 2rem);
+	/* Spill into available viewport side margins without using 100vw (iOS Safari scrollWidth). */
+	--post-side-margin: calc((100vw - min(100vw - 2rem, var(--max-width, 1100px))) / 2);
+	--post-banner-bleed: min(var(--post-banner-spill), var(--post-side-margin));
 	position: absolute;
 	top: -2rem;
 	left: 50%;
-	width: min(calc(100% + 2 * var(--post-banner-spill)), var(--post-banner-max-width));
+	width: calc(100% + 2 * var(--post-banner-bleed));
 	height: clamp(24rem, 52vh, 34rem);
 	transform: translateX(-50%);
 	overflow: clip;
