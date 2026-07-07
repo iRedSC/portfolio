@@ -55,14 +55,55 @@
 	tap-highlight-color: transparent;
 }
 
-html,
-body {
+html {
 	overflow-x: clip;
+	overflow-y: overlay;
+	scrollbar-gutter: auto;
+	scrollbar-width: thin;
+	scrollbar-color: color-mix(in srgb, var(--muted) 42%, transparent) transparent;
+}
+
+@supports not (overflow: overlay) {
+	html {
+		overflow-y: auto;
+	}
+}
+
+/* Overlay scrollbars: transparent track, rounded thumb, no gutter */
+* {
+	scrollbar-width: thin;
+	scrollbar-color: color-mix(in srgb, var(--muted) 42%, transparent) transparent;
+}
+
+*::-webkit-scrollbar {
+	width: 8px;
+	height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+	background: color-mix(in srgb, var(--muted) 42%, transparent);
+	border: 2px solid transparent;
+	border-radius: 999px;
+	background-clip: padding-box;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+	background: color-mix(in srgb, var(--muted) 62%, transparent);
+	background-clip: padding-box;
+}
+
+*::-webkit-scrollbar-corner {
+	background: transparent;
 }
 
 body {
 	margin: 0;
 	padding-top: 5rem;
+	overflow-x: clip;
 	font-family: 'Inter', system-ui, -apple-system, sans-serif;
 	background: var(--bg);
 	color: var(--text);
@@ -2163,22 +2204,8 @@ main.container:has(.post--has-banner) {
 	gap: 1.5rem;
 }
 
-.skill-nodes-container {
-	scrollbar-width: thin;
-	scrollbar-color: var(--border) transparent;
-}
-
 .skill-nodes-container::-webkit-scrollbar {
 	height: 6px;
-}
-
-.skill-nodes-container::-webkit-scrollbar-track {
-	background: transparent;
-}
-
-.skill-nodes-container::-webkit-scrollbar-thumb {
-	background: var(--border);
-	border-radius: 3px;
 }
 
 /* Desktop: single row — title | nodes, evenly spaced */
