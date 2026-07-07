@@ -19,7 +19,13 @@ const socialsDir = path.join(process.cwd(), 'src', 'data', 'socials');
 const ICON_SIZE = 32;
 const MIN_ICON_GAP = 16;
 /** Headshot is ~100px radius + border; keep icon inner edge off the photo. */
-const BASE_RADIUS = 142;
+const BASE_RADIUS = 152;
+
+/** Degrees to lean icon top toward headshot center (0° = upright). */
+export function computeOrbitTilt(angle: number): number {
+	// Icon at polar angle θ sits on the outward ray; lean inward along θ + 90°.
+	return (angle + 90) * 0.14;
+}
 
 /** Evenly distribute icons around the headshot with minimum angular separation. */
 export function layoutSocialOrbit(count: number): SocialOrbitPosition[] {
@@ -34,8 +40,7 @@ export function layoutSocialOrbit(count: number): SocialOrbitPosition[] {
 
 	return Array.from({ length: count }, (_, index) => {
 		const angle = arcStart + spacing * index + spacing / 2;
-		const radius = BASE_RADIUS + (index % 3) * 7 - 7;
-		return { angle, radius, delay: index * 0.65 };
+		return { angle, radius: BASE_RADIUS, delay: index * 0.65 };
 	});
 }
 
