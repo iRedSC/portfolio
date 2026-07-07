@@ -2,7 +2,7 @@
 import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 import type { SocialLink } from '../../lib/socials';
-import { layoutSocialOrbit } from '../../lib/socials';
+import { layoutSocialOrbit, computeOrbitTilt } from '../../lib/socials';
 
 interface Props {
 	profileLight: ImageMetadata;
@@ -41,7 +41,7 @@ const orbitPositions = layoutSocialOrbit(socialLinks.length);
 					const radians = (position.angle * Math.PI) / 180;
 					const x = Math.cos(radians) * position.radius;
 					const y = Math.sin(radians) * position.radius;
-					const tilt = Math.max(-14, Math.min(14, (position.angle + 180) * 0.12));
+					const tilt = computeOrbitTilt(position.angle);
 
 					return (
 						<li
