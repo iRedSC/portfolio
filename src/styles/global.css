@@ -1239,8 +1239,9 @@ main.container:has(.post--has-banner) {
 .hero h1,
 .title-gradient {
 	font-size: 2.75rem;
-	line-height: 1.2;
+	line-height: 1.35;
 	margin: 0.5rem 0;
+	padding-bottom: 0.08em;
 	background: linear-gradient(135deg, var(--accent) 0%, var(--accent-deep) 100%);
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
