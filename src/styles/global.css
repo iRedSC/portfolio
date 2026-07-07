@@ -1429,7 +1429,13 @@ main.container:has(.post--has-banner) {
 	inset: 0;
 	z-index: 2;
 	background:
-		linear-gradient(to right, var(--bg) 0%, transparent 5%, transparent 95%, var(--bg) 100%),
+		linear-gradient(
+			to right,
+			var(--bg) 0,
+			transparent var(--post-banner-bleed),
+			transparent calc(100% - var(--post-banner-bleed)),
+			var(--bg) 100%
+		),
 		linear-gradient(to bottom, var(--bg) 0%, transparent 22%),
 		linear-gradient(to bottom, transparent 0%, transparent 58%, color-mix(in srgb, var(--bg) 50%, transparent) 82%, var(--bg) 100%);
 }
