@@ -1,0 +1,31 @@
+# Home page tabbed section — edit labels and markdown bodies below.
+# Use a YAML `|` block for multi-line markdown (same pattern as project demoNote).
+
+title: More about me
+
+tabs:
+  - id: approach
+    label: Approach
+    body: |
+      I focus on **least friction** — the smallest change that makes a workflow feel obvious instead of painful.
+
+      That usually means:
+      - Watching where people hesitate or backtrack
+      - Removing steps before adding features
+      - Prototyping in the real stack, not slide decks
+
+  - id: stack
+    label: Stack
+    body: |
+      Day-to-day I work across the product surface:
+
+      - **Frontend:** Astro, React islands, accessible HTML/CSS
+      - **Backend:** Node, APIs, caching, deploy pipelines
+      - **Design:** flows, copy, and the boring details that save clicks
+
+  - id: now
+    label: Now
+    body: |
+      Currently building portfolio pieces, writing about what I learn, and shipping projects where the demo is the pitch.
+
+      Open to **collaboration** and **contract work** — say hi via the contact form below.

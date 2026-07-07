@@ -16,6 +16,7 @@ import { getSiteConfig } from '../lib/site-config';
 import { getSocialLinks } from '../lib/socials';
 import HomeCodeTyping from '../components/ui/HomeCodeTyping.astro';
 import HeroPhoto from '../components/ui/HeroPhoto.astro';
+import HomeTabs from '../components/ui/HomeTabs.astro';
 
 const { sections } = await getSiteConfig();
 const socialLinks = await getSocialLinks();
@@ -76,6 +77,8 @@ const featuredCaseStudies = caseStudyEntries
       <HeroPhoto profileLight={profileLight} profileDark={profileDark} socialLinks={socialLinks} />
     </div>
   </section>
+
+  <HomeTabs />
 
   <div class="container">
     {sections.projects && (

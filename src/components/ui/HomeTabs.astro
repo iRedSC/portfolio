@@ -1,0 +1,182 @@
+---
+import { getHomeTabs } from '../../lib/home-tabs';
+import { renderMarkdown } from '../../lib/render-markdown';
+
+const config = await getHomeTabs();
+const tabs = config
+	? await Promise.all(
+			config.tabs.map(async (tab) => ({
+				...tab,
+				html: await renderMarkdown(tab.body),
+			})),
+		)
+	: [];
+
+const panelPrefix = `home-tab-panel-${Math.random().toString(36).slice(2, 9)}`;
+---
+
+{config && tabs.length > 0 && (
+<section class="section home-tabs-section">
+	<div class="container home-tabs">
+		{config.title && (
+			<div class="section-title section-title--divider section-title--centered home-tabs__heading">
+				<div class="section-title__group">
+					<span class="section-title__line" aria-hidden="true"></span>
+					<h2 class="section-title__heading">{config.title}</h2>
+					<span class="section-title__line" aria-hidden="true"></span>
+				</div>
+			</div>
+		)}
+
+		<div
+			class="home-tabs__tablist"
+			role="tablist"
+			aria-label={config.title ?? 'Home page sections'}
+		>
+			{tabs.map((tab, index) => (
+				<button
+					type="button"
+					class="home-tabs__trigger"
+					role="tab"
+					id={`${panelPrefix}-tab-${tab.id}`}
+					aria-selected={index === 0 ? 'true' : 'false'}
+					aria-controls={`${panelPrefix}-panel-${tab.id}`}
+					tabindex={index === 0 ? 0 : -1}
+					data-tab-index={index}
+				>
+					{tab.label}
+				</button>
+			))}
+		</div>
+
+		<div class="home-tabs__panels">
+			{tabs.map((tab, index) => (
+				<div
+					id={`${panelPrefix}-panel-${tab.id}`}
+					class="home-tabs__panel-wrap"
+					role="tabpanel"
+					aria-labelledby={`${panelPrefix}-tab-${tab.id}`}
+					tabindex={0}
+					hidden={index !== 0 ? true : undefined}
+					data-tab-index={index}
+				>
+					<div class="post-content home-tabs__panel" set:html={tab.html} />
+				</div>
+			))}
+		</div>
+	</div>
+</section>
+)}
+
+<script>
+	const tabRoots = document.querySelectorAll<HTMLElement>('.home-tabs');
+
+	for (const root of tabRoots) {
+		const tabs = [...root.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+		const panels = [...root.querySelectorAll<HTMLElement>('[role="tabpanel"]')];
+		if (!tabs.length || tabs.length !== panels.length) continue;
+
+		const selectTab = (index: number) => {
+			const clamped = ((index % tabs.length) + tabs.length) % tabs.length;
+			tabs.forEach((tab, i) => {
+				const selected = i === clamped;
+				tab.setAttribute('aria-selected', String(selected));
+				tab.tabIndex = selected ? 0 : -1;
+			});
+			panels.forEach((panel, i) => {
+				panel.hidden = i !== clamped;
+			});
+			tabs[clamped]?.focus();
+		};
+
+		tabs.forEach((tab, index) => {
+			tab.addEventListener('click', () => selectTab(index));
+
+			tab.addEventListener('keydown', (event) => {
+				let nextIndex: number | null = null;
+				switch (event.key) {
+					case 'ArrowRight':
+					case 'ArrowDown':
+						nextIndex = index + 1;
+						break;
+					case 'ArrowLeft':
+					case 'ArrowUp':
+						nextIndex = index - 1;
+						break;
+					case 'Home':
+						nextIndex = 0;
+						break;
+					case 'End':
+						nextIndex = tabs.length - 1;
+						break;
+					default:
+						return;
+				}
+				event.preventDefault();
+				selectTab(nextIndex);
+			});
+		});
+	}
+</script>
+
+<style>
+	.home-tabs-section {
+		padding-top: 2rem;
+		padding-bottom: 3rem;
+	}
+
+	.home-tabs__heading {
+		margin-bottom: 1.75rem;
+	}
+
+	.home-tabs__tablist {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 0.5rem;
+		margin-bottom: 1.25rem;
+	}
+
+	.home-tabs__trigger {
+		border: 1px solid var(--border);
+		background: transparent;
+		color: var(--text);
+		padding: 0.45rem 0.9rem;
+		border-radius: 999px;
+		font-family: inherit;
+		font-size: 0.875rem;
+		cursor: pointer;
+		transition: background 0.2s, border-color 0.2s, color 0.2s;
+	}
+
+	.home-tabs__trigger:hover:not([aria-selected='true']) {
+		border-color: var(--accent);
+		color: var(--accent);
+	}
+
+	.home-tabs__trigger[aria-selected='true'] {
+		background: var(--accent-soft);
+		color: var(--accent);
+		border-color: var(--accent);
+	}
+
+	.home-tabs__trigger:focus {
+		outline: none;
+	}
+
+	.home-tabs__trigger:focus-visible {
+		outline: 2px solid var(--accent);
+		outline-offset: 2px;
+	}
+
+	.home-tabs__panel-wrap {
+		border: 1px solid var(--border);
+		background: var(--card);
+		border-radius: 12px;
+		padding: 1.5rem 1.75rem;
+	}
+
+	.home-tabs__panel :global(:is(h2, h3, h4):first-child) {
+		margin-top: 0;
+	}
+</style>
