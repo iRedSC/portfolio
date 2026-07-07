@@ -41,20 +41,21 @@ const orbitPositions = layoutSocialOrbit(socialLinks.length);
 					const radians = (position.angle * Math.PI) / 180;
 					const x = Math.cos(radians) * position.radius;
 					const y = Math.sin(radians) * position.radius;
+					const tilt = Math.max(-14, Math.min(14, (position.angle + 180) * 0.12));
 
 					return (
 						<li
 							class="hero-social-orbit__item"
-							style={`--orbit-x: ${x.toFixed(2)}px; --orbit-y: ${y.toFixed(2)}px; --orbit-delay: ${position.delay}s;`}
+							style={`--orbit-x: ${x.toFixed(2)}px; --orbit-y: ${y.toFixed(2)}px; --orbit-tilt: ${tilt.toFixed(2)}deg; --orbit-delay: ${position.delay}s;`}
 						>
 							<a
 								href={link.link}
 								target="_blank"
 								rel="noopener noreferrer"
 								class="hero-social-orbit__link"
+								style={`--icon-url: url(${link.icon});`}
 								aria-label={link.name}
 							>
-								<img src={link.icon} alt="" width={20} height={20} class="hero-social-orbit__icon" />
 							</a>
 						</li>
 					);

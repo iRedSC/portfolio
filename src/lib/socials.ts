@@ -16,9 +16,10 @@ export type SocialOrbitPosition = {
 
 const socialsDir = path.join(process.cwd(), 'src', 'data', 'socials');
 
-const ICON_SIZE = 36;
-const MIN_ICON_GAP = 12;
-const BASE_RADIUS = 118;
+const ICON_SIZE = 32;
+const MIN_ICON_GAP = 16;
+/** Headshot is ~100px radius + border; keep icon inner edge off the photo. */
+const BASE_RADIUS = 142;
 
 /** Evenly distribute icons around the headshot with minimum angular separation. */
 export function layoutSocialOrbit(count: number): SocialOrbitPosition[] {
