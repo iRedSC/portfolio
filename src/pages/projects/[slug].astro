@@ -62,7 +62,11 @@ const bannerImage = entry.data.thumbnail ?? entry.data.image;
 							</svg>
 						</a>
 						{entry.data.demoUrl && (
-							<ProjectDemoLink href={entry.data.demoUrl} note={entry.data.demoNote} />
+							<ProjectDemoLink
+								href={entry.data.demoUrl}
+								note={entry.data.demoNote}
+								buttonName={entry.data.demoButtonName}
+							/>
 						)}
 					</div>
 				</div>

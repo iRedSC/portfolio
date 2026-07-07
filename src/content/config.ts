@@ -45,6 +45,7 @@ const projects = defineCollection({
 		githubMilestoneId: z.number().optional(),
 		featured: z.boolean().default(false),
 		demoUrl: z.string().url().optional(),
+		demoButtonName: z.string().optional(),
 		demoNote: z
 			.string()
 			.optional()

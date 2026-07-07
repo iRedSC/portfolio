@@ -4,12 +4,13 @@ import { markdownToPlainText, renderMarkdown } from '../../lib/render-markdown';
 interface Props {
 	href: string;
 	note?: string;
+	buttonName?: string;
 }
 
-const { href, note } = Astro.props;
+const { href, note, buttonName = 'Live demo' } = Astro.props;
 const noteHtml = note ? await renderMarkdown(note) : undefined;
 const notePlain = note ? markdownToPlainText(note) : undefined;
-const ariaLabel = notePlain ? `Live demo — ${notePlain}` : 'Live demo';
+const ariaLabel = notePlain ? `${buttonName} — ${notePlain}` : buttonName;
 const modalId = `project-demo-modal-${Math.random().toString(36).slice(2, 9)}`;
 ---
 
@@ -22,7 +23,7 @@ const modalId = `project-demo-modal-${Math.random().toString(36).slice(2, 9)}`;
 			aria-haspopup="dialog"
 			aria-controls={modalId}
 		>
-			Live demo
+			{buttonName}
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
 				viewBox="0 0 24 24"
@@ -62,7 +63,7 @@ const modalId = `project-demo-modal-${Math.random().toString(36).slice(2, 9)}`;
 					target="_blank"
 					rel="noreferrer"
 				>
-					Live demo
+					{buttonName}
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						viewBox="0 0 24 24"
@@ -89,7 +90,7 @@ const modalId = `project-demo-modal-${Math.random().toString(36).slice(2, 9)}`;
 		rel="noreferrer"
 		aria-label={ariaLabel}
 	>
-		Live demo
+		{buttonName}
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
 			viewBox="0 0 24 24"
