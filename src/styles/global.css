@@ -1256,13 +1256,45 @@ main.container:has(.post--has-banner) {
 }
 
 .hero-photo {
+	position: relative;
 	width: min(200px, 60vw);
 	height: min(200px, 60vw);
 	border-radius: 50%;
 	border: 4px solid var(--accent);
 	box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
-	object-fit: cover;
+	overflow: hidden;
 	order: -1;
+	flex-shrink: 0;
+}
+
+.hero-photo__img {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.hero-photo__img--dark {
+	display: none;
+}
+
+:root.theme-dark .hero-photo__img--light {
+	display: none;
+}
+
+:root.theme-dark .hero-photo__img--dark {
+	display: block;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root:not(.theme-light) .hero-photo__img--light {
+		display: none;
+	}
+
+	:root:not(.theme-light) .hero-photo__img--dark {
+		display: block;
+	}
 }
 
 @keyframes float {
